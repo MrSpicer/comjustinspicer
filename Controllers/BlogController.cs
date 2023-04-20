@@ -1,8 +1,9 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using comjustinspicer.Models;
-using comjustinspice.Data;
-using comjustinspice.Data.Models.Blog;
+using comjustinspicer.Models.Blog;
+using comjustinspicer.Data;
+using comjustinspicer.Data.Models.Blog;
 
 namespace comjustinspicer.Controllers;
 
@@ -29,10 +30,10 @@ public class BlogController : Controller
 		// _db.Add(new Post() { Id = Guid.NewGuid(), Title = $"this is a test {DateTime.Now}" });
 		// _db.SaveChanges();
     
-        _posts = _db.Posts.Take(5).ToList();
-       Console.WriteLine(String.Join(',', _posts.Select(p => p.Title)));
+        var vm = new BlogViewModel();
+        vm.Posts = _db.Posts.Select(p => new PostViewModel(p)).ToList();
 
-        return View();
+        return View("Index", vm);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

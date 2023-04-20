@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using comjustinspice.Data.Models.Blog;
+using comjustinspicer.Data.Models.Blog;
 
-namespace comjustinspice.Data
+namespace comjustinspicer.Data
 {
 	public class BlogContext : DbContext
 	{
@@ -12,7 +12,7 @@ namespace comjustinspice.Data
 		public BlogContext(){
 			var folder = Environment.SpecialFolder.LocalApplicationData;
 			var path = Environment.GetFolderPath(folder);
-			_dbPath = System.IO.Path.Join(path, "blogging.db");
+			_dbPath = System.IO.Path.Join(path, "blogging.db"); //maybe this should change...
 
 			Console.WriteLine($"Database path: {_dbPath}.");
 		}
