@@ -8,7 +8,7 @@ namespace comjustinspicer.Models.Blog
 		public string Title {get; private set;}
 
 		public PostViewModel(Post post){
-			Title = post.Title;	
+			Title = post.Title ?? String.Empty;	
 		}
 	}
 }

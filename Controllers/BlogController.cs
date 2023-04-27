@@ -31,7 +31,7 @@ public class BlogController : Controller
 		// _db.SaveChanges();
     
         var vm = new BlogViewModel();
-        vm.Posts = _db.Posts.Select(p => new PostViewModel(p)).ToList();
+        vm.Posts = _db.Posts?.Select(p => new PostViewModel(p))?.ToList() ?? new List<PostViewModel>();
 
         return View("Index", vm);
     }
