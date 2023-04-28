@@ -15,7 +15,7 @@ public class BlogController : Controller
 
 
 	//todo: inject this
-	private BlogContext _db = new BlogContext();
+	//private BlogContext _db = new BlogContext();
 
     private IEnumerable<Post> _posts;
 
@@ -31,7 +31,7 @@ public class BlogController : Controller
 		// _db.SaveChanges();
     
         var vm = new BlogViewModel();
-        vm.Posts = _db.Posts?.Select(p => new PostViewModel(p))?.ToList() ?? new List<PostViewModel>();
+        // vm.Posts = _db.Posts?.Select(p => new PostViewModel(p))?.ToList() ?? new List<PostViewModel>();
 
         return View("Index", vm);
     }
