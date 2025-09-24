@@ -1,14 +1,10 @@
-using System;
 using comjustinspicer.Data.Models.Blog;
 
-namespace comjustinspicer.Models.Blog
-{
-	public class PostViewModel
-	{
-		public string Title {get; private set;}
+namespace comjustinspicer.Models.Blog;
 
-		public PostViewModel(Post post){
-			Title = post.Title ?? String.Empty;	
-		}
-	}
+public sealed class PostViewModel
+{
+	public string Title { get; init; }
+
+	public PostViewModel(Post post) => Title = post.Title;
 }

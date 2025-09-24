@@ -6,21 +6,20 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
-//
-// Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlite(connectionString));
+// Register BlogContext using same connection (separate DB file supported via configuration if desired)
+builder.Services.AddDbContext<BlogContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-	.AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultUI();
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultUI();
 //
 
 var app = builder.Build();
-
-//todo: migration endpoint? why
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

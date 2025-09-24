@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using comjustinspicer.Models;
 using comjustinspicer.Models.Blog;
@@ -12,28 +13,27 @@ namespace comjustinspicer.Controllers;
 public class BlogController : Controller
 {
     private readonly ILogger<BlogController> _logger;
+    private readonly BlogContext _blogContext;
 
-
-	//todo: inject this
-	//private BlogContext _db = new BlogContext();
-
-    private IEnumerable<Post> _posts;
-
-    public BlogController(ILogger<BlogController> logger)
+    public BlogController(ILogger<BlogController> logger, BlogContext blogContext)
     {
         _logger = logger;
+        _blogContext = blogContext;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        //todo: remove. testing
-		// _db.Add(new Post() { Id = Guid.NewGuid(), Title = $"this is a test {DateTime.Now}" });
-		// _db.SaveChanges();
-    
         var vm = new BlogViewModel();
-        // vm.Posts = _db.Posts?.Select(p => new PostViewModel(p))?.ToList() ?? new List<PostViewModel>();
 
-        return View("Index", vm);
+        var posts = await _blogContext.Posts
+            .AsNoTracking()
+            .OrderByDescending(p => p.Id)
+            .Select(p => new PostViewModel(p))
+            .ToListAsync();
+
+        vm.Posts = posts;
+
+        return View(vm);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
