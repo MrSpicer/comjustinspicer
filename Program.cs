@@ -42,4 +42,22 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+// Apply any pending EF Core migrations for BlogContext so the database schema is up-to-date.
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var blogContext = services.GetRequiredService<BlogContext>();
+        // Use Migrate to apply migrations. This requires migrations to exist.
+        blogContext.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred migrating the Blog database.");
+        throw;
+    }
+}
+
 app.Run();
