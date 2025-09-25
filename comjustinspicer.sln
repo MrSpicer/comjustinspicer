@@ -1,8 +1,12 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "comjustinspicer", "comjustinspicer.csproj", "{E7A2F866-1610-7CA4-F103-742A4FCD13AE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "comjustinspicer", "Comjustinspicer.Web\comjustinspicer.csproj", "{E7A2F866-1610-7CA4-F103-742A4FCD13AE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8E5B59E0-4F2B-4127-8C9E-CBD282D4C56D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comjustinspicer.Tests", "Comjustinspicer.Tests\Comjustinspicer.Tests.csproj", "{1EA85F29-71FC-452A-A39B-3C19BEAFEBAA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,11 +18,18 @@ Global
 		{E7A2F866-1610-7CA4-F103-742A4FCD13AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E7A2F866-1610-7CA4-F103-742A4FCD13AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E7A2F866-1610-7CA4-F103-742A4FCD13AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EA85F29-71FC-452A-A39B-3C19BEAFEBAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EA85F29-71FC-452A-A39B-3C19BEAFEBAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EA85F29-71FC-452A-A39B-3C19BEAFEBAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EA85F29-71FC-452A-A39B-3C19BEAFEBAA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {272A0A75-73D0-4602-8EA8-BDEF11AC32EF}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1EA85F29-71FC-452A-A39B-3C19BEAFEBAA} = {8E5B59E0-4F2B-4127-8C9E-CBD282D4C56D}
 	EndGlobalSection
 EndGlobal

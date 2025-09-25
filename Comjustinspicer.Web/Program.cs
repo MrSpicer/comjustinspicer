@@ -39,6 +39,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDbContext<BlogContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsHistoryTable("__EFMigrationsHistory_Blog")));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+// Register blog post service
+builder.Services.AddScoped<comjustinspicer.Data.Models.Blog.IPostService, comjustinspicer.Data.Models.Blog.PostService>();
     
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>()
