@@ -10,13 +10,13 @@ public class BlogContext : DbContext
 	{
 	}
 
-	public DbSet<Post> Posts { get; set; } = null!;
+	public DbSet<PostDTO> Posts { get; set; } = null!;
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		base.OnModelCreating(modelBuilder);
 
-		modelBuilder.Entity<Post>(entity =>
+		modelBuilder.Entity<PostDTO>(entity =>
 		{
 			entity.HasKey(e => e.Id);
 			entity.Property(e => e.Title)

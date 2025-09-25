@@ -1,19 +1,45 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using comjustinspicer.Data;
+using Serilog;
+using Serilog.Events;
+using System.Text.RegularExpressions;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Serilog early so startup logs are captured
+var cfgConn = builder.Configuration.GetConnectionString("DefaultConnection") ?? "DataSource=app.db";
+// extract file path from DataSource=...;Cache=... style connection string if possible
+string ExtractSqliteFile(string conn)
+{
+    var m = Regex.Match(conn, "DataSource=(?<file>[^;]+)", RegexOptions.IgnoreCase);
+    return m.Success ? m.Groups["file"].Value : conn;
+}
+
+var sqliteFile = ExtractSqliteFile(cfgConn);
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+    .MinimumLevel.Information()
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    // Fallback to a rolling file sink. If you need DB storage, see the EF-background-writer
+    // approach (or use a compatible Serilog sink for your DB provider).
+    .WriteTo.File("Logs/log-.txt", rollingInterval: Serilog.RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseSqlite(connectionString));
+        options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_Application")));
+
 // Register BlogContext using same connection (separate DB file supported via configuration if desired)
 builder.Services.AddDbContext<BlogContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsHistoryTable("__EFMigrationsHistory_Blog")));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
+    
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultUI();

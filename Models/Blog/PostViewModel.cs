@@ -6,5 +6,5 @@ public sealed class PostViewModel
 {
 	public string Title { get; init; }
 
-	public PostViewModel(Post post) => Title = post.Title;
+	public PostViewModel(PostDTO post) => Title = post.Title;
 }

@@ -7,7 +7,7 @@ using comjustinspicer.Data;
 
 #nullable disable
 
-namespace comjustinspicer.Migrations
+namespace comjustinspicer.Migrations.Blog
 {
     [DbContext(typeof(BlogContext))]
     partial class BlogContextModelSnapshot : ModelSnapshot
@@ -17,13 +17,26 @@ namespace comjustinspicer.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
 
-            modelBuilder.Entity("comjustinspicer.Data.Models.Blog.Post", b =>
+            modelBuilder.Entity("comjustinspicer.Data.Models.Blog.PostDTO", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("AuthorName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ModificationDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("PublicationDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
