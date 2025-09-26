@@ -7,90 +7,107 @@ using System.Text.RegularExpressions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure Serilog early so startup logs are captured
-var cfgConn = builder.Configuration.GetConnectionString("DefaultConnection") ?? "DataSource=app.db";
-// extract file path from DataSource=...;Cache=... style connection string if possible
-string ExtractSqliteFile(string conn)
-{
-    var m = Regex.Match(conn, "DataSource=(?<file>[^;]+)", RegexOptions.IgnoreCase);
-    return m.Success ? m.Groups["file"].Value : conn;
-}
-
-var sqliteFile = ExtractSqliteFile(cfgConn);
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-    .MinimumLevel.Information()
-    .Enrich.FromLogContext()
-    .WriteTo.Console()
-    // Fallback to a rolling file sink. If you need DB storage, see the EF-background-writer
-    // approach (or use a compatible Serilog sink for your DB provider).
-    .WriteTo.File("Logs/log-.txt", rollingInterval: Serilog.RollingInterval.Day)
-    .CreateLogger();
-
+// Initialize logging early so startup messages are captured
+ConfigureSerilog(builder.Configuration);
 builder.Host.UseSerilog();
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_Application")));
-
-// Register BlogContext using same connection (separate DB file supported via configuration if desired)
-builder.Services.AddDbContext<BlogContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsHistoryTable("__EFMigrationsHistory_Blog")));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-// Register blog post service
-builder.Services.AddScoped<comjustinspicer.Data.Models.Blog.IPostService, comjustinspicer.Data.Models.Blog.PostService>();
-    
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultUI();
-
-// Development email sender - logs confirmation emails to Serilog and a local file.
-builder.Services.AddSingleton<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, comjustinspicer.Services.DevEmailSender>();
-//
+// Register framework services
+ConfigureServices(builder.Services, builder.Configuration);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+// Configure HTTP pipeline
+ConfigureMiddleware(app);
+
+// Ensure DB schemas are created/applied at startup (optional - can be removed for manual migration workflows)
+ApplyPendingMigrations(app);
+
+app.Run();
+
+// --- Local helper implementations ---
+
+static void ConfigureSerilog(ConfigurationManager configuration)
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    var conn = configuration.GetConnectionString("DefaultConnection") ?? "DataSource=app.db";
+
+    static string ExtractSqliteFile(string conn)
+    {
+        var m = Regex.Match(conn, "DataSource=(?<file>[^;]+)", RegexOptions.IgnoreCase);
+        return m.Success ? m.Groups["file"].Value : conn;
+    }
+
+    var sqliteFile = ExtractSqliteFile(conn);
+
+    Log.Logger = new LoggerConfiguration()
+        .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+        .MinimumLevel.Information()
+        .Enrich.FromLogContext()
+        .WriteTo.Console()
+        // Keep a rolling file sink for local troubleshooting
+        .WriteTo.File("Logs/log-.txt", rollingInterval: Serilog.RollingInterval.Day)
+        .CreateLogger();
 }
 
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-// Enable authentication middleware so Identity can sign users in/out.
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapRazorPages();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-
-// Apply any pending EF Core migrations so the database schemas are up-to-date.
-// This will ensure both the Identity/ApplicationDbContext schema and the BlogContext schema
-// are created when the app starts (useful for simple deployments/dev). If you prefer to run
-// migrations manually, remove or comment out this block.
-using (var scope = app.Services.CreateScope())
+static void ConfigureServices(IServiceCollection services, ConfigurationManager configuration)
 {
+    services.AddControllersWithViews();
+
+    var connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+    // Main application DB (Identity + app data)
+    services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_Application")));
+
+    // Blog DB/context can share the same connection or be configured separately in appsettings
+    services.AddDbContext<BlogContext>(options =>
+        options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_Blog")));
+
+    services.AddDatabaseDeveloperPageExceptionFilter();
+
+    // Register application services
+    services.AddScoped<comjustinspicer.Data.Models.Blog.IPostService, comjustinspicer.Data.Models.Blog.PostService>();
+
+    services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddDefaultUI();
+
+    // Development email sender - logs confirmation emails to Serilog and a local file
+    services.AddSingleton<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, comjustinspicer.Services.DevEmailSender>();
+}
+
+static void ConfigureMiddleware(WebApplication app)
+{
+    if (!app.Environment.IsDevelopment())
+    {
+        app.UseExceptionHandler("/Home/Error");
+        app.UseHsts();
+    }
+
+    app.UseHttpsRedirection();
+    app.UseStaticFiles();
+
+    app.UseRouting();
+
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    app.MapRazorPages();
+
+    app.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+}
+
+static void ApplyPendingMigrations(WebApplication app)
+{
+    using var scope = app.Services.CreateScope();
     var services = scope.ServiceProvider;
     try
     {
         var appDb = services.GetRequiredService<ApplicationDbContext>();
-        // Apply Identity / application schema migrations
         appDb.Database.Migrate();
 
         var blogContext = services.GetRequiredService<BlogContext>();
-        // Apply migrations for the blog schema
         blogContext.Database.Migrate();
     }
     catch (Exception ex)
@@ -100,5 +117,3 @@ using (var scope = app.Services.CreateScope())
         throw;
     }
 }
-
-app.Run();
