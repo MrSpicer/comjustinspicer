@@ -8,10 +8,10 @@ using comjustinspicer.Data;
 
 #nullable disable
 
-namespace comjustinspicer.Migrations.Blog
+namespace Comjustinspicer.Web.Migrations.Blog
 {
     [DbContext(typeof(BlogContext))]
-    [Migration("20250925061556_InitialBlog")]
+    [Migration("20250926041026_InitialBlog")]
     partial class InitialBlog
     {
         /// <inheritdoc />
@@ -27,6 +27,10 @@ namespace comjustinspicer.Migrations.Blog
                         .HasColumnType("TEXT");
 
                     b.Property<string>("AuthorName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Body")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

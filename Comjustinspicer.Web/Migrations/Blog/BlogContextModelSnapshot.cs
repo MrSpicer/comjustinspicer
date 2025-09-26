@@ -7,7 +7,7 @@ using comjustinspicer.Data;
 
 #nullable disable
 
-namespace comjustinspicer.Migrations.Blog
+namespace Comjustinspicer.Web.Migrations.Blog
 {
     [DbContext(typeof(BlogContext))]
     partial class BlogContextModelSnapshot : ModelSnapshot
@@ -24,6 +24,10 @@ namespace comjustinspicer.Migrations.Blog
                         .HasColumnType("TEXT");
 
                     b.Property<string>("AuthorName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Body")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

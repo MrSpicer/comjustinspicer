@@ -1,12 +1,12 @@
-#!/bin/bash
-# Don't fail if app.db doesn't exist
+#!/usr/bin/env bash
+
 echo "Removing existing database and migrations..." &&
 rm -f app.db &&
 rm -rf Migrations/* &&
 echo "Creating new migrations.." &&
-dotnet ef migrations add InitialIdentity -s comjustinspicer.csproj -p comjustinspicer.csproj -c ApplicationDbContext -o Migrations/Identity &&
-dotnet ef migrations add InitialBlog -c BlogContext -o Migrations/Blog &&
-echo "Updating database..." &&
-dotnet ef database update -c ApplicationDbContext &&
-dotnet ef database update -c BlogContext &&
+echo "ApplicationDbContext" &&
+dotnet ef migrations add InitialIdentity -s Comjustinspicer.Web.csproj -p Comjustinspicer.Web.csproj -c ApplicationDbContext -o Migrations/Identity &&
+echo "BlogContext" &&
+dotnet ef migrations add InitialBlog -s Comjustinspicer.Web.csproj -p Comjustinspicer.Web.csproj -c BlogContext -o Migrations/Blog &&
+./RunMigrations.sh &&
 echo "Database rebuilt successfully."

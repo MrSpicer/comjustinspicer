@@ -7,7 +7,7 @@ using comjustinspicer.Data;
 
 #nullable disable
 
-namespace comjustinspicer.Migrations.Identity
+namespace Comjustinspicer.Web.Migrations.Identity
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot

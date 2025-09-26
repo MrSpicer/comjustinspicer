@@ -8,10 +8,10 @@ using comjustinspicer.Data;
 
 #nullable disable
 
-namespace comjustinspicer.Migrations.Identity
+namespace Comjustinspicer.Web.Migrations.Identity
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250925191711_InitialIdentity")]
+    [Migration("20250926041018_InitialIdentity")]
     partial class InitialIdentity
     {
         /// <inheritdoc />

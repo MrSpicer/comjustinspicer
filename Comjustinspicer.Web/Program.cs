@@ -4,6 +4,7 @@ using comjustinspicer.Data;
 using Serilog;
 using Serilog.Events;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +13,7 @@ ConfigureSerilog(builder.Configuration);
 builder.Host.UseSerilog();
 
 // Register framework services
-ConfigureServices(builder.Services, builder.Configuration);
+ConfigureServices(builder.Services, builder.Configuration, builder.Environment);
 
 var app = builder.Build();
 
@@ -48,9 +49,14 @@ static void ConfigureSerilog(ConfigurationManager configuration)
         .CreateLogger();
 }
 
-static void ConfigureServices(IServiceCollection services, ConfigurationManager configuration)
+static void ConfigureServices(IServiceCollection services, ConfigurationManager configuration, IWebHostEnvironment environment)
 {
-    services.AddControllersWithViews();
+    // Add MVC and enable runtime compilation for Razor views in Development so changes to .cshtml are picked up
+    var mvc = services.AddControllersWithViews();
+    if (environment.IsDevelopment())
+    {
+        mvc.AddRazorRuntimeCompilation();
+    }
 
     var connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
@@ -67,12 +73,15 @@ static void ConfigureServices(IServiceCollection services, ConfigurationManager 
     // Register application services
     services.AddScoped<comjustinspicer.Data.Models.Blog.IPostService, comjustinspicer.Data.Models.Blog.PostService>();
 
-    services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultUI();
 
     // Development email sender - logs confirmation emails to Serilog and a local file
+#if DEBUG
     services.AddSingleton<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, comjustinspicer.Services.DevEmailSender>();
+#endif
+
 }
 
 static void ConfigureMiddleware(WebApplication app)

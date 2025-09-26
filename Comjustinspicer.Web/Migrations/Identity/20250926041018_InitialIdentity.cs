@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace comjustinspicer.Migrations.Identity
+namespace Comjustinspicer.Web.Migrations.Identity
 {
     /// <inheritdoc />
     public partial class InitialIdentity : Migration

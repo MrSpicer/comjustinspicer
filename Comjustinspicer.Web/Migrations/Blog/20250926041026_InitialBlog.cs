@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace comjustinspicer.Migrations.Blog
+namespace Comjustinspicer.Web.Migrations.Blog
 {
     /// <inheritdoc />
     public partial class InitialBlog : Migration
@@ -17,6 +17,7 @@ namespace comjustinspicer.Migrations.Blog
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Title = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
+                    Body = table.Column<string>(type: "TEXT", nullable: false),
                     PublicationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     AuthorName = table.Column<string>(type: "TEXT", nullable: false),
                     ModificationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
