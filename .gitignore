@@ -7,3 +7,5 @@
 **/*.db-shm
 **/*.db-wal
 **/Logs/
+**/*.db
+Comjustinspicer.Web/app.db

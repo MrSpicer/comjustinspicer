@@ -1,0 +1,18 @@
+@{
+    ViewData["Title"] = "Resend Confirmation";
+}
+
+<h2>Resend Confirmation</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" id="email" name="email" />
+    </div>
+    <button type="submit" class="btn btn-primary">Send</button>
+</form>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-info">@ViewBag.Message</div>
+}

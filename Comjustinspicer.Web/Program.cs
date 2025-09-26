@@ -46,6 +46,9 @@ builder.Services.AddScoped<comjustinspicer.Data.Models.Blog.IPostService, comjus
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultUI();
+
+// Development email sender - logs confirmation emails to Serilog and a local file.
+builder.Services.AddSingleton<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, comjustinspicer.Services.DevEmailSender>();
 //
 
 var app = builder.Build();
@@ -63,6 +66,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// Enable authentication middleware so Identity can sign users in/out.
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
@@ -71,20 +76,27 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Apply any pending EF Core migrations for BlogContext so the database schema is up-to-date.
+// Apply any pending EF Core migrations so the database schemas are up-to-date.
+// This will ensure both the Identity/ApplicationDbContext schema and the BlogContext schema
+// are created when the app starts (useful for simple deployments/dev). If you prefer to run
+// migrations manually, remove or comment out this block.
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
+        var appDb = services.GetRequiredService<ApplicationDbContext>();
+        // Apply Identity / application schema migrations
+        appDb.Database.Migrate();
+
         var blogContext = services.GetRequiredService<BlogContext>();
-        // Use Migrate to apply migrations. This requires migrations to exist.
+        // Apply migrations for the blog schema
         blogContext.Database.Migrate();
     }
     catch (Exception ex)
     {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred migrating the Blog database.");
+        var logger = Serilog.Log.ForContext<Program>();
+        logger.Error(ex, "An error occurred migrating the databases.");
         throw;
     }
 }

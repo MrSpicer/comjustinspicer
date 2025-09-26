@@ -12,12 +12,11 @@ namespace comjustinspicer.Controllers;
 
 public class BlogController : Controller
 {
-    private readonly ILogger<BlogController> _logger;
+    private readonly Serilog.ILogger _logger = Serilog.Log.ForContext<BlogController>();
     private readonly IPostService _postService;
 
-    public BlogController(ILogger<BlogController> logger, IPostService postService)
+    public BlogController(IPostService postService)
     {
-        _logger = logger;
         _postService = postService;
     }
 

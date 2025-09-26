@@ -6,11 +6,10 @@ namespace comjustinspicer.Controllers;
 
 public class AboutController : Controller
 {
-    private readonly ILogger<AboutController> _logger;
+    private readonly Serilog.ILogger _logger = Serilog.Log.ForContext<AboutController>();
 
-    public AboutController(ILogger<AboutController> logger)
+    public AboutController()
     {
-        _logger = logger;
     }
 
     public IActionResult Index()
