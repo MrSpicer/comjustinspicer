@@ -39,7 +39,7 @@
             <div class="field">
                 <label class="label" asp-for="AuthorName"></label>
                 <div class="control">
-                    <input class="input" asp-for="AuthorName" />
+                    <input class="input" asp-for="AuthorName" value="@User?.Identity?.Name" />
                 </div>
                 <p class="help is-danger">@Html.ValidationMessageFor(m => m.AuthorName)</p>
             </div>

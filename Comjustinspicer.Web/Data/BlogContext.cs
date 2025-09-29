@@ -21,7 +21,7 @@ public class BlogContext : DbContext
 			entity.HasKey(e => e.Id);
 			entity.Property(e => e.Title)
 				.IsRequired()
-				.HasMaxLength(500);
+				.HasMaxLength(20000);
 			entity.ToTable("Posts");
 		});
 	}

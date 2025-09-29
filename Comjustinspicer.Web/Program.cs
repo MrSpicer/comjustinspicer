@@ -70,11 +70,16 @@ static void ConfigureServices(IServiceCollection services, ConfigurationManager 
     // Blog DB/context can share the same connection or be configured separately in appsettings
     services.AddDbContext<BlogContext>(options =>
         options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_Blog")));
+    
+    // ContentBlock DB/context
+    services.AddDbContext<ContentBlockContext>(options =>
+        options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_ContentBlock")));
 
     services.AddDatabaseDeveloperPageExceptionFilter();
 
     // Register application services
     services.AddScoped<comjustinspicer.Data.Models.Blog.IPostService, comjustinspicer.Data.Models.Blog.PostService>();
+    services.AddScoped<comjustinspicer.Data.Models.ContentBlock.IContentBlockService, comjustinspicer.Data.Models.ContentBlock.ContentBlockService>();
     // Register blog model which encapsulates business logic for the BlogController
     services.AddScoped<comjustinspicer.Models.Blog.IBlogModel, comjustinspicer.Models.Blog.BlogModel>();
     services.AddScoped<comjustinspicer.Models.Blog.IBlogPostModel, comjustinspicer.Models.Blog.BlogPostModel>();

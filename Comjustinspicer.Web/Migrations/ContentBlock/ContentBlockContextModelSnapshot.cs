@@ -7,28 +7,25 @@ using comjustinspicer.Data;
 
 #nullable disable
 
-namespace Comjustinspicer.Web.Migrations.Blog
+namespace Comjustinspicer.Web.Migrations.ContentBlock
 {
-    [DbContext(typeof(BlogContext))]
-    partial class BlogContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(ContentBlockContext))]
+    partial class ContentBlockContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
 
-            modelBuilder.Entity("comjustinspicer.Data.Models.Blog.PostDTO", b =>
+            modelBuilder.Entity("comjustinspicer.Data.Models.ContentBlock.ContentBlockDTO", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("AuthorName")
+                    b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Body")
-                        .IsRequired()
+                        .HasMaxLength(10000)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreationDate")
@@ -37,17 +34,13 @@ namespace Comjustinspicer.Web.Migrations.Blog
                     b.Property<DateTime>("ModificationDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("PublicationDate")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(20000)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("ContentBlocks", (string)null);
                 });
 #pragma warning restore 612, 618
         }

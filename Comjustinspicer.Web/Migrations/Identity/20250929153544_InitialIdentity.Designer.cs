@@ -11,7 +11,7 @@ using comjustinspicer.Data;
 namespace Comjustinspicer.Web.Migrations.Identity
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250926041018_InitialIdentity")]
+    [Migration("20250929153544_InitialIdentity")]
     partial class InitialIdentity
     {
         /// <inheritdoc />
