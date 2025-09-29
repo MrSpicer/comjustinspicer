@@ -23,8 +23,8 @@ public class BlogPostController : Controller
     }
 
     [HttpGet("blog/post/edit/{id?}")]
-    [Authorize]
-    public async Task<IActionResult> Edit(Guid? id)
+	[Authorize(Roles = "Admin,Editor")]
+	public async Task<IActionResult> Edit(Guid? id)
     {
         var vm = await _model.GetUpsertViewModelAsync(id);
         if (vm == null && id != null) return NotFound();
@@ -33,8 +33,8 @@ public class BlogPostController : Controller
 
     [HttpPost("blog/post/edit/{id?}")]
     [ValidateAntiForgeryToken]
-    [Authorize]
-    public async Task<IActionResult> Edit(PostUpsertViewModel model)
+	[Authorize(Roles = "Admin,Editor")]
+	public async Task<IActionResult> Edit(PostUpsertViewModel model)
     {
         if (!ModelState.IsValid)
         {

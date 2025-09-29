@@ -2,17 +2,27 @@
     ViewData["Title"] = "Resend Confirmation";
 }
 
-<h2>Resend Confirmation</h2>
+<section class="section">
+    <div class="container">
+        <h2 class="title">Resend Confirmation</h2>
 
-<form method="post">
-    <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" class="form-control" id="email" name="email" />
+        <form method="post">
+            <div class="field">
+                <label class="label" for="email">Email</label>
+                <div class="control">
+                    <input type="email" class="input" id="email" name="email" />
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <button type="submit" class="button is-primary">Send</button>
+                </div>
+            </div>
+        </form>
+
+        @if (ViewBag.Message != null)
+        {
+            <div class="notification is-info">@ViewBag.Message</div>
+        }
     </div>
-    <button type="submit" class="btn btn-primary">Send</button>
-</form>
-
-@if (ViewBag.Message != null)
-{
-    <div class="alert alert-info">@ViewBag.Message</div>
-}
+</section>

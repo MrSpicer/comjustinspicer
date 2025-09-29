@@ -11,6 +11,8 @@
         return;
     }
 
+    var isAuthor = User?.Identity?.IsAuthenticated == true && (User.IsInRole("Admin") || User.IsInRole("Editor"));
+
     ViewData["Title"] = Model.Title;
 }
 
@@ -27,7 +29,7 @@
 
             <div class="mt-4">
                 <a asp-action="Index" asp-controller="Blog" class="button is-light">Back to blog</a>
-                @if (User?.Identity?.IsAuthenticated == true)
+                @if (isAuthor)
                 {
                     <a asp-action="Edit" asp-controller="BlogPost" asp-route-id="@Model.Id"
                         class="button is-primary">Edit</a>

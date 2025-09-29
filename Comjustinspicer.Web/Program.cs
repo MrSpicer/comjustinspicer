@@ -23,6 +23,9 @@ ConfigureMiddleware(app);
 // Ensure DB schemas are created/applied at startup (optional - can be removed for manual migration workflows)
 ApplyPendingMigrations(app);
 
+// Ensure roles and an initial admin user exist
+SeedRolesAndAdmin(app);
+
 app.Run();
 
 // --- Local helper implementations ---
@@ -77,6 +80,7 @@ static void ConfigureServices(IServiceCollection services, ConfigurationManager 
     services.AddScoped<comjustinspicer.Models.Blog.IBlogPostModel, comjustinspicer.Models.Blog.BlogPostModel>();
 
     services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+        .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultUI();
 
@@ -127,5 +131,63 @@ static void ApplyPendingMigrations(WebApplication app)
         var logger = Serilog.Log.ForContext<Program>();
         logger.Error(ex, "An error occurred migrating the databases.");
         throw;
+    }
+}
+
+static void SeedRolesAndAdmin(WebApplication app)
+{
+    using var scope = app.Services.CreateScope();
+    var services = scope.ServiceProvider;
+    var logger = Serilog.Log.ForContext<Program>();
+
+    try
+    {
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+        var config = services.GetRequiredService<IConfiguration>();
+
+        var roles = new[] { "Admin", "Editor", "User" };
+        foreach (var role in roles)
+        {
+            var exists = roleManager.RoleExistsAsync(role).GetAwaiter().GetResult();
+            if (!exists)
+            {
+                var r = roleManager.CreateAsync(new IdentityRole(role)).GetAwaiter().GetResult();
+                if (!r.Succeeded)
+                {
+                    logger.Warning("Failed to create role {Role}: {Errors}", role, string.Join(", ", r.Errors.Select(e => e.Description)));
+                }
+            }
+        }
+
+        // Admin credentials can be configured in appsettings (AdminUser:Email, AdminUser:Password)
+        var adminEmail = config["AdminUser:Email"] ?? "justin@justinspicer.com";
+        var adminPassword = config["AdminUser:Password"] ?? "Admin123!";
+
+        var admin = userManager.FindByEmailAsync(adminEmail).GetAwaiter().GetResult();
+        if (admin == null)
+        {
+            admin = new IdentityUser { UserName = adminEmail, Email = adminEmail, EmailConfirmed = true };
+            var cr = userManager.CreateAsync(admin, adminPassword).GetAwaiter().GetResult();
+            if (!cr.Succeeded)
+            {
+                logger.Warning("Failed to create admin user {Email}: {Errors}", adminEmail, string.Join(", ", cr.Errors.Select(e => e.Description)));
+            }
+        }
+
+        var inRole = userManager.IsInRoleAsync(admin, "Admin").GetAwaiter().GetResult();
+        if (!inRole)
+        {
+            var ar = userManager.AddToRoleAsync(admin, "Admin").GetAwaiter().GetResult();
+            if (!ar.Succeeded)
+            {
+                logger.Warning("Failed to add admin user {Email} to Admin role: {Errors}", adminEmail, string.Join(", ", ar.Errors.Select(e => e.Description)));
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        Serilog.Log.ForContext<Program>().Error(ex, "An error occurred seeding roles/admin user.");
+        // do not rethrow startup seeding errors to avoid masking migration exceptions
     }
 }

@@ -1,5 +1,7 @@
 @{
 	ViewData["Title"] = "Blog";
+
+	var isAuthor = User?.Identity?.IsAuthenticated == true && (User.IsInRole("Admin") || User.IsInRole("Editor"));
 }
 @using comjustinspicer.Models.Blog
 @model comjustinspicer.Models.Blog.BlogViewModel
@@ -7,7 +9,7 @@
 <section class="section">
 	<div class="container">
 		<div class="columns is-multiline">
-			@if (User?.Identity?.IsAuthenticated == true)
+			@if (isAuthor)
 			{
 				<div class="mb-4">
 					<a asp-action="Edit" asp-controller="BlogPost" class="button is-primary">New +</a>
