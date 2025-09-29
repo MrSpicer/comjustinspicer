@@ -7,6 +7,12 @@
 <section class="section">
 	<div class="container">
 		<div class="columns is-multiline">
+			@if (User?.Identity?.IsAuthenticated == true)
+			{
+				<div class="mb-4">
+					<a asp-action="Edit" asp-controller="BlogPost" class="button is-primary">New +</a>
+				</div>
+			}
 			@foreach (var post in Model.Posts)
 			{
 				<div class="column is-full">
