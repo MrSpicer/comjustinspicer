@@ -20,12 +20,19 @@
 				<div class="column is-full">
 					<div class="card">
 						<div class="card-content">
-							<p class="title is-4">
+							<p class="title">
 								<a href="@Url.Action("Index", "BlogPost", new { id = post.Id })">@post.Title</a>
 							</p>
-							<p class="subtitle is-6">@post.PublicationDate.ToString("MMMM dd, yyyy")</p>
-							<div class="content">
-								@Html.Raw(post.Body)
+							<p class="subtitle">@post.PublicationDate.ToString("MMMM dd, yyyy")</p>
+							<hr />
+							@Html.Raw(post.Body)
+
+							<div class="mt-4">
+								@if (isAuthor)
+								{
+									<a asp-action="Edit" asp-controller="BlogPost" asp-route-id="@post.Id"
+										class="button is-primary">Edit</a>
+								}
 							</div>
 						</div>
 					</div>

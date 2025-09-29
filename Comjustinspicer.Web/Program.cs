@@ -161,8 +161,14 @@ static void SeedRolesAndAdmin(WebApplication app)
         }
 
         // Admin credentials can be configured in appsettings (AdminUser:Email, AdminUser:Password)
-        var adminEmail = config["AdminUser:Email"] ?? "justin@justinspicer.com";
-        var adminPassword = config["AdminUser:Password"] ?? "Admin123!";
+        var adminEmail = config["AdminUser:Email"];
+        var adminPassword = config["AdminUser:Password"];
+
+        if (string.IsNullOrWhiteSpace(adminEmail) || string.IsNullOrWhiteSpace(adminPassword))
+        {
+            logger.Warning("Admin user not created - missing AdminUser:Email or AdminUser:Password configuration.");
+            return;
+        }
 
         var admin = userManager.FindByEmailAsync(adminEmail).GetAwaiter().GetResult();
         if (admin == null)

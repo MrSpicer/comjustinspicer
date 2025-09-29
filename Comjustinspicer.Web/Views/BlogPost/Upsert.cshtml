@@ -21,7 +21,7 @@
     <div class="field">
         <label class="label" asp-for="Body"></label>
         <div class="control">
-            <textarea class="textarea" asp-for="Body" rows="10"></textarea>
+            <textarea id="editor" class="textarea" asp-for="Body" rows="10"></textarea>
         </div>
         <p class="help is-danger">@Html.ValidationMessageFor(m => m.Body)</p>
     </div>

@@ -26,3 +26,66 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 //end bulma
+
+//CKEditor
+const {
+	ClassicEditor,
+	Essentials,
+	Bold,
+	Italic,
+	Underline,
+	Strikethrough,
+	Code,
+	BlockQuote,
+	Heading,
+	Link,
+	List,
+	Indent,
+	IndentBlock,
+	Paragraph,
+	Font,
+	FontSize,
+	FontFamily,
+	FontColor,
+	FontBackgroundColor,
+	Alignment,
+	Table,
+	TableToolbar,
+	CodeBlock,
+	HorizontalLine,
+	SpecialCharacters,
+	RemoveFormat,
+	Highlight
+} = CKEDITOR;
+
+ClassicEditor
+	.create(document.querySelector('#editor'), {
+		licenseKey: 'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3NjAzOTk5OTksImp0aSI6IjI4MDYxN2JjLTYzZTYtNDJmOS04NzMzLWU5NDJlZGE3OTA0YSIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiLCJzaCJdLCJ3aGl0ZUxhYmVsIjp0cnVlLCJsaWNlbnNlVHlwZSI6InRyaWFsIiwiZmVhdHVyZXMiOlsiKiJdLCJ2YyI6IjY1Y2YzNjZkIn0.2vMMmO9Luc_YFq6pmwB7Fv8FMhY170J2eIdfSXHFlwPj0B7idS1mV8SbWDSaSzdsEJTIj2TnrttioWEeliVVtg',
+		plugins: [
+			Essentials, Bold, Italic, Underline, Strikethrough, Code, BlockQuote,
+			Heading, Link, List, Indent, IndentBlock, Paragraph,
+			Font, FontSize, FontFamily, FontColor, FontBackgroundColor, Alignment,
+			Table, TableToolbar, CodeBlock, HorizontalLine, SpecialCharacters,
+			RemoveFormat, Highlight
+		],
+		toolbar: [
+			'undo', 'redo', '|',
+			'heading', '|',
+			'bold', 'italic', 'underline', 'strikethrough', 'removeFormat', '|',
+			'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'highlight', '|',
+			'link', 'bulletedList', 'numberedList', 'indent', '|',
+			'blockQuote', 'code', 'codeBlock', '|',
+			'insertTable', 'horizontalLine', '|',
+			'specialCharacters', '|',
+			'alignment', '|',
+			'undo', 'redo'
+		],
+		table: {
+			contentToolbar: [ 'tableColumn', 'tableRow', 'mergeTableCells' ]
+		}
+	})
+	.catch( 
+		error => console.log(error)
+	);
+
+//end CKEditor

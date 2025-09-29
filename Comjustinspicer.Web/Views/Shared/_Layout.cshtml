@@ -1,6 +1,10 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 
+@{
+	var isAuthor = User?.Identity?.IsAuthenticated == true && (User.IsInRole("Admin") || User.IsInRole("Editor"));
+}
+
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,6 +15,11 @@
 
 
 	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+	@if (isAuthor)
+	{
+		<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/46.1.1/ckeditor5.css" />
+	}
 </head>
 
 <body>
@@ -93,7 +102,13 @@
 		</footer>
 	</div>
 
+	@if (isAuthor)
+	{
+		<script src="https://cdn.ckeditor.com/ckeditor5/46.1.1/ckeditor5.umd.js"></script>
+	}
+
 	<script src="~/js/site.js" asp-append-version="true"></script>
+
 
 	@await RenderSectionAsync("Scripts", required: false)
 </body>
