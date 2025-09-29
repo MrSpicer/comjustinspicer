@@ -1,0 +1,23 @@
+
+@model comjustinspicer.Models.Blog.PostViewModel?
+
+@{
+    if (Model == null)
+    {
+        <text>Post not found.</text>
+        return;
+    }
+
+    ViewData["Title"] = Model.Title;
+}
+
+<article>
+    <h1>@Model.Title</h1>
+    <p class="text-muted">By @Model.AuthorName on @Model.PublicationDate.ToString("yyyy-MM-dd HH:mm")</p>
+    <div>
+        @Html.Raw(Model.Body)
+    </div>
+    <p class="text-muted small">Created: @Model.CreationDate.ToString("yyyy-MM-dd HH:mm") - Modified: @Model.ModificationDate.ToString("yyyy-MM-dd HH:mm")</p>
+</article>
+
+<a asp-action="Index" asp-controller="Blog" class="btn btn-link">Back to blog</a>

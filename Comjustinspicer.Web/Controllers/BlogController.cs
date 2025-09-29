@@ -5,6 +5,8 @@ using comjustinspicer.Models;
 using comjustinspicer.Models.Blog;
 using comjustinspicer.Data;
 using comjustinspicer.Data.Models.Blog;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Authorization;
 
 namespace comjustinspicer.Controllers;
 
@@ -13,20 +15,16 @@ namespace comjustinspicer.Controllers;
 public class BlogController : Controller
 {
     private readonly Serilog.ILogger _logger = Serilog.Log.ForContext<BlogController>();
-    private readonly IPostService _postService;
+    private readonly IBlogModel _blogModel;
 
-    public BlogController(IPostService postService)
+    public BlogController(IBlogModel blogModel)
     {
-        _postService = postService;
+        _blogModel = blogModel ?? throw new ArgumentNullException(nameof(blogModel));
     }
 
     public async Task<IActionResult> Index()
     {
-        var vm = new BlogViewModel();
-
-        var posts = await _postService.GetAllAsync();
-        vm.Posts = posts.Select(p => new PostViewModel(p)).ToList();
-
+        var vm = await _blogModel.GetIndexViewModelAsync();
         return View(vm);
     }
 

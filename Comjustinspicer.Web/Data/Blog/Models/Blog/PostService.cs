@@ -41,6 +41,7 @@ public sealed class PostService : IPostService
 
         post.CreationDate = DateTime.UtcNow;
         post.ModificationDate = DateTime.UtcNow;
+        post.PublicationDate = post.PublicationDate == default ? DateTime.UtcNow : post.PublicationDate;
 
         _db.Posts.Add(post);
         await _db.SaveChangesAsync(ct);

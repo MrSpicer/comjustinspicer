@@ -8,7 +8,9 @@
 @foreach(var post in Model.Posts)
 {
 	<li>
-		<h1>@post.Title</h1>
+		<h1><a href="@Url.Action("Index", "BlogPost", new { id = post.Id })">@post.Title</a></h1>
+		<span>@post.PublicationDate.ToString("MMMM dd, yyyy")</span>
+		<div>@Html.Raw(post.Body)</div>
 	</li>
 }
 </ul>

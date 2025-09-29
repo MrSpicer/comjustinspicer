@@ -9,3 +9,4 @@
 **/Logs/
 **/*.db
 Comjustinspicer.Web/app.db
+Comjustinspicer.Tests/TestResults/
