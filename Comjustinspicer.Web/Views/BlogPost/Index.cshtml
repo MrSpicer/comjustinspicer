@@ -1,23 +1,37 @@
-
 @model comjustinspicer.Models.Blog.PostViewModel?
 
 @{
     if (Model == null)
     {
-        <text>Post not found.</text>
+        <div class="section">
+            <div class="container">
+                <div class="notification is-warning">Post not found.</div>
+            </div>
+        </div>
         return;
     }
 
     ViewData["Title"] = Model.Title;
 }
 
-<article>
-    <h1>@Model.Title</h1>
-    <p class="text-muted">By @Model.AuthorName on @Model.PublicationDate.ToString("yyyy-MM-dd HH:mm")</p>
-    <div>
-        @Html.Raw(Model.Body)
-    </div>
-    <p class="text-muted small">Created: @Model.CreationDate.ToString("yyyy-MM-dd HH:mm") - Modified: @Model.ModificationDate.ToString("yyyy-MM-dd HH:mm")</p>
-</article>
+<section class="section">
+    <div class="container content">
+        <div class="box">
+            <p class="title">@Model.Title</p>
+            <p class="subtitle">@Model.PublicationDate.ToString("MMMM dd, yyyy")</p>
+            <hr />
+            @Html.Raw(Model.Body)
+        </div>
 
-<a asp-action="Index" asp-controller="Blog" class="btn btn-link">Back to blog</a>
+            <p class="is-size-7 has-text-grey">Last Modified: @Model.ModificationDate.ToString("yyyy-MM-dd HH:mm")</p>
+
+            <div class="mt-4">
+                <a asp-action="Index" asp-controller="Blog" class="button is-light">Back to blog</a>
+                @if (User?.Identity?.IsAuthenticated == true)
+                {
+                    <a asp-action="Edit" asp-controller="BlogPost" asp-route-id="@Model.Id"
+                        class="button is-primary">Edit</a>
+                }
+            </div>
+        </div>
+</section>
