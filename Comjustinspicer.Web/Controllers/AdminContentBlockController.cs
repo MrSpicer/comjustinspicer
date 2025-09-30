@@ -24,11 +24,12 @@ public class AdminContentBlockController : Controller
     }
 
     [HttpGet("admin/contentblocks/edit/{id?}")]
-    public async Task<IActionResult> Edit(Guid? id)
+    public async Task<IActionResult> Edit(Guid? id, string? returnUrl)
     {
         if (id == null)
         {
             // new
+            if (!string.IsNullOrWhiteSpace(returnUrl)) ViewData["ReturnUrl"] = returnUrl;
             return View("ContentBlockUpsert", new Data.ContentBlock.Models.ContentBlockDTO());
         }
 
@@ -39,15 +40,18 @@ public class AdminContentBlockController : Controller
             existing = new Data.ContentBlock.Models.ContentBlockDTO();
         }
 
+        if (!string.IsNullOrWhiteSpace(returnUrl)) ViewData["ReturnUrl"] = returnUrl;
+
         return View("ContentBlockUpsert", existing);
     }
 
     [HttpPost("admin/contentblocks/edit/{id?}")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(Data.ContentBlock.Models.ContentBlockDTO model)
+    public async Task<IActionResult> Edit(Data.ContentBlock.Models.ContentBlockDTO model, string? returnUrl)
     {
         if (!ModelState.IsValid)
         {
+            if (!string.IsNullOrWhiteSpace(returnUrl)) ViewData["ReturnUrl"] = returnUrl;
             return View("ContentBlockUpsert", model);
         }
 
@@ -56,6 +60,12 @@ public class AdminContentBlockController : Controller
         {
             ModelState.AddModelError(string.Empty, "An error occurred while saving the content block.");
             return View("ContentBlockUpsert", model);
+        }
+
+        // If a returnUrl was supplied and it's a local url, redirect there instead of Index
+        if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+        {
+            return Redirect(returnUrl);
         }
 
         return RedirectToAction("Index");

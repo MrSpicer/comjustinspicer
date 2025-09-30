@@ -15,6 +15,13 @@
 		<h2 class="subtitle">@Model.Id</h2>
 		<form asp-action="Edit" method="post">
 			@Html.AntiForgeryToken()
+			@{
+				var returnUrl = ViewData["ReturnUrl"] as string ?? Context.Request.Query["returnUrl"].FirstOrDefault();
+			}
+			@if(!string.IsNullOrWhiteSpace(returnUrl))
+			{
+				<input type="hidden" name="returnUrl" value="@returnUrl" />
+			}
 			<input class="input" type="hidden" asp-for="Id" />
 			<div class="field">
 				<label class="label">Title</label>
@@ -35,7 +42,14 @@
 					<button class="button is-primary" type="submit">Save</button>
 				</div>
 				<div class="control">
-					<a asp-action="Index" class="button">Cancel</a>
+					@if(!string.IsNullOrWhiteSpace(returnUrl))
+					{
+						<a href="@returnUrl" class="button">Cancel</a>
+					}
+					else
+					{
+						<a asp-action="Index" class="button">Cancel</a>
+					}
 				</div>
 			</div>
 		</form>

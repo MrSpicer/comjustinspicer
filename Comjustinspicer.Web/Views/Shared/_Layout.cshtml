@@ -57,6 +57,24 @@
 							href="https://github.com/MrSpicer/Resume_public/blob/main/justin_resume.pdf">
 							Resume
 						</a>
+
+						@if (isAuthor)
+						{
+							<div class="navbar-item has-dropdown is-hoverable">
+								<a class="navbar-link">
+									Admin
+								</a>
+
+								<div class="navbar-dropdown">
+									<a class="navbar-item" href="/admin/ContentBlocks">
+										Content Blocks
+									</a>
+									<a class="navbar-item" href="/admin/ResendConfirmation">
+										Resend Confirmation Email
+									</a>
+								</div>
+							</div>
+						}
 					</div>
 
 					<div class="navbar-end">
