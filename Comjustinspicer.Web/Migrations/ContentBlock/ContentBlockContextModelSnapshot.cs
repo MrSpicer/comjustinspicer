@@ -17,7 +17,7 @@ namespace Comjustinspicer.Web.Migrations.ContentBlock
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
 
-            modelBuilder.Entity("comjustinspicer.Data.Models.ContentBlock.ContentBlockDTO", b =>
+            modelBuilder.Entity("comjustinspicer.Data.ContentBlock.Models.ContentBlockDTO", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -32,6 +32,9 @@ namespace Comjustinspicer.Web.Migrations.ContentBlock
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("ModificationDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("PublicationDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")

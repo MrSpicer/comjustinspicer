@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using comjustinspicer.Models;
 using comjustinspicer.Models.Blog;
-using comjustinspicer.Data;
-using comjustinspicer.Data.Models.Blog;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Authorization;
 

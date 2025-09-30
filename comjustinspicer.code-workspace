@@ -3,5 +3,17 @@
 		{
 			"path": "."
 		}
-	]
+	],
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+				"name": "Comjustinspicer.Web.csproj Debug",
+				"type": "dotnet",
+				"request": "launch",
+				"projectPath": "${workspaceFolder}/Comjustinspicer.Web/Comjustinspicer.Web.csproj"
+			}
+
+		]
+	}
 }

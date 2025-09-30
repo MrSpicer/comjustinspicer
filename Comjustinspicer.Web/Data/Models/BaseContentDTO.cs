@@ -1,10 +1,10 @@
-namespace comjustinspicer.Data.Models.ContentBlock;
+namespace comjustinspicer.Data.Models;
 
-public class ContentBlockDTO
+public abstract class BaseContentDTO
 {
 	public Guid Id { get; set; }
 	public string Title { get; set; } = string.Empty;
-	public string Content { get; set; } = string.Empty;
+	public DateTime PublicationDate { get; set; }
 	public DateTime ModificationDate { get; set; }
 	public DateTime CreationDate { get; set; }
 }

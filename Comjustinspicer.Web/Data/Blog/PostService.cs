@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using comjustinspicer.Data;
-using comjustinspicer.Data.Models.Blog;
+using comjustinspicer.Data.Blog.Models;
 
-namespace comjustinspicer.Data.Models.Blog;
+namespace comjustinspicer.Data.Blog;
 
 /// <summary>
 /// Thin service providing basic CRUD operations for blog posts.

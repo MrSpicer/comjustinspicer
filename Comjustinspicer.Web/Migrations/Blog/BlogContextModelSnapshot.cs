@@ -17,7 +17,7 @@ namespace Comjustinspicer.Web.Migrations.Blog
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
 
-            modelBuilder.Entity("comjustinspicer.Data.Models.Blog.PostDTO", b =>
+            modelBuilder.Entity("comjustinspicer.Data.Blog.Models.PostDTO", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

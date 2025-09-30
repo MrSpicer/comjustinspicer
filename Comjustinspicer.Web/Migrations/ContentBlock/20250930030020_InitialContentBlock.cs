@@ -16,8 +16,9 @@ namespace Comjustinspicer.Web.Migrations.ContentBlock
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Title = table.Column<string>(type: "TEXT", nullable: false),
                     Content = table.Column<string>(type: "TEXT", maxLength: 10000, nullable: false),
+                    Title = table.Column<string>(type: "TEXT", nullable: false),
+                    PublicationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ModificationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     CreationDate = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },

@@ -1,4 +1,5 @@
-using comjustinspicer.Data.Models.Blog;
+using comjustinspicer.Data.Blog;
+using comjustinspicer.Data.Blog.Models;
 
 namespace comjustinspicer.Models.Blog;
 

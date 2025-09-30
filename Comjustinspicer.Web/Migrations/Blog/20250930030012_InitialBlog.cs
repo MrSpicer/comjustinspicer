@@ -16,10 +16,10 @@ namespace Comjustinspicer.Web.Migrations.Blog
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Title = table.Column<string>(type: "TEXT", maxLength: 20000, nullable: false),
                     Body = table.Column<string>(type: "TEXT", nullable: false),
-                    PublicationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     AuthorName = table.Column<string>(type: "TEXT", nullable: false),
+                    Title = table.Column<string>(type: "TEXT", maxLength: 20000, nullable: false),
+                    PublicationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ModificationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     CreationDate = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },

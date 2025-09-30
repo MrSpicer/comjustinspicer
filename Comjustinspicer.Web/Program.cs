@@ -61,6 +61,8 @@ static void ConfigureServices(IServiceCollection services, ConfigurationManager 
         mvc.AddRazorRuntimeCompilation();
     }
 
+    //Databases/DbContexts
+    
     var connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
     // Main application DB (Identity + app data)
@@ -77,13 +79,18 @@ static void ConfigureServices(IServiceCollection services, ConfigurationManager 
 
     services.AddDatabaseDeveloperPageExceptionFilter();
 
+    //DI
     // Register application services
-    services.AddScoped<comjustinspicer.Data.Models.Blog.IPostService, comjustinspicer.Data.Models.Blog.PostService>();
-    services.AddScoped<comjustinspicer.Data.Models.ContentBlock.IContentBlockService, comjustinspicer.Data.Models.ContentBlock.ContentBlockService>();
+    services.AddScoped<comjustinspicer.Data.Blog.IPostService, comjustinspicer.Data.Blog.PostService>();
+    // Register content block service
+    services.AddScoped<comjustinspicer.Data.ContentBlock.IContentBlockService, comjustinspicer.Data.ContentBlock.ContentBlockService>();
+    // Register content block model used by the ContentBlockViewComponent
+    services.AddScoped<comjustinspicer.Models.ContentBlock.ContentBlockModel>();
     // Register blog model which encapsulates business logic for the BlogController
     services.AddScoped<comjustinspicer.Models.Blog.IBlogModel, comjustinspicer.Models.Blog.BlogModel>();
     services.AddScoped<comjustinspicer.Models.Blog.IBlogPostModel, comjustinspicer.Models.Blog.BlogPostModel>();
 
+    // Identity and authentication
     services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
         .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<ApplicationDbContext>()

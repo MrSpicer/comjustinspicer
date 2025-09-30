@@ -1,6 +1,7 @@
 using System.Threading;
+using comjustinspicer.Data.ContentBlock.Models;
 
-namespace comjustinspicer.Data.Models.ContentBlock;
+namespace comjustinspicer.Data.ContentBlock;
 
 public interface IContentBlockService
 {

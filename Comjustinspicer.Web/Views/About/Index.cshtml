@@ -1,4 +1,5 @@
-﻿@{
+﻿@using comjustinspicer.ViewComponents
+@{
 	ViewData["Title"] = "About";
 }
 
@@ -22,3 +23,5 @@
 		</div>
 	</div>
 </div>
+
+@await Component.InvokeAsync("ContentBlock", new { contentBlockID = new Guid("3fa84bb0-e053-4100-9ae3-3f138fa8aa1c") })

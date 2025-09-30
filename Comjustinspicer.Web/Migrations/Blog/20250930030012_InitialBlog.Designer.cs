@@ -8,11 +8,11 @@ using comjustinspicer.Data;
 
 #nullable disable
 
-namespace Comjustinspicer.Web.Migrations.ContentBlock
+namespace Comjustinspicer.Web.Migrations.Blog
 {
-    [DbContext(typeof(ContentBlockContext))]
-    [Migration("20250929153559_InitialContentBlock")]
-    partial class InitialContentBlock
+    [DbContext(typeof(BlogContext))]
+    [Migration("20250930030012_InitialBlog")]
+    partial class InitialBlog
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,15 +20,18 @@ namespace Comjustinspicer.Web.Migrations.ContentBlock
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
 
-            modelBuilder.Entity("comjustinspicer.Data.Models.ContentBlock.ContentBlockDTO", b =>
+            modelBuilder.Entity("comjustinspicer.Data.Blog.Models.PostDTO", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Content")
+                    b.Property<string>("AuthorName")
                         .IsRequired()
-                        .HasMaxLength(10000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreationDate")
@@ -37,13 +40,17 @@ namespace Comjustinspicer.Web.Migrations.ContentBlock
                     b.Property<DateTime>("ModificationDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime>("PublicationDate")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Title")
                         .IsRequired()
+                        .HasMaxLength(20000)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("ContentBlocks", (string)null);
+                    b.ToTable("Posts", (string)null);
                 });
 #pragma warning restore 612, 618
         }

@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using comjustinspicer.Data.Models.ContentBlock;
+using comjustinspicer.Data.ContentBlock.Models;
 
 namespace comjustinspicer.Data;
 

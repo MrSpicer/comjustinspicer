@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using comjustinspicer.Data;
+using comjustinspicer.Data.ContentBlock;
+using comjustinspicer.Data.ContentBlock.Models;
 
-namespace comjustinspicer.Data.Models.ContentBlock;
+namespace comjustinspicer.Data.ContentBlock;
 
 /// <summary>
 /// Thin service providing basic CRUD operations for content blocks.

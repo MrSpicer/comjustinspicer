@@ -1,7 +1,8 @@
 using System;
-using comjustinspicer.Data.Models.Blog;
+using comjustinspicer.Data.Blog.Models;
 
 namespace comjustinspicer.Models.Blog;
+
 
 public sealed class PostViewModel
 {

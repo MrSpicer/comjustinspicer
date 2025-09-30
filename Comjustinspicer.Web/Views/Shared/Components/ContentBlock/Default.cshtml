@@ -1,0 +1,12 @@
+@model comjustinspicer.Models.ContentBlock.ContentBlockViewModel
+
+@{
+    var isAuthor = User?.Identity?.IsAuthenticated == true && (User.IsInRole("Admin") || User.IsInRole("Editor"));
+}
+
+@if (isAuthor)
+{
+    <a asp-controller="AdminContentBlock" asp-action="Edit" asp-route-id="@Model.Id" class="button is-small">Edit</a>
+}
+
+@Html.Raw(Model?.Content ?? string.Empty)
