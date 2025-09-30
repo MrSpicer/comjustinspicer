@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Serilog;
 
-namespace comjustinspicer.Services
+namespace Comjustinspicer.Services
 {
     // Simple development email sender that logs email content to Serilog and to Logs/email.log
     public class DevEmailSender : IEmailSender

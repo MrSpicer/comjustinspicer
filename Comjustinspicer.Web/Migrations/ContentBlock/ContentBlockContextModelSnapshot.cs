@@ -3,7 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using comjustinspicer.Data;
+using Comjustinspicer.Data;
 
 #nullable disable
 
@@ -17,7 +17,7 @@ namespace Comjustinspicer.Web.Migrations.ContentBlock
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
 
-            modelBuilder.Entity("comjustinspicer.Data.ContentBlock.Models.ContentBlockDTO", b =>
+            modelBuilder.Entity("Comjustinspicer.Data.ContentBlock.Models.ContentBlockDTO", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Authorization;
 
-namespace comjustinspicer.Controllers
+namespace Comjustinspicer.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller

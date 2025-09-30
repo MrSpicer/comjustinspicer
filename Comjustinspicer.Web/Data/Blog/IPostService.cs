@@ -1,7 +1,7 @@
 using System.Threading;
-using comjustinspicer.Data.Blog.Models;
+using Comjustinspicer.Data.Blog.Models;
 
-namespace comjustinspicer.Data.Blog;
+namespace Comjustinspicer.Data.Blog;
 
 public interface IPostService
 {

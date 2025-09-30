@@ -1,7 +1,7 @@
-using comjustinspicer.Data.Blog;
-using comjustinspicer.Data.Blog.Models;
+using Comjustinspicer.Data.Blog;
+using Comjustinspicer.Data.Blog.Models;
 
-namespace comjustinspicer.Models.Blog;
+namespace Comjustinspicer.Models.Blog;
 
 public sealed class BlogPostModel : IBlogPostModel
 {

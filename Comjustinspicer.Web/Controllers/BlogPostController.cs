@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using comjustinspicer.Models.Blog;
+using Comjustinspicer.Models.Blog;
 using Microsoft.AspNetCore.Authorization;
 
-namespace comjustinspicer.Controllers;
+namespace Comjustinspicer.Controllers;
 
 public class BlogPostController : Controller
 {

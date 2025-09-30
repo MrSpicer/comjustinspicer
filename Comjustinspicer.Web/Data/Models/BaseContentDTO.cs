@@ -1,4 +1,4 @@
-namespace comjustinspicer.Data.Models;
+namespace Comjustinspicer.Data.Models;
 
 public abstract class BaseContentDTO
 {

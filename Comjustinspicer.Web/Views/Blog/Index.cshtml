@@ -3,8 +3,8 @@
 
 	var isAuthor = User?.Identity?.IsAuthenticated == true && (User.IsInRole("Admin") || User.IsInRole("Editor"));
 }
-@using comjustinspicer.Models.Blog
-@model comjustinspicer.Models.Blog.BlogViewModel
+@using Comjustinspicer.Models.Blog
+@model Comjustinspicer.Models.Blog.BlogViewModel
 
 <section class="section">
 	<div class="container">

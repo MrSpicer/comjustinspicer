@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace comjustinspicer.Data;
+namespace Comjustinspicer.Data;
 
 public class ApplicationDbContext : IdentityDbContext
 {

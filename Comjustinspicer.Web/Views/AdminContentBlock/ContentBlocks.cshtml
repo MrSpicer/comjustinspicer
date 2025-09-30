@@ -1,4 +1,4 @@
-@using comjustinspicer.Data.ContentBlock.Models
+@using Comjustinspicer.Data.ContentBlock.Models
 @model List<ContentBlockDTO>
 
 @{
@@ -27,8 +27,8 @@
 					<tr>
 						<td>@cb.Title</td>
 						<td>@cb.Id</td>
-						<td>@cb.CreationDate.ToString("yyyy-MM-dd")</td>
-						<td>@cb.ModificationDate.ToString("yyyy-MM-dd")</td>
+						<td>@cb.CreationDate.ToString("yyyy-MM-dd hh:mm")</td>
+						<td>@cb.ModificationDate.ToString("yyyy-MM-dd hh:mm")</td>
 						<td>
 							<a asp-controller="AdminContentBlock" asp-action="Edit" asp-route-id="@cb.Id" class="button is-small">Edit</a>
 							<form asp-controller="AdminContentBlock" asp-action="Delete" asp-route-id="@cb.Id" method="post" style="display:inline">

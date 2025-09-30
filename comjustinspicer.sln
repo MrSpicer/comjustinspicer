@@ -2,7 +2,7 @@
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "comjustinspicer.Web", "Comjustinspicer.Web\Comjustinspicer.Web.csproj", "{E7A2F866-1610-7CA4-F103-742A4FCD13AE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comjustinspicer.Web", "Comjustinspicer.Web\Comjustinspicer.Web.csproj", "{E7A2F866-1610-7CA4-F103-742A4FCD13AE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8E5B59E0-4F2B-4127-8C9E-CBD282D4C56D}"
 EndProject

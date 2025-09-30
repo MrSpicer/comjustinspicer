@@ -1,8 +1,8 @@
 using NUnit.Framework;
 using Microsoft.EntityFrameworkCore;
-using comjustinspicer.Data;
-using comjustinspicer.Data.Blog;
-using comjustinspicer.Data.Blog.Models;
+using Comjustinspicer.Data;
+using Comjustinspicer.Data.Blog;
+using Comjustinspicer.Data.Blog.Models;
 using System.Threading;
 using System.Threading.Tasks;
 using System;

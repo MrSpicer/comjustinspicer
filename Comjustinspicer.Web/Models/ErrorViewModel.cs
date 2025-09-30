@@ -1,4 +1,4 @@
-namespace comjustinspicer.Models;
+namespace Comjustinspicer.Models;
 
 public class ErrorViewModel
 {

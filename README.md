@@ -1,14 +1,33 @@
-# comjustinspicer
+# Comjustinspicer
+
+## setup
+
+### Make Scripts Executable
+```
+chmod +x Comjustinspicer.Web/Scripts/*
+chmod +x Comjustinspicer.Tests/Scripts/*
+```
+
+### Create Database
+```
+cd Comjustinspicer.Web
+./Scripts/RunMigrations.sh
+```
 
 ## Development - Hot Reload
-
-You can use dotnet's hot reload to update C# and Razor views without restarting the server.
-
-From the repository root run:
-
 ```
 cd Comjustinspicer.Web
 ./Scripts/RunHotReload.sh
 ```
 
-This runs `dotnet watch run` with `ASPNETCORE_ENVIRONMENT=Development`. Razor view changes are picked up in Development because the project enables runtime compilation in `Program.cs`.
+## Run Tests
+```
+cd Comjustinspicer.Tests
+./Scripts/RunTests.sh
+```
+
+## Default Admin Account
+a default Admin account is configured in Comjustinspicer.Web/appsettings.json
+The account will be created on first run
+you MUST change this before deploying to production
+

@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using comjustinspicer.Data.ContentBlock;
-using comjustinspicer.Models.ContentBlock;
+using Comjustinspicer.Data.ContentBlock;
+using Comjustinspicer.Models.ContentBlock;
 using System.Threading;
 
-namespace comjustinspicer.ViewComponents;
+namespace Comjustinspicer.ViewComponents;
 
 public class ContentBlockViewComponent : ViewComponent
 {

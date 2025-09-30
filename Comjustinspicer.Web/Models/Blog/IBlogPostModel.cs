@@ -1,6 +1,6 @@
 using System.Threading;
 
-namespace comjustinspicer.Models.Blog;
+namespace Comjustinspicer.Models.Blog;
 
 public interface IBlogPostModel
 {

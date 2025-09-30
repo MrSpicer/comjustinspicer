@@ -1,12 +1,12 @@
 using Microsoft.EntityFrameworkCore;
-using comjustinspicer.Data.ContentBlock;
-using comjustinspicer.Data.ContentBlock.Models;
+using Comjustinspicer.Data.ContentBlock;
+using Comjustinspicer.Data.ContentBlock.Models;
 
-namespace comjustinspicer.Data.ContentBlock;
+namespace Comjustinspicer.Data.ContentBlock;
 
 /// <summary>
 /// Thin service providing basic CRUD operations for content blocks.
-/// Mirrors the patterns used in <see cref="comjustinspicer.Data.Models.Blog.PostService"/>.
+/// Mirrors the patterns used in <see cref="Comjustinspicer.Data.Models.Blog.PostService"/>.
 /// </summary>
 public sealed class ContentBlockService : IContentBlockService
 {
@@ -62,6 +62,7 @@ public sealed class ContentBlockService : IContentBlockService
 		else
 		{
 			existing.Content = contentBlock.Content;
+			existing.ModificationDate = contentBlock.ModificationDate;
 
 			_db.ContentBlocks.Update(existing);
 		}

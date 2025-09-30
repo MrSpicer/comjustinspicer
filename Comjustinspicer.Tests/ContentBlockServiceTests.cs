@@ -1,8 +1,8 @@
 using NUnit.Framework;
 using Microsoft.EntityFrameworkCore;
-using comjustinspicer.Data;
-using comjustinspicer.Data.ContentBlock;
-using comjustinspicer.Data.ContentBlock.Models;
+using Comjustinspicer.Data;
+using Comjustinspicer.Data.ContentBlock;
+using Comjustinspicer.Data.ContentBlock.Models;
 using System.Threading;
 using System.Threading.Tasks;
 using System;

@@ -1,6 +1,6 @@
-using comjustinspicer.Data.ContentBlock.Models;
+using Comjustinspicer.Data.ContentBlock.Models;
 
-namespace comjustinspicer.Models.ContentBlock;
+namespace Comjustinspicer.Models.ContentBlock;
 
 public sealed class ContentBlockViewModel
 {

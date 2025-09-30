@@ -1,7 +1,7 @@
-using comjustinspicer.Data.ContentBlock;
-using comjustinspicer.Data.ContentBlock.Models;
+using Comjustinspicer.Data.ContentBlock;
+using Comjustinspicer.Data.ContentBlock.Models;
 
-namespace comjustinspicer.Models.ContentBlock;
+namespace Comjustinspicer.Models.ContentBlock;
 
 public class ContentBlockModel
 {

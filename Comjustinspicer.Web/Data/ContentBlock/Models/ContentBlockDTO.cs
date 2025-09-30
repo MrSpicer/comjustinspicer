@@ -1,6 +1,6 @@
-using comjustinspicer.Data.Models;
+using Comjustinspicer.Data.Models;
 
-namespace comjustinspicer.Data.ContentBlock.Models;
+namespace Comjustinspicer.Data.ContentBlock.Models;
 
 public class ContentBlockDTO : BaseContentDTO
 {

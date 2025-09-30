@@ -1,12 +1,12 @@
 ﻿using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
-using comjustinspicer.Models;
-using comjustinspicer.Models.Blog;
+using Comjustinspicer.Models;
+using Comjustinspicer.Models.Blog;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Authorization;
 
-namespace comjustinspicer.Controllers;
+namespace Comjustinspicer.Controllers;
 
 
 

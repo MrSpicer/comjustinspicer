@@ -1,9 +1,9 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using comjustinspicer.Models;
+using Comjustinspicer.Models;
 
-namespace comjustinspicer.Controllers;
+namespace Comjustinspicer.Controllers;
 
 public class ErrorController : Controller
 {

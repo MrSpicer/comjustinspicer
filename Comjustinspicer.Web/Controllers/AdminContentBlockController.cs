@@ -1,17 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
-using comjustinspicer.Data.ContentBlock;
+using Comjustinspicer.Data.ContentBlock;
 using Microsoft.AspNetCore.Authorization;
+using Comjustinspicer.Models.ContentBlock;
 
-namespace comjustinspicer.Controllers;
+namespace Comjustinspicer.Controllers;
 
 [Authorize(Roles = "Admin")]
 public class AdminContentBlockController : Controller
 {
     private readonly Serilog.ILogger _logger = Serilog.Log.ForContext<AdminContentBlockController>();
     private readonly IContentBlockService _service;
+    private readonly ContentBlockModel _model;
 
-    public AdminContentBlockController(IContentBlockService service)
+    //todo: all of the logic here needs to be moved into the ContentBlockModel class
+    public AdminContentBlockController(ContentBlockModel model, IContentBlockService service)
     {
+        _model = model ?? throw new ArgumentNullException(nameof(model));
         _service = service ?? throw new ArgumentNullException(nameof(service));
     }
 

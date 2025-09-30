@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using comjustinspicer.Data;
+using Comjustinspicer.Data;
 using Serilog;
 using Serilog.Events;
 using System.Text.RegularExpressions;
@@ -81,14 +81,14 @@ static void ConfigureServices(IServiceCollection services, ConfigurationManager 
 
     //DI
     // Register application services
-    services.AddScoped<comjustinspicer.Data.Blog.IPostService, comjustinspicer.Data.Blog.PostService>();
+    services.AddScoped<Comjustinspicer.Data.Blog.IPostService, Comjustinspicer.Data.Blog.PostService>();
     // Register content block service
-    services.AddScoped<comjustinspicer.Data.ContentBlock.IContentBlockService, comjustinspicer.Data.ContentBlock.ContentBlockService>();
+    services.AddScoped<Comjustinspicer.Data.ContentBlock.IContentBlockService, Comjustinspicer.Data.ContentBlock.ContentBlockService>();
     // Register content block model used by the ContentBlockViewComponent
-    services.AddScoped<comjustinspicer.Models.ContentBlock.ContentBlockModel>();
+    services.AddScoped<Comjustinspicer.Models.ContentBlock.ContentBlockModel>();
     // Register blog model which encapsulates business logic for the BlogController
-    services.AddScoped<comjustinspicer.Models.Blog.IBlogModel, comjustinspicer.Models.Blog.BlogModel>();
-    services.AddScoped<comjustinspicer.Models.Blog.IBlogPostModel, comjustinspicer.Models.Blog.BlogPostModel>();
+    services.AddScoped<Comjustinspicer.Models.Blog.IBlogModel, Comjustinspicer.Models.Blog.BlogModel>();
+    services.AddScoped<Comjustinspicer.Models.Blog.IBlogPostModel, Comjustinspicer.Models.Blog.BlogPostModel>();
 
     // Identity and authentication
     services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -98,7 +98,7 @@ static void ConfigureServices(IServiceCollection services, ConfigurationManager 
 
     // Development email sender - logs confirmation emails to Serilog and a local file
 #if DEBUG
-    services.AddSingleton<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, comjustinspicer.Services.DevEmailSender>();
+    services.AddSingleton<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, Comjustinspicer.Services.DevEmailSender>();
 #endif
 
 }

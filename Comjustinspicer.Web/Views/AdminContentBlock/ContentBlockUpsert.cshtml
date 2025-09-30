@@ -1,4 +1,4 @@
-@using comjustinspicer.Data.ContentBlock.Models
+@using Comjustinspicer.Data.ContentBlock.Models
 @model ContentBlockDTO
 
 @{
@@ -15,6 +15,7 @@
 		<h2 class="subtitle">@Model.Id</h2>
 		<form asp-action="Edit" method="post">
 			@Html.AntiForgeryToken()
+			@*todo: Is this really needed? can't we just use the querystring?*@
 			@{
 				var returnUrl = ViewData["ReturnUrl"] as string ?? Context.Request.Query["returnUrl"].FirstOrDefault();
 			}

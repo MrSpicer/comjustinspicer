@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace comjustinspicer.Models.Blog;
+namespace Comjustinspicer.Models.Blog;
 
 public sealed class BlogViewModel
 {

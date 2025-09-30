@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using comjustinspicer.Data;
+using Comjustinspicer.Data;
 
 #nullable disable
 
@@ -20,7 +20,7 @@ namespace Comjustinspicer.Web.Migrations.Blog
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
 
-            modelBuilder.Entity("comjustinspicer.Data.Blog.Models.PostDTO", b =>
+            modelBuilder.Entity("Comjustinspicer.Data.Blog.Models.PostDTO", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
