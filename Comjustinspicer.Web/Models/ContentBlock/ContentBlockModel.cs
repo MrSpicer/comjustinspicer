@@ -11,10 +11,10 @@ public class ContentBlockModel
         _service = service ?? throw new ArgumentNullException(nameof(service));
     }
 
-    public async Task<ContentBlockDTO> FromIdAsync(Guid id, CancellationToken ct = default)
+    public async Task<ContentBlockDTO?> FromIdAsync(Guid id, CancellationToken ct = default)
     {
         if (id == Guid.Empty) throw new ArgumentException("ID cannot be empty.", nameof(id));
 
-        return await _service.GetByIdAsync(id) ?? new ContentBlockDTO { Content = string.Empty };
+        return await _service.GetByIdAsync(id);
     }
 }

@@ -23,6 +23,10 @@ public class ContentBlockViewComponent : ViewComponent
 		}
 
 		var model = await _model.FromIdAsync(contentBlockID, CancellationToken.None);
+		if (model == null)
+		{
+			return View(new ContentBlockViewModel { Id = contentBlockID });
+		}
 
 		var vm = ContentBlockViewModel.FromDto(model);
 

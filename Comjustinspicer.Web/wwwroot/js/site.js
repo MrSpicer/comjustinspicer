@@ -55,7 +55,8 @@ const {
 	HorizontalLine,
 	SpecialCharacters,
 	RemoveFormat,
-	Highlight
+	Highlight,
+	SourceEditing
 } = CKEDITOR;
 
 ClassicEditor
@@ -66,7 +67,7 @@ ClassicEditor
 			Heading, Link, List, Indent, IndentBlock, Paragraph,
 			Font, FontSize, FontFamily, FontColor, FontBackgroundColor, Alignment,
 			Table, TableToolbar, CodeBlock, HorizontalLine, SpecialCharacters,
-			RemoveFormat, Highlight
+			RemoveFormat, Highlight, SourceEditing
 		],
 		toolbar: [
 			'undo', 'redo', '|',
@@ -78,7 +79,8 @@ ClassicEditor
 			'insertTable', 'horizontalLine', '|',
 			'specialCharacters', '|',
 			'alignment', '|',
-			'undo', 'redo'
+			'undo', 'redo', '|',
+			'sourceEditing'
 		],
 		table: {
 			contentToolbar: [ 'tableColumn', 'tableRow', 'mergeTableCells' ]

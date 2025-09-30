@@ -62,7 +62,7 @@ static void ConfigureServices(IServiceCollection services, ConfigurationManager 
     }
 
     //Databases/DbContexts
-    
+
     var connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
     // Main application DB (Identity + app data)
@@ -107,7 +107,10 @@ static void ConfigureMiddleware(WebApplication app)
 {
     if (!app.Environment.IsDevelopment())
     {
-        app.UseExceptionHandler("/Home/Error");
+        // Route exceptions to centralized ErrorController
+        app.UseExceptionHandler("/Error");
+        // Route status code pages (like 404) to the ErrorController status handler
+        app.UseStatusCodePagesWithReExecute("/Error/{0}");
         app.UseHsts();
     }
 

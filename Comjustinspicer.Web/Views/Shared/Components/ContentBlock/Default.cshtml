@@ -4,9 +4,12 @@
     var isAuthor = User?.Identity?.IsAuthenticated == true && (User.IsInRole("Admin") || User.IsInRole("Editor"));
 }
 
-@if (isAuthor)
+@if (isAuthor && Model.Id != Guid.Empty)
 {
     <a asp-controller="AdminContentBlock" asp-action="Edit" asp-route-id="@Model.Id" class="button is-small">Edit</a>
 }
 
-@Html.Raw(Model?.Content ?? string.Empty)
+@if(!string.IsNullOrWhiteSpace(Model?.Content))
+{
+    @Html.Raw(Model.Content)
+}

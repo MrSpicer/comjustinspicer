@@ -4,7 +4,7 @@ namespace comjustinspicer.Models.ContentBlock;
 
 public sealed class ContentBlockViewModel
 {
-    public Guid Id { get; init; } = Guid.NewGuid();
+    public Guid Id { get; init; } = Guid.Empty;
     public string Content { get; init; } = string.Empty;
 
     public static ContentBlockViewModel FromDto(ContentBlockDTO? dto)

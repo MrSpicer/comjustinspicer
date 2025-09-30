@@ -6,22 +6,8 @@
 <div class="column is-8 is-offset-2">
 	<div class="box">
 		<div class="content is-medium">
-			<p>
-				Hi!     My name is Justin Spicer,
-			</p>
-			<p>
-				I'm a software developer. Computers,
-				and
-				thus software, have always been a big part of my life. I was part of the first generation that grew up
-				with
-				computers in the home and I built my first website in the mid 90s, before Google even existed, when I
-				was
-				about 6, with some help from one of my older brothers. It wasn't a great site, but none were in those
-				days... It was a fan site for Dragon Ball Z, I was 6 remember, built with Dream Weaver and hosted on
-				GeoCities. Technology and I have both come a long way since then.
-			</p>
+			@await Component.InvokeAsync("ContentBlock", 
+				new { contentBlockID = new Guid("bffabbe5-5420-46b5-a122-fb96691d7111") })
 		</div>
 	</div>
 </div>
-
-@await Component.InvokeAsync("ContentBlock", new { contentBlockID = new Guid("3fa84bb0-e053-4100-9ae3-3f138fa8aa1c") })
