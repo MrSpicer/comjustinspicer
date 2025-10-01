@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+###THIS WILL DELETE YOUR DATA ###
+
 echo "Removing existing database and migrations..." &&
 rm -f app.db &&
 rm -rf Migrations/* &&

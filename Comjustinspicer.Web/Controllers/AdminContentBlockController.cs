@@ -9,44 +9,28 @@ namespace Comjustinspicer.Controllers;
 public class AdminContentBlockController : Controller
 {
     private readonly Serilog.ILogger _logger = Serilog.Log.ForContext<AdminContentBlockController>();
-    private readonly IContentBlockService _service;
-    private readonly ContentBlockModel _model;
+    private readonly IContentBlockModel _model;
 
-    //todo: all of the logic here needs to be moved into the ContentBlockModel class
-    public AdminContentBlockController(ContentBlockModel model, IContentBlockService service)
+    // Business logic moved into ContentBlockModel
+    public AdminContentBlockController(IContentBlockModel model)
     {
         _model = model ?? throw new ArgumentNullException(nameof(model));
-        _service = service ?? throw new ArgumentNullException(nameof(service));
     }
 
     // List all content blocks for admin management
     [HttpGet("admin/contentblocks")]
     public async Task<IActionResult> Index()
     {
-        var all = await _service.GetAllAsync();
+        var all = await _model.GetAllAsync();
         return View("ContentBlocks", all);
     }
 
     [HttpGet("admin/contentblocks/edit/{id?}")]
     public async Task<IActionResult> Edit(Guid? id, string? returnUrl)
     {
-        if (id == null)
-        {
-            // new
-            if (!string.IsNullOrWhiteSpace(returnUrl)) ViewData["ReturnUrl"] = returnUrl;
-            return View("ContentBlockUpsert", new Data.ContentBlock.Models.ContentBlockDTO());
-        }
-
-        var existing = await _service.GetByIdAsync(id.Value);
-
-        if (existing == null)
-        {
-            existing = new Data.ContentBlock.Models.ContentBlockDTO();
-        }
-
+        var vm = await _model.GetUpsertModelAsync(id);
         if (!string.IsNullOrWhiteSpace(returnUrl)) ViewData["ReturnUrl"] = returnUrl;
-
-        return View("ContentBlockUpsert", existing);
+        return View("ContentBlockUpsert", vm);
     }
 
     [HttpPost("admin/contentblocks/edit/{id?}")]
@@ -59,10 +43,10 @@ public class AdminContentBlockController : Controller
             return View("ContentBlockUpsert", model);
         }
 
-        var ok = await _service.UpsertAsync(model);
-        if (!ok)
+        var result = await _model.SaveUpsertAsync(model);
+        if (!result.Success)
         {
-            ModelState.AddModelError(string.Empty, "An error occurred while saving the content block.");
+            ModelState.AddModelError(string.Empty, result.ErrorMessage ?? "An error occurred while saving the content block.");
             return View("ContentBlockUpsert", model);
         }
 
@@ -79,7 +63,7 @@ public class AdminContentBlockController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var ok = await _service.DeleteAsync(id);
+        var ok = await _model.DeleteAsync(id);
         if (!ok)
         {
             TempData["Error"] = "Could not delete content block.";

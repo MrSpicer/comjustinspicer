@@ -7,14 +7,18 @@ namespace Comjustinspicer.ViewComponents;
 
 public class ContentBlockViewComponent : ViewComponent
 {
-	private readonly ContentBlockModel _model;
+	private readonly IContentBlockModel _model;
 
-	public ContentBlockViewComponent(ContentBlockModel model)
+	public ContentBlockViewComponent(IContentBlockModel model)
 	{
 		_model = model ?? throw new ArgumentNullException(nameof(model));
 	}
 
-	// The view component expects a single argument named "ContentBlockID" of type Guid
+/// <summary>
+/// Renders a content block by its ID.
+/// </summary>
+/// <param name="contentBlockID"></param>
+/// <returns></returns>
 	public async Task<IViewComponentResult> InvokeAsync(Guid contentBlockID)
 	{
 		if (contentBlockID == Guid.Empty)

@@ -5,4 +5,4 @@ cd "$(dirname "$0")/.."
 # Ensure Development environment and show messages
 export ASPNETCORE_ENVIRONMENT=Development
 # Use dotnet watch to run the project with hot reload for both C# and Razor files
-dotnet watch run --project Comjustinspicer.Web.csproj
+dotnet watch run --project Comjustinspicer.Web.csproj --verbose

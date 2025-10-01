@@ -8,12 +8,15 @@ using Microsoft.AspNetCore.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Initialize logging early so startup messages are captured
-ConfigureSerilog(builder.Configuration);
-builder.Host.UseSerilog();
+MapTypes(builder.Services);
 
-// Register framework services
-ConfigureServices(builder.Services, builder.Configuration, builder.Environment);
+ConfigureDatabaseServices(builder.Services, builder.Configuration);
+
+ConfigureSerilog(builder.Configuration, builder);
+
+ConfigureAuthorization(builder.Services);
+
+MapControllers(builder.Services, builder.Configuration, builder.Environment);
 
 var app = builder.Build();
 
@@ -30,7 +33,7 @@ app.Run();
 
 // --- Local helper implementations ---
 
-static void ConfigureSerilog(ConfigurationManager configuration)
+static void ConfigureSerilog(ConfigurationManager configuration, WebApplicationBuilder builder)
 {
     var conn = configuration.GetConnectionString("DefaultConnection") ?? "DataSource=app.db";
 
@@ -43,16 +46,18 @@ static void ConfigureSerilog(ConfigurationManager configuration)
     var sqliteFile = ExtractSqliteFile(conn);
 
     Log.Logger = new LoggerConfiguration()
-        .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+        .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
         .MinimumLevel.Information()
         .Enrich.FromLogContext()
         .WriteTo.Console()
         // Keep a rolling file sink for local troubleshooting
         .WriteTo.File("Logs/log-.txt", rollingInterval: Serilog.RollingInterval.Day)
         .CreateLogger();
+
+    builder.Host.UseSerilog();
 }
 
-static void ConfigureServices(IServiceCollection services, ConfigurationManager configuration, IWebHostEnvironment environment)
+static void MapControllers(IServiceCollection services, ConfigurationManager configuration, IWebHostEnvironment environment)
 {
     // Add MVC and enable runtime compilation for Razor views in Development so changes to .cshtml are picked up
     var mvc = services.AddControllersWithViews();
@@ -60,8 +65,10 @@ static void ConfigureServices(IServiceCollection services, ConfigurationManager 
     {
         mvc.AddRazorRuntimeCompilation();
     }
+}
 
-    //Databases/DbContexts
+static void ConfigureDatabaseServices(IServiceCollection services, ConfigurationManager configuration)
+{
 
     var connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
@@ -72,35 +79,39 @@ static void ConfigureServices(IServiceCollection services, ConfigurationManager 
     // Blog DB/context can share the same connection or be configured separately in appsettings
     services.AddDbContext<BlogContext>(options =>
         options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_Blog")));
-    
+
     // ContentBlock DB/context
     services.AddDbContext<ContentBlockContext>(options =>
         options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_ContentBlock")));
 
     services.AddDatabaseDeveloperPageExceptionFilter();
+}
 
-    //DI
-    // Register application services
-    services.AddScoped<Comjustinspicer.Data.Blog.IPostService, Comjustinspicer.Data.Blog.PostService>();
-    // Register content block service
-    services.AddScoped<Comjustinspicer.Data.ContentBlock.IContentBlockService, Comjustinspicer.Data.ContentBlock.ContentBlockService>();
-    // Register content block model used by the ContentBlockViewComponent
-    services.AddScoped<Comjustinspicer.Models.ContentBlock.ContentBlockModel>();
-    // Register blog model which encapsulates business logic for the BlogController
-    services.AddScoped<Comjustinspicer.Models.Blog.IBlogModel, Comjustinspicer.Models.Blog.BlogModel>();
-    services.AddScoped<Comjustinspicer.Models.Blog.IBlogPostModel, Comjustinspicer.Models.Blog.BlogPostModel>();
-
-    // Identity and authentication
-    services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-        .AddRoles<IdentityRole>()
-        .AddEntityFrameworkStores<ApplicationDbContext>()
-        .AddDefaultUI();
-
+static void MapTypes(IServiceCollection services)
+{
     // Development email sender - logs confirmation emails to Serilog and a local file
 #if DEBUG
     services.AddSingleton<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, Comjustinspicer.Services.DevEmailSender>();
 #endif
 
+    // Register application services
+    services.AddScoped<Comjustinspicer.Data.Blog.IPostService, Comjustinspicer.Data.Blog.PostService>();
+    // Register content block service
+    services.AddScoped<Comjustinspicer.Data.ContentBlock.IContentBlockService, Comjustinspicer.Data.ContentBlock.ContentBlockService>();
+    // Register content block model used by the ContentBlockViewComponent
+    services.AddScoped<Comjustinspicer.Models.ContentBlock.IContentBlockModel, Comjustinspicer.Models.ContentBlock.ContentBlockModel>();
+    // Register blog model which encapsulates business logic for the BlogController
+    services.AddScoped<Comjustinspicer.Models.Blog.IBlogModel, Comjustinspicer.Models.Blog.BlogModel>();
+    services.AddScoped<Comjustinspicer.Models.Blog.IBlogPostModel, Comjustinspicer.Models.Blog.BlogPostModel>();
+}
+
+static void ConfigureAuthorization(IServiceCollection services)
+{
+    // Identity and authentication
+    services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+        .AddRoles<IdentityRole>()
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddDefaultUI();
 }
 
 static void ConfigureMiddleware(WebApplication app)
