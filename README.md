@@ -7,7 +7,7 @@
 * [Serilog](https://serilog.net/)
 
 ### Dependencies
-* [dotnet sdk](ttps://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+* [dotnet sdk](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 * dotnet-ef - ```dotnet tool install --global dotnet-ef```
 
 ## Setup
