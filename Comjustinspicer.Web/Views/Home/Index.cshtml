@@ -2,8 +2,8 @@
 	ViewData["Title"] = "Home Page";
 }
 
-<figure class="image">
-	<img src="https://images.pexels.com/photos/169573/pexels-photo-169573.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-	class="img-fluid border rounded-3 shadow-lg mb-4" alt="Example image" loading="lazy">
-</figure>
-
+<section class="section">
+	<div class="container content">
+		@await Component.InvokeAsync("ContentBlock", new { contentBlockID = new Guid("f83e7429-d163-4063-b8c3-ca3869b988dc") })
+	</div>
+</section>

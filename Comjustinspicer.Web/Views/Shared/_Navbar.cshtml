@@ -1,0 +1,64 @@
+﻿@using Microsoft.AspNetCore.Identity
+
+@{
+    var isAuthor = User?.Identity?.IsAuthenticated == true && (User.IsInRole("Admin") || User.IsInRole("Editor"));
+}
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+            <img src="" width="112" height="28">
+        </a>
+
+        <a id="nav-toggle" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+            data-target="siteNav">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+
+    <div id="siteNav" class="navbar-menu">
+        <div class="navbar-start">
+            <a class="navbar-item" href="/">
+                Home
+            </a>
+
+            <a class="navbar-item" href="/about">
+                About
+            </a>
+
+            <a class="navbar-item" href="/blog">
+                Blog
+            </a>
+
+            <a class="navbar-item" href="https://github.com/MrSpicer/Resume_public/blob/main/justin_resume.pdf">
+                Resume
+            </a>
+
+            @if (isAuthor)
+            {
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        Admin
+                    </a>
+
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item" href="/admin/ContentBlocks">
+                            Content Blocks
+                        </a>
+                        <a class="navbar-item" href="/admin/ResendConfirmation">
+                            Resend Confirmation Email
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="navbar-end">
+            @await Component.InvokeAsync("ContentBlock", new { contentBlockID = new
+            Guid("9033b373-ca8a-43ba-86a5-f3ecceab65ce") })
+            <partial name="_LoginNavPartial" />
+        </div>
+    </div>
+</nav>

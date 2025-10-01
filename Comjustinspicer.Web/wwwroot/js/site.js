@@ -56,9 +56,12 @@ const {
 	SpecialCharacters,
 	RemoveFormat,
 	Highlight,
-	SourceEditing
+	SourceEditing,
+	HtmlEmbed
 } = CKEDITOR;
 
+//todo: licenseKey needs to move!
+//todo: source edit doesn't wok very well. fix or find way to disable CKEditor for source editing
 ClassicEditor
 	.create(document.querySelector('#editor'), {
 		licenseKey: 'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3NjAzOTk5OTksImp0aSI6IjI4MDYxN2JjLTYzZTYtNDJmOS04NzMzLWU5NDJlZGE3OTA0YSIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiLCJzaCJdLCJ3aGl0ZUxhYmVsIjp0cnVlLCJsaWNlbnNlVHlwZSI6InRyaWFsIiwiZmVhdHVyZXMiOlsiKiJdLCJ2YyI6IjY1Y2YzNjZkIn0.2vMMmO9Luc_YFq6pmwB7Fv8FMhY170J2eIdfSXHFlwPj0B7idS1mV8SbWDSaSzdsEJTIj2TnrttioWEeliVVtg',
@@ -67,9 +70,10 @@ ClassicEditor
 			Heading, Link, List, Indent, IndentBlock, Paragraph,
 			Font, FontSize, FontFamily, FontColor, FontBackgroundColor, Alignment,
 			Table, TableToolbar, CodeBlock, HorizontalLine, SpecialCharacters,
-			RemoveFormat, Highlight, SourceEditing
+			RemoveFormat, Highlight, SourceEditing, HtmlEmbed
 		],
 		toolbar: [
+			'htmlEmbed',
 			'undo', 'redo', '|',
 			'heading', '|',
 			'bold', 'italic', 'underline', 'strikethrough', 'removeFormat', '|',
