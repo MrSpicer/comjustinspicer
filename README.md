@@ -14,19 +14,11 @@
 
 ### Make Scripts Executable
 ```
-chmod +x Comjustinspicer.Web/Scripts/*
-chmod +x Comjustinspicer.Tests/Scripts/*
-```
-
-### Create Database
-```
-cd Comjustinspicer.Web
-./Scripts/RunMigrations.sh
+chmod +x ./Scripts/*
 ```
 
 ## Development - Hot Reload
 ```
-cd Comjustinspicer.Web
 ./Scripts/RunHotReload.sh
 ```
 
@@ -36,9 +28,16 @@ cd Comjustinspicer.Tests
 ./Scripts/RunTests.sh
 ```
 
-## notes
+## Docker
+
+### Build and run
+```
+/Scripts/DockerRun.sh
+```
+
+## Notes
 ### Default Admin Account
-a default Admin account is configured in Comjustinspicer.Web/appsettings.json
+a default Admin account is configured in Comjustinspicer.Web/appsettings.json and docker-compose.yml
 The account will be created on first run
 you MUST change this before deploying to production
 

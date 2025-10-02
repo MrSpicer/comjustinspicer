@@ -19,7 +19,8 @@ public class ErrorController : Controller
         }
 
         var model = new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier };
-        return View("Shared/Error", model);
+    // Use conventional view name so Razor finds /Views/Shared/Error.cshtml
+    return View("Error", model);
     }
 
     [Route("Error/{statusCode}")]
@@ -28,6 +29,6 @@ public class ErrorController : Controller
         // Log status codes like 404
         _logger.Warning("HTTP status code {StatusCode} returned for request {Path}", statusCode, HttpContext.Request.Path);
         var model = new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier };
-        return View("Shared/Error", model);
+        return View("Error", model);
     }
 }

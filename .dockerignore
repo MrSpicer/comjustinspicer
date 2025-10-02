@@ -1,0 +1,12 @@
+**/bin
+**/obj
+**/Logs
+.git
+.gitignore
+.vscode
+*.user
+*.suo
+*.swp
+*.sln.docstates
+Dockerfile*
+.dockerignore

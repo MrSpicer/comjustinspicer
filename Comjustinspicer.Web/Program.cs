@@ -45,14 +45,31 @@ static void ConfigureSerilog(ConfigurationManager configuration, WebApplicationB
 
     var sqliteFile = ExtractSqliteFile(conn);
 
-    Log.Logger = new LoggerConfiguration()
+    // If using a mounted /data path for SQLite inside a container, make sure it exists
+    if (sqliteFile.StartsWith("/data/", StringComparison.OrdinalIgnoreCase))
+    {
+        var dir = Path.GetDirectoryName(sqliteFile);
+        if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+        {
+            Directory.CreateDirectory(dir);
+        }
+    }
+
+    var runningInContainer = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
+
+    var loggerConfig = new LoggerConfiguration()
         .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
         .MinimumLevel.Information()
         .Enrich.FromLogContext()
-        .WriteTo.Console()
-        // Keep a rolling file sink for local troubleshooting
-        .WriteTo.File("Logs/log-.txt", rollingInterval: Serilog.RollingInterval.Day)
-        .CreateLogger();
+        .WriteTo.Console();
+
+    if (!runningInContainer)
+    {
+        // Keep a rolling file sink for local troubleshooting only
+        loggerConfig = loggerConfig.WriteTo.File("Logs/log-.txt", rollingInterval: Serilog.RollingInterval.Day);
+    }
+
+    Log.Logger = loggerConfig.CreateLogger();
 
     builder.Host.UseSerilog();
 }
@@ -151,6 +168,10 @@ static void ApplyPendingMigrations(WebApplication app)
 
         var blogContext = services.GetRequiredService<BlogContext>();
         blogContext.Database.Migrate();
+
+        // Ensure ContentBlock migrations are applied (fix for missing ContentBlocks table in container)
+        var contentBlockContext = services.GetRequiredService<ContentBlockContext>();
+        contentBlockContext.Database.Migrate();
     }
     catch (Exception ex)
     {
