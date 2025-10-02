@@ -19,12 +19,11 @@ chmod +x ./Scripts/*
 
 ## Development - Hot Reload
 ```
-./Scripts/RunHotReload.sh
+./Scripts/HotReloadRun.sh
 ```
 
 ## Run Tests
 ```
-cd Comjustinspicer.Tests
 ./Scripts/RunTests.sh
 ```
 

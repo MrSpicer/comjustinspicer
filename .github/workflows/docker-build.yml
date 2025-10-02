@@ -8,6 +8,7 @@ on:
 
 env:
   IMAGE_NAME: comjustinspicer-web
+  BUILD_CONFIGURATION: Release
 
 jobs:
   build:
@@ -28,10 +29,10 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --no-restore -c Release
+        run: dotnet build --no-restore -c $BUILD_CONFIGURATION
 
       - name: Test
-        run: dotnet test --no-build --verbosity normal
+        run: dotnet test --no-build -c $BUILD_CONFIGURATION --verbosity normal
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
