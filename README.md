@@ -8,10 +8,12 @@ CC BY-SA 4.0
 * [ASP.Net Core MVC](https://dotnet.microsoft.com/en-us/apps/aspnet)
 * [SQLite](https://sqlite.org/)
 * [Serilog](https://serilog.net/)
+* [NUnit](https://nunit.org/)
+* [AutoMapper](https://automapper.io/)
 
 ### Dependencies
 * [dotnet sdk](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-* dotnet-ef - ```dotnet tool install --global dotnet-ef```
+* dotnet-ef (optional)- ```dotnet tool install --global dotnet-ef```
 
 ## Setup
 
@@ -66,15 +68,3 @@ ADMIN_PASSWORD
 CONNECTION_STRING
 CKEDITOR_LICENSE_KEY
 ```
-
-## Notes
-### Default Admin Account
-a default Admin account is configured in Comjustinspicer.Web/appsettings.json and docker-compose.yml
-The account will be created on first run
-you MUST change this before deploying to production
-
-3. For local development, either:
-	 * Set an environment variable before running the app:
-		 - Linux/macOS: `export CKEditor__LicenseKey="your-key"`
-		 - Windows (Powershell): `$Env:CKEditor__LicenseKey = "your-key"`
-	 * Or put a non‑secret placeholder in `appsettings.Development.json` (avoid committing real keys).

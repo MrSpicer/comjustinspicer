@@ -2,16 +2,19 @@ using Microsoft.AspNetCore.Mvc;
 using Comjustinspicer.Data.ContentBlock;
 using Comjustinspicer.Models.ContentBlock;
 using System.Threading;
+using AutoMapper;
 
 namespace Comjustinspicer.ViewComponents;
 
 public class ContentBlockViewComponent : ViewComponent
 {
 	private readonly IContentBlockModel _model;
+	private readonly IMapper _mapper;
 
-	public ContentBlockViewComponent(IContentBlockModel model)
+	public ContentBlockViewComponent(IContentBlockModel model, IMapper mapper)
 	{
 		_model = model ?? throw new ArgumentNullException(nameof(model));
+		_mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 	}
 
 /// <summary>
@@ -32,7 +35,7 @@ public class ContentBlockViewComponent : ViewComponent
 			return View(new ContentBlockViewModel { Id = contentBlockID });
 		}
 
-		var vm = ContentBlockViewModel.FromDto(model);
+        var vm = _mapper.Map<ContentBlockViewModel>(model);
 
 		return View(vm);
 	}

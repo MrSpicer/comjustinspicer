@@ -1,15 +1,18 @@
 using Comjustinspicer.Data.Blog.Models;
 using Comjustinspicer.Data.Blog;
+using AutoMapper;
 
 namespace Comjustinspicer.Models.Blog;
 
 public sealed class BlogModel : IBlogModel
 {
     private readonly IPostService _postService;
+    private readonly IMapper _mapper;
 
-    public BlogModel(IPostService postService)
+    public BlogModel(IPostService postService, IMapper mapper)
     {
         _postService = postService ?? throw new ArgumentNullException(nameof(postService));
+        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
     public async Task<BlogViewModel> GetIndexViewModelAsync(CancellationToken ct = default)
@@ -18,7 +21,7 @@ public sealed class BlogModel : IBlogModel
         var posts = await _postService.GetAllAsync(ct);
         vm.Posts = posts
             .Where(p => p.PublicationDate <= DateTime.UtcNow)
-            .Select(p => new PostViewModel(p))
+            .Select(p => _mapper.Map<PostViewModel>(p))
             .ToList();
         return vm;
     }
@@ -30,14 +33,14 @@ public sealed class BlogModel : IBlogModel
         var post = await _postService.GetByIdAsync(id.Value, ct);
         if (post == null) return null;
 
-        return PostUpsertViewModel.FromDto(post);
+    return _mapper.Map<PostUpsertViewModel>(post);
     }
 
     public async Task<(bool Success, string? ErrorMessage)> SaveUpsertAsync(PostUpsertViewModel model, CancellationToken ct = default)
     {
         if (model == null) throw new ArgumentNullException(nameof(model));
 
-        var dto = model.ToDto();
+    var dto = _mapper.Map<PostDTO>(model);
 
         if (model.Id == null || model.Id == Guid.Empty)
         {

@@ -8,6 +8,11 @@ using Microsoft.AspNetCore.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAutoMapper(cfg =>
+{
+    cfg.AddProfile(new MappingProfile());
+});
+
 MapTypes(builder.Services);
 
 ConfigureDatabaseServices(builder.Services, builder.Configuration);
