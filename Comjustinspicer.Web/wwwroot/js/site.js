@@ -57,41 +57,66 @@ const {
 	RemoveFormat,
 	Highlight,
 	SourceEditing,
-	HtmlEmbed
+	HtmlEmbed,
+	GeneralHtmlSupport
 } = CKEDITOR;
 
-//todo: licenseKey needs to move!
-//todo: source edit doesn't wok very well. fix or find way to disable CKEditor for source editing
-ClassicEditor
-	.create(document.querySelector('#editor'), {
-		licenseKey: 'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3NjAzOTk5OTksImp0aSI6IjI4MDYxN2JjLTYzZTYtNDJmOS04NzMzLWU5NDJlZGE3OTA0YSIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiLCJzaCJdLCJ3aGl0ZUxhYmVsIjp0cnVlLCJsaWNlbnNlVHlwZSI6InRyaWFsIiwiZmVhdHVyZXMiOlsiKiJdLCJ2YyI6IjY1Y2YzNjZkIn0.2vMMmO9Luc_YFq6pmwB7Fv8FMhY170J2eIdfSXHFlwPj0B7idS1mV8SbWDSaSzdsEJTIj2TnrttioWEeliVVtg',
-		plugins: [
-			Essentials, Bold, Italic, Underline, Strikethrough, Code, BlockQuote,
-			Heading, Link, List, Indent, IndentBlock, Paragraph,
-			Font, FontSize, FontFamily, FontColor, FontBackgroundColor, Alignment,
-			Table, TableToolbar, CodeBlock, HorizontalLine, SpecialCharacters,
-			RemoveFormat, Highlight, SourceEditing, HtmlEmbed
-		],
-		toolbar: [
-			'htmlEmbed',
-			'undo', 'redo', '|',
-			'heading', '|',
-			'bold', 'italic', 'underline', 'strikethrough', 'removeFormat', '|',
-			'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'highlight', '|',
-			'link', 'bulletedList', 'numberedList', 'indent', '|',
-			'blockQuote', 'code', 'codeBlock', '|',
-			'insertTable', 'horizontalLine', '|',
-			'specialCharacters', '|',
-			'alignment', '|',
-			'undo', 'redo', '|',
-			'sourceEditing'
-		],
-		table: {
-			contentToolbar: [ 'tableColumn', 'tableRow', 'mergeTableCells' ]
-		}
-	})
-	.catch( 
-		error => console.log(error)
-	);
+// CKEditor dynamic configuration (license key injected server-side)
+(() => {
+	const editorElement = document.querySelector('#editor');
+	if (!editorElement) {
+		return; // No editor on this page.
+	}
+
+	const ckLicenseKey = (window.__APP_CONFIG__ && window.__APP_CONFIG__.ckEditorLicenseKey)
+		|| (document.querySelector('meta[name="ckeditor-license-key"]')?.content)
+		|| '';
+
+	if (!ckLicenseKey) {
+		console.warn('CKEditor license key not configured. Proceeding without it.');
+	}
+
+	if (ckLicenseKey) {
+	ClassicEditor
+		.create(editorElement, {
+			licenseKey: ckLicenseKey,
+			plugins: [
+				Essentials, Bold, Italic, Underline, Strikethrough, Code, BlockQuote,
+				Heading, Link, List, Indent, IndentBlock, Paragraph,
+				Font, FontSize, FontFamily, FontColor, FontBackgroundColor, Alignment,
+				Table, TableToolbar, CodeBlock, HorizontalLine, SpecialCharacters,
+				RemoveFormat, Highlight, SourceEditing, HtmlEmbed, GeneralHtmlSupport
+			],
+			toolbar: [
+				'htmlEmbed',
+				'undo', 'redo', '|',
+				'heading', '|',
+				'bold', 'italic', 'underline', 'strikethrough', 'removeFormat', '|',
+				'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'highlight', '|',
+				'link', 'bulletedList', 'numberedList', 'indent', '|',
+				'blockQuote', 'code', 'codeBlock', '|',
+				'insertTable', 'horizontalLine', '|',
+				'specialCharacters', '|',
+				'alignment', '|',
+				'undo', 'redo', '|',
+				'sourceEditing'
+			],
+			table: {
+				contentToolbar: [ 'tableColumn', 'tableRow', 'mergeTableCells' ]
+			},
+			htmlSupport: {
+				allow: [
+					{
+						name: /.*/,
+						attributes: true,
+						classes: true,
+						styles: true
+					}
+				]
+			}
+		})
+		.catch(error => console.log(error));
+	}
+})();
 
 //end CKEditor

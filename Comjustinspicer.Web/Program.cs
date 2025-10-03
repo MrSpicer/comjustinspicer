@@ -63,6 +63,7 @@ static void ConfigureSerilog(ConfigurationManager configuration, WebApplicationB
         .Enrich.FromLogContext()
         .WriteTo.Console();
 
+//todo: fix this. always log to db
     if (!runningInContainer)
     {
         // Keep a rolling file sink for local troubleshooting only

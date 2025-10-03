@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+
+<!DOCTYPE html>
 <html lang="en">
 
 @{
@@ -18,6 +20,13 @@
 
 	@if (isAuthor)
 	{
+		<meta name="ckeditor-license-key" content="@Configuration["CKEditor:LicenseKey"]" />
+		<script>
+			window.__APP_CONFIG__ = Object.assign({}, window.__APP_CONFIG__, {
+				ckEditorLicenseKey: "@Configuration["CKEditor:LicenseKey"]"
+			});
+		</script>
+
 		<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/46.1.1/ckeditor5.css" />
 	}
 </head>
@@ -33,8 +42,7 @@
 		</main>
 
 		<footer class="footer mt-auto pb-0 mb-0" style="background-color: white;">
-			@await Component.InvokeAsync("ContentBlock", new { contentBlockID = new
-			Guid("f1858727-4931-4505-83cb-8c4fd2aeb0e1") })
+			<partial name="_Footer" />
 		</footer>
 	</div>
 
