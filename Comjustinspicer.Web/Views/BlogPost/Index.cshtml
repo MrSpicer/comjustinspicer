@@ -1,4 +1,7 @@
+@using Comjustinspicer.Services;
 @model Comjustinspicer.Models.Blog.PostViewModel?
+
+@inject UserService UserService
 
 @{
     if (Model == null)
@@ -11,7 +14,7 @@
         return;
     }
 
-    var isAuthor = User?.Identity?.IsAuthenticated == true && (User.IsInRole("Admin") || User.IsInRole("Editor"));
+    var isAuthor = UserService.IsUserAuthor;
 
     ViewData["Title"] = Model.Title;
 }

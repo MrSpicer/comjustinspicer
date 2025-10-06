@@ -6,6 +6,7 @@ using Comjustinspicer.Models.ContentBlock;
 namespace Comjustinspicer.Controllers;
 
 [Authorize(Roles = "Admin")]
+[Route("admin")]
 public class AdminContentBlockController : Controller
 {
     private readonly Serilog.ILogger _logger = Serilog.Log.ForContext<AdminContentBlockController>();
@@ -18,14 +19,14 @@ public class AdminContentBlockController : Controller
     }
 
     // List all content blocks for admin management
-    [HttpGet("admin/contentblocks")]
+    [HttpGet("contentblocks")]
     public async Task<IActionResult> Index()
     {
         var all = await _model.GetAllAsync();
         return View("ContentBlocks", all);
     }
 
-    [HttpGet("admin/contentblocks/edit/{id?}")]
+    [HttpGet("contentblocks/edit/{id?}")]
     public async Task<IActionResult> Edit(Guid? id, string? returnUrl)
     {
         var vm = await _model.GetUpsertModelAsync(id);
@@ -33,7 +34,7 @@ public class AdminContentBlockController : Controller
         return View("ContentBlockUpsert", vm);
     }
 
-    [HttpPost("admin/contentblocks/edit/{id?}")]
+    [HttpPost("contentblocks/edit/{id?}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Data.ContentBlock.Models.ContentBlockDTO model, string? returnUrl)
     {
@@ -59,7 +60,7 @@ public class AdminContentBlockController : Controller
         return RedirectToAction("Index");
     }
 
-    [HttpPost("admin/contentblocks/delete/{id}")]
+    [HttpPost("contentblocks/delete/{id}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(Guid id)
     {

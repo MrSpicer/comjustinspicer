@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Comjustinspicer.Data.Blog.Models;
+using Comjustinspicer.Data.DbContexts;
 
 namespace Comjustinspicer.Data.Blog;
 
 /// <summary>
 /// Thin service providing basic CRUD operations for blog posts.
-/// This is intentionally small and forwards calls to <see cref="BlogContext"/>.
 /// </summary>
 public sealed class PostService : IPostService
 {

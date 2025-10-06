@@ -1,7 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using Comjustinspicer.Services;
+@inject UserService UserService
 
 @{
-    var isAuthor = User?.Identity?.IsAuthenticated == true && (User.IsInRole("Admin") || User.IsInRole("Editor"));
+    var isAuthor = UserService.IsUserAuthor;
 }
 
 <nav class="navbar" role="navigation" aria-label="main navigation">

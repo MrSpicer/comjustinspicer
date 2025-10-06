@@ -12,6 +12,7 @@ public class LayoutViewComponent : ViewComponent
 {
 	public async Task<IViewComponentResult> InvokeAsync(string layoutName)
 	{
+		await Task.Delay(0);
 		return View(layoutName);
 	}
 }

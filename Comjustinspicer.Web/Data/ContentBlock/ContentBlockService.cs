@@ -1,12 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using Comjustinspicer.Data.ContentBlock;
+using Comjustinspicer.Data.DbContexts;
 using Comjustinspicer.Data.ContentBlock.Models;
 
 namespace Comjustinspicer.Data.ContentBlock;
 
 /// <summary>
 /// Thin service providing basic CRUD operations for content blocks.
-/// Mirrors the patterns used in <see cref="Comjustinspicer.Data.Models.Blog.PostService"/>.
 /// </summary>
 public sealed class ContentBlockService : IContentBlockService
 {

@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Comjustinspicer.Data.ContentBlock.Models;
 
-namespace Comjustinspicer.Data;
+namespace Comjustinspicer.Data.DbContexts;
 
 public class ContentBlockContext : DbContext
 {

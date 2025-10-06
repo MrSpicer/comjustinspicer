@@ -1,10 +1,12 @@
 ﻿@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@using Comjustinspicer.Services;
+@inject UserService UserService
 
 <!DOCTYPE html>
 <html lang="en">
 
 @{
-	var isAuthor = User?.Identity?.IsAuthenticated == true && (User.IsInRole("Admin") || User.IsInRole("Editor"));
+	var isAuthor = UserService.IsUserAuthor;
 }
 
 <head>

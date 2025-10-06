@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Comjustinspicer.Data.Blog.Models;
 
-namespace Comjustinspicer.Data;
+namespace Comjustinspicer.Data.DbContexts;
 
 public class BlogContext : DbContext
 {

@@ -13,7 +13,7 @@ CC BY-SA 4.0
 
 ### Dependencies
 * [dotnet sdk](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-* dotnet-ef (optional)- ```dotnet tool install --global dotnet-ef```
+* dotnet-ef (optional) - ```dotnet tool install --global dotnet-ef```
 
 ## Setup
 
@@ -30,7 +30,7 @@ chmod +x ./Scripts/*
 
 ### Run Tests
 ```
-./Scripts/RunTests.sh
+./Scripts/TestsRun.sh
 ```
 
 ## Docker
@@ -46,6 +46,7 @@ docker run --rm -p 8080:8080 \
   -e AdminUser__Email="${ADMIN_EMAIL}" \
   -e AdminUser__Password="${ADMIN_PASSWORD}" \
   -e CKEditor__LicenseKey="${CKEDITOR_LICENSE_KEY}" \
+  -e AutoMapper__LicenseKey="${AUTOMAPPER_LICENSE_KEY}" \
   -v appdata:/data \
   comjustinspicer-web
   ```
@@ -59,6 +60,7 @@ dotnet user-secrets set "AdminUser:Email" "<you@example.com>" --project Comjusti
 dotnet user-secrets set "AdminUser:Password" "<ChangeThisStrongPassword!>" --project Comjustinspicer.Web
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "DataSource=app.db;Cache=Shared" --project Comjustinspicer.Web
 dotnet user-secrets set "CKEditor:LicenseKey" "<your-dev-license>" --project Comjustinspicer.Web
+dotnet user-secrets set "AutoMapper:LicenseKey" "<your-dev-license>" --project Comjustinspicer.Web
 ```
 
 ### GitHub
@@ -67,4 +69,5 @@ ADMIN_EMAIL
 ADMIN_PASSWORD
 CONNECTION_STRING
 CKEDITOR_LICENSE_KEY
+AUTOMAPPER_LICENSE_KEY
 ```

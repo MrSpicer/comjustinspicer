@@ -4,14 +4,9 @@ using Comjustinspicer.Data;
 using Serilog;
 using Serilog.Events;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Hosting;
+using Comjustinspicer.Data.DbContexts;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddAutoMapper(cfg =>
-{
-    cfg.AddProfile(new MappingProfile());
-});
 
 MapTypes(builder.Services);
 
@@ -126,6 +121,13 @@ static void MapTypes(IServiceCollection services)
     // Register blog model which encapsulates business logic for the BlogController
     services.AddScoped<Comjustinspicer.Models.Blog.IBlogModel, Comjustinspicer.Models.Blog.BlogModel>();
     services.AddScoped<Comjustinspicer.Models.Blog.IBlogPostModel, Comjustinspicer.Models.Blog.BlogPostModel>();
+
+    services.AddSingleton<Comjustinspicer.Services.UserService>();
+
+    services.AddAutoMapper(cfg =>
+{
+    cfg.AddProfile(new MappingProfile());
+});
 }
 
 static void ConfigureAuthorization(IServiceCollection services)

@@ -1,7 +1,10 @@
+@using Comjustinspicer.Services;
+@inject UserService UserService
+
 @{
 	ViewData["Title"] = "Blog";
 
-	var isAuthor = User?.Identity?.IsAuthenticated == true && (User.IsInRole("Admin") || User.IsInRole("Editor"));
+	var isAuthor = UserService.IsUserAuthor;
 }
 @using Comjustinspicer.Models.Blog
 @model Comjustinspicer.Models.Blog.BlogViewModel

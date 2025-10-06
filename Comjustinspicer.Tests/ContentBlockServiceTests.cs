@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
-using Comjustinspicer.Data;
+using Comjustinspicer.Data.DbContexts;
 using Comjustinspicer.Data.ContentBlock;
 using Comjustinspicer.Data.ContentBlock.Models;
 using System.Threading;
@@ -25,24 +25,6 @@ public class ContentBlockServiceTests
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
     }
-
-    // [SetUp]
-    // public void Setup()
-    // {
-    //     // Configure AutoMapper here. 
-    //     // You can add individual profiles or scan for profiles in an assembly.
-    //     //todo: maybe a better way to do the logfactory
-    //     _config = new MapperConfiguration(cfg =>
-    //     {
-    //         // Example: Adding a specific profile
-    //         cfg.AddProfile<MappingProfile>();
-
-    //         // Example: Scanning an assembly for all profiles
-    //         // cfg.AddMaps(typeof(MyApplicationProfile).Assembly); 
-    //     }, LoggerFactory.Create(builder => builder.AddConsole()));
-
-    //     _mapper = _config.CreateMapper();
-    // }
 
     [Test]
     public async Task Upsert_Create_Read_Update_Delete_Flow()
