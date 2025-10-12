@@ -1,0 +1,58 @@
+@using Comjustinspicer.CMS.Data.ContentBlock.Models
+@model ContentBlockDTO
+
+@{
+    ViewData["Title"] = Model.Id == Guid.Empty ? "New Content Block" : "Edit Content Block";
+	if(Model.Id == Guid.Empty)
+	{
+		Model.Id = Guid.NewGuid();
+	}
+}
+
+<section class="section">
+	<div class="container">
+		<h1 class="title">@ViewData["Title"]</h1>
+		<h2 class="subtitle">@Model.Id</h2>
+		<form asp-action="Edit" method="post">
+			@Html.AntiForgeryToken()
+			@*todo: Is this really needed? can't we just use the querystring?*@
+			@{
+				var returnUrl = ViewData["ReturnUrl"] as string ?? Context.Request.Query["returnUrl"].FirstOrDefault();
+			}
+			@if(!string.IsNullOrWhiteSpace(returnUrl))
+			{
+				<input type="hidden" name="returnUrl" value="@returnUrl" />
+			}
+			<input class="input" type="hidden" asp-for="Id" />
+			<div class="field">
+				<label class="label">Title</label>
+				<div class="control">
+					<input class="input" asp-for="Title" />
+				</div>
+			</div>
+
+			<div class="field">
+				<label class="label">Content (HTML)</label>
+				<div class="control">
+					<textarea id="editor" class="textarea" asp-for="Content"></textarea>
+				</div>
+			</div>
+
+			<div class="field is-grouped">
+				<div class="control">
+					<button class="button is-primary" type="submit">Save</button>
+				</div>
+				<div class="control">
+					@if(!string.IsNullOrWhiteSpace(returnUrl))
+					{
+						<a href="@returnUrl" class="button">Cancel</a>
+					}
+					else
+					{
+						<a asp-action="Index" class="button">Cancel</a>
+					}
+				</div>
+			</div>
+		</form>
+	</div>
+</section>

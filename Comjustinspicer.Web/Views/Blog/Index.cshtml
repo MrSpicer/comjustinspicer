@@ -1,13 +1,14 @@
-@using Comjustinspicer.Services;
-@inject UserService UserService
+@model Comjustinspicer.Models.Blog.BlogViewModel
+@using Comjustinspicer.CMS.Services;
+@using Comjustinspicer.Models.Blog
+@inject UserService UserService;
 
 @{
 	ViewData["Title"] = "Blog";
 
 	var isAuthor = UserService.IsUserAuthor;
 }
-@using Comjustinspicer.Models.Blog
-@model Comjustinspicer.Models.Blog.BlogViewModel
+
 
 <section class="section">
 	<div class="container">

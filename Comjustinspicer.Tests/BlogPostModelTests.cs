@@ -4,10 +4,9 @@ using System.Threading.Tasks;
 using System.Threading;
 using System;
 using Comjustinspicer.Models.Blog;
-using Comjustinspicer.Data.Blog;
-using Comjustinspicer.Data.Blog.Models;
+using Comjustinspicer.CMS.Data.Blog;
+using Comjustinspicer.CMS.Data.Blog.Models;
 using AutoMapper;
-using Comjustinspicer.Data;
 using Microsoft.Extensions.Logging;
 
 namespace Comjustinspicer.Tests;

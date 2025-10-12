@@ -1,0 +1,12 @@
+@model Comjustinspicer.CMS.Models.ContentZone.ContentZoneViewModel
+@using Comjustinspicer.CMS.Models.ContentZone
+@{
+
+}
+
+@foreach(var obj in Model.ZoneObjects)
+{
+	<div class="zone-object mb-5">
+		@await Component.InvokeAsync(obj.ComponentName, obj.ComponentProperties)
+	</div>
+}

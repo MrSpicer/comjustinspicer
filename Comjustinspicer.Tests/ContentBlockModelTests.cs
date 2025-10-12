@@ -5,13 +5,15 @@ using System.Threading;
 using System;
 using System.Collections.Generic;
 using AutoMapper;
-using Comjustinspicer.Models.ContentBlock;
-using Comjustinspicer.Data.ContentBlock;
-using Comjustinspicer.Data.ContentBlock.Models;
-using Comjustinspicer.Data;
+using Comjustinspicer.CMS.Models.ContentBlock;
+using Comjustinspicer.CMS.Data.ContentBlock;
+using Comjustinspicer.CMS.Data.ContentBlock.Models;
+using Comjustinspicer.CMS.Data;
 using Microsoft.Extensions.Logging;
 
 namespace Comjustinspicer.Tests;
+
+//todo: seperate out out DTO and Model tests
 
 [TestFixture]
 public class ContentBlockModelTests

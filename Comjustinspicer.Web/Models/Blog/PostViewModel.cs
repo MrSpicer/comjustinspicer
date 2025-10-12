@@ -1,6 +1,3 @@
-using System;
-using Comjustinspicer.Data.Blog.Models;
-
 namespace Comjustinspicer.Models.Blog;
 
 
@@ -13,6 +10,8 @@ public sealed class PostViewModel
     public string AuthorName { get; init; } = string.Empty;
     public DateTime ModificationDate { get; init; }
     public DateTime CreationDate { get; init; }
+
+    //todo: delete?
     // Parameterless for AutoMapper
     public PostViewModel() { }
 }

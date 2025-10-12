@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Comjustinspicer.Web\Comjustinspicer.Web.csproj" />
+    <ProjectReference Include="..\Comjustinspicer.CMS\Comjustinspicer.CMS.csproj" />
   </ItemGroup>
 
 </Project>

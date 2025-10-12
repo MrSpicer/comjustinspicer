@@ -5,9 +5,8 @@ using System.Threading;
 using System;
 using System.Collections.Generic;
 using Comjustinspicer.Models.Blog;
-using Comjustinspicer.Data.Blog;
-using Comjustinspicer.Data.Blog.Models;
-using Comjustinspicer.Data;
+using Comjustinspicer.CMS.Data.Blog;
+using Comjustinspicer.CMS.Data.Blog.Models;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 

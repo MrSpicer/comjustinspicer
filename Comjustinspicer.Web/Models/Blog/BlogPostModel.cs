@@ -1,5 +1,5 @@
-using Comjustinspicer.Data.Blog;
-using Comjustinspicer.Data.Blog.Models;
+using Comjustinspicer.CMS.Data.Blog;
+using Comjustinspicer.CMS.Data.Blog.Models;
 using AutoMapper;
 
 namespace Comjustinspicer.Models.Blog;

@@ -1,5 +1,6 @@
 ﻿@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
-@using Comjustinspicer.Services;
+@using Comjustinspicer.CMS.Services;
+@using Comjustinspicer.CMS.ViewComponents
 @inject UserService UserService
 
 <!DOCTYPE html>
@@ -54,7 +55,10 @@
 	}
 
 	<script src="~/js/site.js" asp-append-version="true"></script>
-
+	@if (isAuthor)
+	{
+	<script src="~/js/admin.js" asp-append-version="true"></script>
+	}
 
 	@await RenderSectionAsync("Scripts", required: false)
 </body>

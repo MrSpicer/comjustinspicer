@@ -1,9 +1,9 @@
 using NUnit.Framework;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
-using Comjustinspicer.Data.DbContexts;
-using Comjustinspicer.Data.ContentBlock;
-using Comjustinspicer.Data.ContentBlock.Models;
+using Comjustinspicer.CMS.Data.DbContexts;
+using Comjustinspicer.CMS.Data.ContentBlock;
+using Comjustinspicer.CMS.Data.ContentBlock.Models;
 using System.Threading;
 using System.Threading.Tasks;
 using System;

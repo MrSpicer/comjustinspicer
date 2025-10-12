@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using Comjustinspicer.Data.Blog.Models;
 
 namespace Comjustinspicer.Models.Blog;
 

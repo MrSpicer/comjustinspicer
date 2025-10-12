@@ -1,0 +1,45 @@
+@using Comjustinspicer.CMS.Data.ContentBlock.Models
+
+@model List<ContentBlockDTO>
+
+@{
+    ViewData["Title"] = "Content Blocks";
+}
+
+<section class="section">
+	<div class="container">
+		<h1 class="title">Content Blocks</h1>
+
+		<a asp-controller="AdminContentBlock" asp-action="Edit" class="button">New +</a>
+
+		<table class="table is-fullwidth is-striped">
+			<thead>
+				<tr>
+					<th>Title</th>
+					<th>Id</th>
+					<th>Created</th>
+					<th>Modified</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var cb in Model)
+				{
+					<tr>
+						<td>@cb.Title</td>
+						<td>@cb.Id</td>
+						<td>@cb.CreationDate.ToString("yyyy-MM-dd hh:mm")</td>
+						<td>@cb.ModificationDate.ToString("yyyy-MM-dd hh:mm")</td>
+						<td>
+							<a asp-controller="AdminContentBlock" asp-action="Edit" asp-route-id="@cb.Id" class="button is-small">Edit</a>
+							<form asp-controller="AdminContentBlock" asp-action="Delete" asp-route-id="@cb.Id" method="post" style="display:inline">
+								@Html.AntiForgeryToken()
+								<button type="submit" class="button is-small is-danger" onclick="return confirm('Delete this content block?');">Delete</button>
+							</form>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</section>

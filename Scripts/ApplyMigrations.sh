@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cd ./Comjustinspicer.Web/
+cd ./Comjustinspicer.CMS/
 echo "Applying BlogContext migrations" &&
 dotnet ef database update -c BlogContext &&
 echo "Applying ApplicationDbContext migrations" &&

@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using Comjustinspicer.Services;
+@using Comjustinspicer.CMS.Services;
+
 @inject UserService UserService
 
 @{
@@ -34,9 +35,10 @@
                 Blog
             </a>
 
-            <a class="navbar-item" href="https://github.com/MrSpicer/Resume_public/blob/main/justin_resume.pdf">
+            @*Todo: readd as data*@
+            @* <a class="navbar-item" href="https://github.com/MrSpicer/Resume_public/blob/main/justin_resume.pdf">
                 Resume
-            </a>
+            </a> *@
 
             @if (isAuthor)
             {

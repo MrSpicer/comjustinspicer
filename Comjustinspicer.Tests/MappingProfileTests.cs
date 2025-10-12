@@ -1,6 +1,6 @@
 using AutoMapper;
 using NUnit.Framework;
-using Comjustinspicer.Data;
+using Comjustinspicer.CMS.Data;
 using Serilog;
 using Microsoft.Extensions.Logging;
 

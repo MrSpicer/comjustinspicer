@@ -8,6 +8,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8E5B59E0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comjustinspicer.Tests", "Comjustinspicer.Tests\Comjustinspicer.Tests.csproj", "{1EA85F29-71FC-452A-A39B-3C19BEAFEBAA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comjustinspicer.CMS", "Comjustinspicer.CMS\Comjustinspicer.CMS.csproj", "{4D24E8F7-3F2E-4E8D-A1C2-8E3F6B1F9A11}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,6 +24,10 @@ Global
 		{1EA85F29-71FC-452A-A39B-3C19BEAFEBAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1EA85F29-71FC-452A-A39B-3C19BEAFEBAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1EA85F29-71FC-452A-A39B-3C19BEAFEBAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D24E8F7-3F2E-4E8D-A1C2-8E3F6B1F9A11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D24E8F7-3F2E-4E8D-A1C2-8E3F6B1F9A11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D24E8F7-3F2E-4E8D-A1C2-8E3F6B1F9A11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D24E8F7-3F2E-4E8D-A1C2-8E3F6B1F9A11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

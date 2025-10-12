@@ -1,0 +1,18 @@
+@model Comjustinspicer.CMS.Models.ContentBlock.ContentBlockViewModel
+@using Comjustinspicer.CMS.Services
+@inject UserService UserService
+
+@{
+    var isAuthor = UserService.IsUserAuthor;
+}
+
+@if (isAuthor && Model.Id != Guid.Empty)
+{
+    var currentUrl = Context.Request.Path + Context.Request.QueryString;
+    <a href='@Url.Action("Edit", "AdminContentBlock", new { id = Model.Id, returnUrl = currentUrl })' class="button is-small">Edit</a>
+}
+
+@if(!string.IsNullOrWhiteSpace(Model?.Content))
+{
+    @Html.Raw(Model.Content)
+}
