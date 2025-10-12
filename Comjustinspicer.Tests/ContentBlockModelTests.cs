@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using AutoMapper;
 using Comjustinspicer.CMS.Models.ContentBlock;
-using Comjustinspicer.CMS.Data.ContentBlock;
+using Comjustinspicer.CMS.Data.Services;
 using Comjustinspicer.CMS.Data.ContentBlock.Models;
 using Comjustinspicer.CMS.Data;
 using Microsoft.Extensions.Logging;
@@ -51,7 +51,7 @@ public class ContentBlockModelTests
     [Test]
     public void FromIdAsync_Empty_Throws()
     {
-        var svc = new Mock<IContentBlockService>();
+    var svc = new Mock<IContentService<ContentBlockDTO>>();
         var model = new ContentBlockModel(svc.Object);
         Assert.ThrowsAsync<ArgumentException>(async () => await model.FromIdAsync(Guid.Empty));
     }
@@ -60,7 +60,7 @@ public class ContentBlockModelTests
     public async Task FromIdAsync_Found_ReturnsDto()
     {
         var dto = CreateDto();
-        var svc = new Mock<IContentBlockService>();
+    var svc = new Mock<IContentService<ContentBlockDTO>>();
         svc.Setup(s => s.GetByIdAsync(dto.Id, It.IsAny<CancellationToken>())).ReturnsAsync(dto);
         var model = new ContentBlockModel(svc.Object);
         var result = await model.FromIdAsync(dto.Id);
@@ -72,7 +72,7 @@ public class ContentBlockModelTests
     public async Task GetAllAsync_ReturnsList()
     {
         var list = new List<ContentBlockDTO> { CreateDto() };
-        var svc = new Mock<IContentBlockService>();
+    var svc = new Mock<IContentService<ContentBlockDTO>>();
         svc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(list);
         var model = new ContentBlockModel(svc.Object);
         var result = await model.GetAllAsync();
@@ -82,7 +82,7 @@ public class ContentBlockModelTests
     [Test]
     public async Task GetUpsertModelAsync_NullId_ReturnsEmptyDto()
     {
-        var svc = new Mock<IContentBlockService>();
+    var svc = new Mock<IContentService<ContentBlockDTO>>();
         var model = new ContentBlockModel(svc.Object);
         var dto = await model.GetUpsertModelAsync(null);
         Assert.That(dto, Is.Not.Null);
@@ -92,9 +92,9 @@ public class ContentBlockModelTests
     [Test]
     public async Task GetUpsertModelAsync_NotFound_ReturnsEmptyDto()
     {
-        var svc = new Mock<IContentBlockService>();
+        var svc = new Mock<IContentService<ContentBlockDTO>>();
         svc.Setup(s => s.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((ContentBlockDTO?)null);
+            .ReturnsAsync(null as ContentBlockDTO);
         var model = new ContentBlockModel(svc.Object);
         var dto = await model.GetUpsertModelAsync(Guid.NewGuid());
         Assert.That(dto, Is.Not.Null);
@@ -105,7 +105,7 @@ public class ContentBlockModelTests
     public async Task GetUpsertModelAsync_Found_ReturnsDto()
     {
         var dto = CreateDto();
-        var svc = new Mock<IContentBlockService>();
+    var svc = new Mock<IContentService<ContentBlockDTO>>();
         svc.Setup(s => s.GetByIdAsync(dto.Id, It.IsAny<CancellationToken>())).ReturnsAsync(dto);
         var model = new ContentBlockModel(svc.Object);
         var result = await model.GetUpsertModelAsync(dto.Id);
@@ -116,7 +116,7 @@ public class ContentBlockModelTests
     [Test]
     public async Task SaveUpsertAsync_Success()
     {
-        var svc = new Mock<IContentBlockService>();
+        var svc = new Mock<IContentService<ContentBlockDTO>>();
         svc.Setup(s => s.UpsertAsync(It.IsAny<ContentBlockDTO>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
         var model = new ContentBlockModel(svc.Object);
@@ -129,7 +129,7 @@ public class ContentBlockModelTests
     [Test]
     public async Task SaveUpsertAsync_Failure()
     {
-        var svc = new Mock<IContentBlockService>();
+        var svc = new Mock<IContentService<ContentBlockDTO>>();
         svc.Setup(s => s.UpsertAsync(It.IsAny<ContentBlockDTO>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
         var model = new ContentBlockModel(svc.Object);
@@ -142,7 +142,7 @@ public class ContentBlockModelTests
     [Test]
     public void SaveUpsertAsync_Null_Throws()
     {
-        var svc = new Mock<IContentBlockService>();
+    var svc = new Mock<IContentService<ContentBlockDTO>>();
         var model = new ContentBlockModel(svc.Object);
         Assert.ThrowsAsync<ArgumentNullException>(async () => await model.SaveUpsertAsync(null!));
     }
@@ -150,7 +150,7 @@ public class ContentBlockModelTests
     [Test]
     public async Task DeleteAsync_Delegates()
     {
-        var svc = new Mock<IContentBlockService>();
+    var svc = new Mock<IContentService<ContentBlockDTO>>();
         svc.Setup(s => s.DeleteAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
         var model = new ContentBlockModel(svc.Object);
         var ok = await model.DeleteAsync(Guid.NewGuid());

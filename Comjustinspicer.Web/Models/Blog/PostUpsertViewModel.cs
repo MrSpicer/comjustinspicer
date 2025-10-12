@@ -20,4 +20,6 @@ public sealed class PostUpsertViewModel
     [StringLength(200)]
     public string AuthorName { get; init; } = string.Empty;
 
+    public bool IsPublished { get; init; } = false;
+
 }

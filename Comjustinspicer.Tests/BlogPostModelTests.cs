@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using System.Threading;
 using System;
 using Comjustinspicer.Models.Blog;
-using Comjustinspicer.CMS.Data.Blog;
 using Comjustinspicer.CMS.Data.Blog.Models;
+using Comjustinspicer.CMS.Data.Services;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 
@@ -49,9 +49,9 @@ public class BlogPostModelTests
     [Test]
     public async Task GetPostViewModelAsync_NotFound_ReturnsNull()
     {
-        var svc = new Mock<IPostService>();
+        var svc = new Mock<IContentService<PostDTO>>();
         svc.Setup(s => s.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((PostDTO?)null);
+            .ReturnsAsync(null as PostDTO);
         var model = new BlogPostModel(svc.Object, _mapper);
         var result = await model.GetPostViewModelAsync(Guid.NewGuid());
         Assert.That(result, Is.Null);
@@ -61,7 +61,7 @@ public class BlogPostModelTests
     public async Task GetPostViewModelAsync_Found_ReturnsViewModel()
     {
         var post = CreatePost();
-        var svc = new Mock<IPostService>();
+        var svc = new Mock<IContentService<PostDTO>>();
         svc.Setup(s => s.GetByIdAsync(post.Id, It.IsAny<CancellationToken>())).ReturnsAsync(post);
         var model = new BlogPostModel(svc.Object, _mapper);
         var result = await model.GetPostViewModelAsync(post.Id);
@@ -72,7 +72,7 @@ public class BlogPostModelTests
     [Test]
     public async Task GetUpsertViewModelAsync_NullId_ReturnsEmptyModel()
     {
-        var svc = new Mock<IPostService>();
+        var svc = new Mock<IContentService<PostDTO>>();
         var model = new BlogPostModel(svc.Object, _mapper);
         var vm = await model.GetUpsertViewModelAsync(null);
         Assert.That(vm, Is.Not.Null);
@@ -82,9 +82,9 @@ public class BlogPostModelTests
     [Test]
     public async Task GetUpsertViewModelAsync_NotFound_ReturnsNull()
     {
-        var svc = new Mock<IPostService>();
+        var svc = new Mock<IContentService<PostDTO>>();
         svc.Setup(s => s.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((PostDTO?)null);
+            .ReturnsAsync(null as PostDTO);
         var model = new BlogPostModel(svc.Object, _mapper);
         var vm = await model.GetUpsertViewModelAsync(Guid.NewGuid());
         Assert.That(vm, Is.Null);
@@ -94,7 +94,7 @@ public class BlogPostModelTests
     public async Task GetUpsertViewModelAsync_Found_ReturnsMapped()
     {
         var post = CreatePost();
-        var svc = new Mock<IPostService>();
+        var svc = new Mock<IContentService<PostDTO>>();
         svc.Setup(s => s.GetByIdAsync(post.Id, It.IsAny<CancellationToken>())).ReturnsAsync(post);
         var model = new BlogPostModel(svc.Object, _mapper);
         var vm = await model.GetUpsertViewModelAsync(post.Id);
@@ -105,7 +105,7 @@ public class BlogPostModelTests
     [Test]
     public async Task SaveUpsertAsync_Create_Path()
     {
-        var svc = new Mock<IPostService>();
+    var svc = new Mock<IContentService<PostDTO>>();
         svc.Setup(s => s.CreateAsync(It.IsAny<PostDTO>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((PostDTO p, CancellationToken _) => p);
         var model = new BlogPostModel(svc.Object, _mapper);
@@ -119,7 +119,7 @@ public class BlogPostModelTests
     [Test]
     public async Task SaveUpsertAsync_Update_Path_Success()
     {
-        var svc = new Mock<IPostService>();
+    var svc = new Mock<IContentService<PostDTO>>();
         svc.Setup(s => s.UpdateAsync(It.IsAny<PostDTO>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
         var model = new BlogPostModel(svc.Object, _mapper);
         var vm = new PostUpsertViewModel { Id = Guid.NewGuid(), Title = "T", Body = "B", AuthorName = "A", PublicationDate = DateTime.UtcNow };
@@ -132,7 +132,7 @@ public class BlogPostModelTests
     [Test]
     public async Task SaveUpsertAsync_Update_Path_Failure()
     {
-        var svc = new Mock<IPostService>();
+    var svc = new Mock<IContentService<PostDTO>>();
         svc.Setup(s => s.UpdateAsync(It.IsAny<PostDTO>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
         var model = new BlogPostModel(svc.Object, _mapper);
         var vm = new PostUpsertViewModel { Id = Guid.NewGuid(), Title = "T", Body = "B", AuthorName = "A", PublicationDate = DateTime.UtcNow };
@@ -144,7 +144,7 @@ public class BlogPostModelTests
     [Test]
     public void SaveUpsertAsync_NullModel_Throws()
     {
-        var svc = new Mock<IPostService>();
+    var svc = new Mock<IContentService<PostDTO>>();
         var model = new BlogPostModel(svc.Object, _mapper);
         Assert.ThrowsAsync<ArgumentNullException>(async () => await model.SaveUpsertAsync(null!));
     }

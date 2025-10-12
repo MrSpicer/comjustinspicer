@@ -16,7 +16,12 @@ builder.Services.AddComjustinspicerCms(builder.Configuration);
 
 builder.Host.UseCmsSerilog(builder.Configuration);
 
-MapControllers(builder.Services, builder.Configuration, builder.Environment);
+// Add MVC and enable runtime compilation for Razor views in Development so changes to .cshtml are picked up
+var mvc = builder.Services.AddControllersWithViews();
+if (builder.Environment.IsDevelopment())
+{
+    mvc.AddRazorRuntimeCompilation();
+}
 
 try
 {
@@ -24,7 +29,17 @@ try
 
     app.EnsureCMS();
 
-    ConfigureMiddleware(app);
+    if (!app.Environment.IsDevelopment())
+    {
+        // Route exceptions to centralized ErrorController
+        app.UseExceptionHandler("/Error");
+        // Route status code pages (like 404) to the ErrorController status handler
+        app.UseStatusCodePagesWithReExecute("/Error/{0}");
+    }
+
+    app.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
 
     app.Run();
 }
@@ -38,43 +53,15 @@ finally
     Log.CloseAndFlush();
 }
 
-// --- Local helper implementations ---
-
-
-static void MapControllers(IServiceCollection services, ConfigurationManager configuration, IWebHostEnvironment environment)
-{
-    // Add MVC and enable runtime compilation for Razor views in Development so changes to .cshtml are picked up
-    var mvc = services.AddControllersWithViews();
-    if (environment.IsDevelopment())
-    {
-        mvc.AddRazorRuntimeCompilation();
-    }
-}
 
 static void MapTypes(IServiceCollection services)
 {
     services.AddScoped<IBlogModel, BlogModel>();
     services.AddScoped<IBlogPostModel, BlogPostModel>();
 
-
     services.AddAutoMapper(cfg =>
     {
         cfg.AddProfile(new MappingProfile());
     });
 
-}
-
-static void ConfigureMiddleware(WebApplication app)
-{
-    if (!app.Environment.IsDevelopment())
-    {
-        // Route exceptions to centralized ErrorController
-        app.UseExceptionHandler("/Error");
-        // Route status code pages (like 404) to the ErrorController status handler
-        app.UseStatusCodePagesWithReExecute("/Error/{0}");
-    }
-
-    app.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
 }

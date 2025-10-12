@@ -1,8 +1,8 @@
 using NUnit.Framework;
 using Microsoft.EntityFrameworkCore;
 using Comjustinspicer.CMS.Data.DbContexts;
-using Comjustinspicer.CMS.Data.Blog;
 using Comjustinspicer.CMS.Data.Blog.Models;
+using Comjustinspicer.CMS.Data.Services;
 using System.Threading.Tasks;
 using System;
 
@@ -28,7 +28,7 @@ public class PostServiceTests
         PostDTO created;
         using (var ctx = new BlogContext(options))
         {
-            var svc = new PostService(ctx);
+            IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
             var post = new PostDTO
             {
                 Title = "Test Title",
@@ -45,7 +45,7 @@ public class PostServiceTests
         // Read All / ById
         using (var ctx = new BlogContext(options))
         {
-            var svc = new PostService(ctx);
+            IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
             var all = await svc.GetAllAsync();
             Assert.That(all.Count, Is.EqualTo(1));
 
@@ -57,7 +57,7 @@ public class PostServiceTests
         // Update
         using (var ctx = new BlogContext(options))
         {
-            var svc = new PostService(ctx);
+            IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
             created.Title = "Updated Title";
             var ok = await svc.UpdateAsync(created);
             Assert.That(ok, Is.True);
@@ -65,7 +65,7 @@ public class PostServiceTests
 
         using (var ctx = new BlogContext(options))
         {
-            var svc = new PostService(ctx);
+            IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
             var byId = await svc.GetByIdAsync(created.Id);
             Assert.That(byId, Is.Not.Null);
             Assert.That(byId!.Title, Is.EqualTo("Updated Title"));
@@ -74,14 +74,14 @@ public class PostServiceTests
         // Delete
         using (var ctx = new BlogContext(options))
         {
-            var svc = new PostService(ctx);
+            IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
             var ok = await svc.DeleteAsync(created.Id);
             Assert.That(ok, Is.True);
         }
 
         using (var ctx = new BlogContext(options))
         {
-            var svc = new PostService(ctx);
+            IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
             var all = await svc.GetAllAsync();
             Assert.That(all.Count, Is.EqualTo(0));
 
@@ -97,7 +97,7 @@ public class PostServiceTests
 
         using (var ctx = new BlogContext(options))
         {
-            var svc = new PostService(ctx);
+            IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
             var post = new PostDTO { Id = Guid.NewGuid(), Title = "x" };
             var ok = await svc.UpdateAsync(post);
             Assert.That(ok, Is.False);
@@ -111,7 +111,7 @@ public class PostServiceTests
 
         using (var ctx = new BlogContext(options))
         {
-            var svc = new PostService(ctx);
+            IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
             var ok = await svc.DeleteAsync(Guid.NewGuid());
             Assert.That(ok, Is.False);
         }

@@ -1,15 +1,15 @@
-using Comjustinspicer.CMS.Data.Blog;
 using Comjustinspicer.CMS.Data.Blog.Models;
+using Comjustinspicer.CMS.Data.Services;
 using AutoMapper;
 
 namespace Comjustinspicer.Models.Blog;
 
 public sealed class BlogPostModel : IBlogPostModel
 {
-    private readonly IPostService _postService;
+    private readonly IContentService<PostDTO> _postService;
     private readonly IMapper _mapper;
 
-    public BlogPostModel(IPostService postService, IMapper mapper)
+    public BlogPostModel(IContentService<PostDTO> postService, IMapper mapper)
     {
         _postService = postService ?? throw new ArgumentNullException(nameof(postService));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));

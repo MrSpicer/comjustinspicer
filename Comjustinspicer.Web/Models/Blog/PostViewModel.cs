@@ -10,6 +10,7 @@ public sealed class PostViewModel
     public string AuthorName { get; init; } = string.Empty;
     public DateTime ModificationDate { get; init; }
     public DateTime CreationDate { get; init; }
+    public bool IsPublished { get; init; }
 
     //todo: delete?
     // Parameterless for AutoMapper

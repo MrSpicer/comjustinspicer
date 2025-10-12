@@ -1,12 +1,12 @@
-using Comjustinspicer.CMS.Data.ContentBlock;
 using Comjustinspicer.CMS.Data.ContentBlock.Models;
+using Comjustinspicer.CMS.Data.Services;
 
 namespace Comjustinspicer.CMS.Models.ContentBlock;
 
 public class ContentBlockModel : IContentBlockModel
 {
-    private IContentBlockService _service { get; set; }
-    public ContentBlockModel(IContentBlockService service)
+    private IContentService<ContentBlockDTO> _service { get; set; }
+    public ContentBlockModel(IContentService<ContentBlockDTO> service)
     {
         _service = service ?? throw new ArgumentNullException(nameof(service));
     }

@@ -2,8 +2,8 @@ using NUnit.Framework;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using Comjustinspicer.CMS.Data.DbContexts;
-using Comjustinspicer.CMS.Data.ContentBlock;
 using Comjustinspicer.CMS.Data.ContentBlock.Models;
+using Comjustinspicer.CMS.Data.Services;
 using System.Threading;
 using System.Threading.Tasks;
 using System;
@@ -35,7 +35,7 @@ public class ContentBlockServiceTests
         ContentBlockDTO created;
         using (var ctx = new ContentBlockContext(options))
         {
-            var svc = new ContentBlockService(ctx);
+            IContentService<ContentBlockDTO> svc = new ContentService<ContentBlockDTO>(ctx);
             var cb = new ContentBlockDTO
             {
                 Title = "Test Block",
@@ -53,7 +53,7 @@ public class ContentBlockServiceTests
         // Read All / ById
         using (var ctx = new ContentBlockContext(options))
         {
-            var svc = new ContentBlockService(ctx);
+            IContentService<ContentBlockDTO> svc = new ContentService<ContentBlockDTO>(ctx);
             var all = await svc.GetAllAsync();
             Assert.That(all.Count, Is.EqualTo(1));
 
@@ -65,7 +65,7 @@ public class ContentBlockServiceTests
         // Update via Upsert (existing Id)
         using (var ctx = new ContentBlockContext(options))
         {
-            var svc = new ContentBlockService(ctx);
+            IContentService<ContentBlockDTO> svc = new ContentService<ContentBlockDTO>(ctx);
             created.Content = "Updated content";
             var ok = await svc.UpsertAsync(created);
             Assert.That(ok, Is.True);
@@ -73,7 +73,7 @@ public class ContentBlockServiceTests
 
         using (var ctx = new ContentBlockContext(options))
         {
-            var svc = new ContentBlockService(ctx);
+            IContentService<ContentBlockDTO> svc = new ContentService<ContentBlockDTO>(ctx);
             var byId = await svc.GetByIdAsync(created.Id);
             Assert.That(byId, Is.Not.Null);
             Assert.That(byId!.Content, Is.EqualTo("Updated content"));
@@ -82,14 +82,14 @@ public class ContentBlockServiceTests
         // Delete
         using (var ctx = new ContentBlockContext(options))
         {
-            var svc = new ContentBlockService(ctx);
+            IContentService<ContentBlockDTO> svc = new ContentService<ContentBlockDTO>(ctx);
             var ok = await svc.DeleteAsync(created.Id);
             Assert.That(ok, Is.True);
         }
 
         using (var ctx = new ContentBlockContext(options))
         {
-            var svc = new ContentBlockService(ctx);
+            IContentService<ContentBlockDTO> svc = new ContentService<ContentBlockDTO>(ctx);
             var all = await svc.GetAllAsync();
             Assert.That(all.Count, Is.EqualTo(0));
 
@@ -105,7 +105,7 @@ public class ContentBlockServiceTests
 
         using (var ctx = new ContentBlockContext(options))
         {
-            var svc = new ContentBlockService(ctx);
+            IContentService<ContentBlockDTO> svc = new ContentService<ContentBlockDTO>(ctx);
             Assert.ThrowsAsync<ArgumentNullException>(async () => await svc.UpsertAsync(null!));
         }
     }
@@ -117,7 +117,7 @@ public class ContentBlockServiceTests
 
         using (var ctx = new ContentBlockContext(options))
         {
-            var svc = new ContentBlockService(ctx);
+            IContentService<ContentBlockDTO> svc = new ContentService<ContentBlockDTO>(ctx);
             var ok = await svc.DeleteAsync(Guid.NewGuid());
             Assert.That(ok, Is.False);
         }
