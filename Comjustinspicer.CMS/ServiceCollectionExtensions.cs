@@ -4,6 +4,9 @@ using AutoMapper;
 using Comjustinspicer.CMS.Data;
 using Comjustinspicer.CMS.Data.Blog;
 using Comjustinspicer.CMS.Data.ContentBlock;
+using Comjustinspicer.CMS.Data.Blog.Models;
+using Comjustinspicer.CMS.Data.ContentBlock.Models;
+using Comjustinspicer.CMS.Data.Services;
 // using Comjustinspicer.CMS.Models.Blog;
 using Comjustinspicer.CMS.Models.ContentBlock;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
@@ -78,8 +81,18 @@ public static class ServiceCollectionExtensions
 		services.AddHttpContextAccessor();
 		services.AddSingleton<Services.UserService>();
 
-		services.AddScoped<IPostService, PostService>();
-		services.AddScoped<IContentBlockService, ContentBlockService>();
+		// Generic content service registrations to enable consumers to request IContentService<T>
+		// Note: Each T must be bound to the correct DbContext through constructor injection of DbContext.
+		services.AddScoped<IContentService<PostDTO>>(sp =>
+		{
+			var ctx = sp.GetRequiredService<BlogContext>();
+			return new ContentService<PostDTO>(ctx);
+		});
+		services.AddScoped<IContentService<ContentBlockDTO>>(sp =>
+		{
+			var ctx = sp.GetRequiredService<ContentBlockContext>();
+			return new ContentService<ContentBlockDTO>(ctx);
+		});
 
 		services.AddScoped<IContentBlockModel, ContentBlockModel>();
 
