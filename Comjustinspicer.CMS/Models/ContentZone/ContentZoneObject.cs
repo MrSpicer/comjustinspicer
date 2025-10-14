@@ -10,5 +10,5 @@ public class ContentZoneObject : IContentZoneObject
 	public Guid ZoneId { get; set; }
 
 	public string ComponentName { get; set; } = string.Empty;
-	public Object? ComponentProperties { get; set; } = default;
+	public object ComponentProperties { get; set; } = default!;
 }

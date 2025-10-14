@@ -1,4 +1,4 @@
-using Comjustinspicer.CMS.Data.ContentBlock.Models;
+using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
 
 namespace Comjustinspicer.CMS.Models.ContentBlock;

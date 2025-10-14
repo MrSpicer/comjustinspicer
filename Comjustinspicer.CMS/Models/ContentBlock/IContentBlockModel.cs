@@ -1,4 +1,4 @@
-using Comjustinspicer.CMS.Data.ContentBlock.Models;
+using Comjustinspicer.CMS.Data.Models;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

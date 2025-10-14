@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Comjustinspicer.CMS.Data.ContentBlock;
 using Microsoft.AspNetCore.Authorization;
 using Comjustinspicer.CMS.Models.ContentBlock;
 
@@ -36,7 +35,7 @@ public class AdminContentBlockController : Controller
 
     [HttpPost("contentblocks/edit/{id?}")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(Data.ContentBlock.Models.ContentBlockDTO model, string? returnUrl)
+    public async Task<IActionResult> Edit(Data.Models.ContentBlockDTO model, string? returnUrl)
     {
         if (!ModelState.IsValid)
         {

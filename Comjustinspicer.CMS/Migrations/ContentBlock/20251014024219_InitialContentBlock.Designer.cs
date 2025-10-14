@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Comjustinspicer.CMS.Migrations.ContentBlock
 {
     [DbContext(typeof(ContentBlockContext))]
-    [Migration("20251009192012_InitialContentBlock")]
+    [Migration("20251014024219_InitialContentBlock")]
     partial class InitialContentBlock
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace Comjustinspicer.CMS.Migrations.ContentBlock
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
 
-            modelBuilder.Entity("Comjustinspicer.CMS.Data.ContentBlock.Models.ContentBlockDTO", b =>
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ContentBlockDTO", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -37,6 +37,15 @@ namespace Comjustinspicer.CMS.Migrations.ContentBlock
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsHidden")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("IsPublished")
                         .HasColumnType("INTEGER");
 
@@ -47,6 +56,9 @@ namespace Comjustinspicer.CMS.Migrations.ContentBlock
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("PublicationDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("PublicationEndDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")

@@ -1,5 +1,7 @@
 # Comjustinspicer
 
+This software is in pre-alpha development. do not use it
+
 ## License
 CC BY-SA 4.0
 

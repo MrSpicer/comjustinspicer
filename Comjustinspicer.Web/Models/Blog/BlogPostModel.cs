@@ -1,4 +1,4 @@
-using Comjustinspicer.CMS.Data.Blog.Models;
+using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
 using AutoMapper;
 

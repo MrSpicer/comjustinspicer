@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using Comjustinspicer.Models.Blog;
 using Comjustinspicer.CMS.Data.Services;
-using Comjustinspicer.CMS.Data.Blog.Models;
+using Comjustinspicer.CMS.Data.Models;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 

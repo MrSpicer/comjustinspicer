@@ -1,6 +1,6 @@
 using Comjustinspicer.CMS.Data.Models;
 
-namespace Comjustinspicer.CMS.Data.Blog.Models;
+namespace Comjustinspicer.CMS.Data.Models;
 
 public class PostDTO : BaseContentDTO
 {

@@ -7,6 +7,7 @@ public abstract class BaseContentDTO
     public Guid CreatedBy { get; set; }
     public Guid LastModifiedBy { get; set; }
     public DateTime PublicationDate { get; set; }
+    public DateTime? PublicationEndDate { get; set; }
     public DateTime ModificationDate { get; set; }
     public DateTime CreationDate { get; set; }
     public bool IsPublished { get; set; }

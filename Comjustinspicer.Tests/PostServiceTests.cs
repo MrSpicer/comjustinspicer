@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using Microsoft.EntityFrameworkCore;
 using Comjustinspicer.CMS.Data.DbContexts;
-using Comjustinspicer.CMS.Data.Blog.Models;
+using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
 using System.Threading.Tasks;
 using System;

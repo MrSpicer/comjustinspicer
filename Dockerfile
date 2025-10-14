@@ -8,6 +8,7 @@ WORKDIR /src
 COPY comjustinspicer.sln ./
 COPY Comjustinspicer.Web/Comjustinspicer.Web.csproj Comjustinspicer.Web/
 COPY Comjustinspicer.Tests/Comjustinspicer.Tests.csproj Comjustinspicer.Tests/
+COPY Comjustinspicer.CMS/Comjustinspicer.CMS.csproj Comjustinspicer.CMS/
 
 RUN dotnet restore
 

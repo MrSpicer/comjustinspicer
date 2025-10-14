@@ -1,5 +1,5 @@
 using AutoMapper;
-using Comjustinspicer.CMS.Data.Blog.Models;
+using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.Models.Blog;
 
 namespace Comjustinspicer;
@@ -27,6 +27,7 @@ public class MappingProfile : Profile
             .ForMember(d => d.LastModifiedBy, opt => opt.Ignore())
             .ForMember(d => d.IsArchived, opt => opt.Ignore())
             .ForMember(d => d.IsHidden, opt => opt.Ignore())
-            .ForMember(d => d.IsDeleted, opt => opt.Ignore());
+            .ForMember(d => d.IsDeleted, opt => opt.Ignore())
+            .ForMember(d => d.PublicationEndDate, opt => opt.Ignore());
     }
 }

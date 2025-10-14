@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using AutoMapper;
 using Comjustinspicer.CMS.Models.ContentBlock;
 using Comjustinspicer.CMS.Data.Services;
-using Comjustinspicer.CMS.Data.ContentBlock.Models;
+using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data;
 using Microsoft.Extensions.Logging;
 

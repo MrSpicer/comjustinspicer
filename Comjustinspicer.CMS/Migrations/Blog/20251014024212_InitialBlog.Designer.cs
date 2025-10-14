@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Comjustinspicer.CMS.Migrations.Blog
 {
     [DbContext(typeof(BlogContext))]
-    [Migration("20251009192004_InitialBlog")]
+    [Migration("20251014024212_InitialBlog")]
     partial class InitialBlog
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace Comjustinspicer.CMS.Migrations.Blog
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
 
-            modelBuilder.Entity("Comjustinspicer.CMS.Data.Blog.Models.PostDTO", b =>
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.PostDTO", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -40,6 +40,15 @@ namespace Comjustinspicer.CMS.Migrations.Blog
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsHidden")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("IsPublished")
                         .HasColumnType("INTEGER");
 
@@ -50,6 +59,9 @@ namespace Comjustinspicer.CMS.Migrations.Blog
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("PublicationDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("PublicationEndDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")

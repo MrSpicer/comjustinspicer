@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Comjustinspicer.CMS.Migrations.Identity
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251009191956_InitialIdentity")]
+    [Migration("20251014024205_InitialIdentity")]
     partial class InitialIdentity
     {
         /// <inheritdoc />

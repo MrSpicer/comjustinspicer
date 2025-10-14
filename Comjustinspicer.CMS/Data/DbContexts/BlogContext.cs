@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Comjustinspicer.CMS.Data.Blog.Models;
+using Comjustinspicer.CMS.Data.Models;
 
 namespace Comjustinspicer.CMS.Data.DbContexts;
 
