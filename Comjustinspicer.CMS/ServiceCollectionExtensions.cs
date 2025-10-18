@@ -1,35 +1,20 @@
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using AutoMapper;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Comjustinspicer.CMS.Data.Database;
 using Comjustinspicer.CMS.Data;
 using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
-// using Comjustinspicer.CMS.Models.Blog;
 using Comjustinspicer.CMS.Models.ContentBlock;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using Microsoft.AspNetCore.Mvc;
-using System.Reflection;
-using Microsoft.AspNetCore.Identity;
 using Comjustinspicer.CMS.Data.DbContexts;
-using Serilog;
-using Serilog.Events;
-using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace Comjustinspicer.CMS;
 
 public static class ServiceCollectionExtensions
 {
-	/// <summary>
-	/// Registers CMS (Data, Models, Services) components and adds MVC application part for Controllers/ViewComponents.
-	/// </summary>
-	public static IServiceCollection AddComjustinspicerCms(this IServiceCollection services)
-	{
-		// Backwards-compatible overload assumes database contexts already configured by host.
-		AddCmsCore(services);
-		return services;
-	}
-
 	/// <summary>
 	/// Registers CMS services and configures EF Core DbContexts using the provided configuration.
 	/// </summary>
@@ -39,34 +24,29 @@ public static class ServiceCollectionExtensions
 	public static IServiceCollection AddComjustinspicerCms(this IServiceCollection services, IConfiguration configuration)
 	{
 		ConfigureDatabaseServices(services, configuration);
-		AddCmsCore(services);
-		return services;
-	}
-
-	private static void AddCmsCore(IServiceCollection services)
-	{
 		MapTypes(services);
 		ConfigureAuthorization(services);
+		return services;
 	}
 
 	private static void ConfigureDatabaseServices(IServiceCollection services, IConfiguration configuration)
 	{
-		var connectionString = configuration.GetConnectionString("DefaultConnection")
-			?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-		// Main application DB (Identity + app data)
-		services.AddDbContext<ApplicationDbContext>(options =>
-			options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_Application")));
+		var configurator = typeof(ServiceCollectionExtensions).Assembly
+			.GetTypes()
+			.Where(t => !t.IsAbstract && typeof(IDatabaseConfigurator).IsAssignableFrom(t))
+			.Select(t => Activator.CreateInstance(t) as IDatabaseConfigurator)
+			.FirstOrDefault(c => c != null && c.DBTypeSupported == configuration["DatabaseType"]);
 
-		// Blog DB/context can share the same connection or be configured separately in appsettings
-		services.AddDbContext<BlogContext>(options =>
-			options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_Blog")));
+		if (configurator is null)
+		{
+			throw new InvalidOperationException($"No database configurator found for type '{configuration["DatabaseType"]}'.");
+		}
 
-		// ContentBlock DB/context
-		services.AddDbContext<ContentBlockContext>(options =>
-			options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_ContentBlock")));
+		configurator.Configure(services, configuration);
 
 		services.AddDatabaseDeveloperPageExceptionFilter();
+
 	}
 
 	private static void MapTypes(IServiceCollection services)
@@ -74,7 +54,6 @@ public static class ServiceCollectionExtensions
 #if DEBUG
 		services.AddSingleton<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, Services.DevEmailSender>();
 #endif
-		// Needed for UserService to inspect current HttpContext/User
 		services.AddHttpContextAccessor();
 		services.AddSingleton<Services.UserService>();
 
