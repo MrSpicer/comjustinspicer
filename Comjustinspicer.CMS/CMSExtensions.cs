@@ -43,7 +43,7 @@ public static class CMSExtensions
 		{
 			// Order shouldn't matter for independent contexts, but we keep a deterministic order.
 			Migrate<ApplicationDbContext>(services, logger);
-			Migrate<BlogContext>(services, logger);
+			Migrate<ArticleContext>(services, logger);
 			Migrate<ContentBlockContext>(services, logger);
 		}
 		catch (Exception ex)

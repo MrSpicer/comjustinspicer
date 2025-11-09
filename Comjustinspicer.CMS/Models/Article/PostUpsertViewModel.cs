@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Comjustinspicer.Models.Blog;
+namespace Comjustinspicer.CMS.Models.Article;
 
 public sealed class PostUpsertViewModel
 {

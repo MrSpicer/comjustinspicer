@@ -1,28 +1,19 @@
-﻿using System.Diagnostics;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
-using Comjustinspicer.Models;
-using Comjustinspicer.Models.Blog;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Comjustinspicer.Controllers;
 
 
 
-public class BlogController : Controller
+public class ArticleController : Controller
 {
-    private readonly Serilog.ILogger _logger = Serilog.Log.ForContext<BlogController>();
-    private readonly IBlogModel _blogModel;
+    private readonly Serilog.ILogger _logger = Serilog.Log.ForContext<ArticleController>();
 
-    public BlogController(IBlogModel blogModel)
+    public ArticleController()
     {
-        _blogModel = blogModel ?? throw new ArgumentNullException(nameof(blogModel));
     }
 
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
-        var vm = await _blogModel.GetIndexViewModelAsync();
-        return View(vm);
+        return View();
     }
 }

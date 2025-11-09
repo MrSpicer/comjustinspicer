@@ -3,7 +3,7 @@ using Moq;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
-using Comjustinspicer.Models.Blog;
+using Comjustinspicer.CMS.Models.Article;
 using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
 using AutoMapper;
@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 namespace Comjustinspicer.Tests;
 
 [TestFixture]
-public class BlogPostModelTests
+public class ArticlePostModelTests
 {
 	private IMapper _mapper;
 	private MapperConfiguration _config;
@@ -52,7 +52,7 @@ public class BlogPostModelTests
         var svc = new Mock<IContentService<PostDTO>>();
         svc.Setup(s => s.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(null as PostDTO);
-        var model = new BlogPostModel(svc.Object, _mapper);
+        var model = new ArticleModel(svc.Object, _mapper);
         var result = await model.GetPostViewModelAsync(Guid.NewGuid());
         Assert.That(result, Is.Null);
     }
@@ -63,7 +63,7 @@ public class BlogPostModelTests
         var post = CreatePost();
         var svc = new Mock<IContentService<PostDTO>>();
         svc.Setup(s => s.GetByIdAsync(post.Id, It.IsAny<CancellationToken>())).ReturnsAsync(post);
-        var model = new BlogPostModel(svc.Object, _mapper);
+        var model = new ArticleModel(svc.Object, _mapper);
         var result = await model.GetPostViewModelAsync(post.Id);
         Assert.That(result, Is.Not.Null);
         Assert.That(result!.Id, Is.EqualTo(post.Id));
@@ -73,7 +73,7 @@ public class BlogPostModelTests
     public async Task GetUpsertViewModelAsync_NullId_ReturnsEmptyModel()
     {
         var svc = new Mock<IContentService<PostDTO>>();
-        var model = new BlogPostModel(svc.Object, _mapper);
+        var model = new ArticleModel(svc.Object, _mapper);
         var vm = await model.GetUpsertViewModelAsync(null);
         Assert.That(vm, Is.Not.Null);
         Assert.That(vm!.Id, Is.Null);
@@ -85,7 +85,7 @@ public class BlogPostModelTests
         var svc = new Mock<IContentService<PostDTO>>();
         svc.Setup(s => s.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(null as PostDTO);
-        var model = new BlogPostModel(svc.Object, _mapper);
+        var model = new ArticleModel(svc.Object, _mapper);
         var vm = await model.GetUpsertViewModelAsync(Guid.NewGuid());
         Assert.That(vm, Is.Null);
     }
@@ -96,7 +96,7 @@ public class BlogPostModelTests
         var post = CreatePost();
         var svc = new Mock<IContentService<PostDTO>>();
         svc.Setup(s => s.GetByIdAsync(post.Id, It.IsAny<CancellationToken>())).ReturnsAsync(post);
-        var model = new BlogPostModel(svc.Object, _mapper);
+        var model = new ArticleModel(svc.Object, _mapper);
         var vm = await model.GetUpsertViewModelAsync(post.Id);
         Assert.That(vm, Is.Not.Null);
         Assert.That(vm!.Id, Is.EqualTo(post.Id));
@@ -108,7 +108,7 @@ public class BlogPostModelTests
     var svc = new Mock<IContentService<PostDTO>>();
         svc.Setup(s => s.CreateAsync(It.IsAny<PostDTO>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((PostDTO p, CancellationToken _) => p);
-        var model = new BlogPostModel(svc.Object, _mapper);
+        var model = new ArticleModel(svc.Object, _mapper);
         var vm = new PostUpsertViewModel { Title = "T", Body = "B", AuthorName = "A", PublicationDate = DateTime.UtcNow };
         var (success, err) = await model.SaveUpsertAsync(vm);
         Assert.That(success, Is.True);
@@ -121,7 +121,7 @@ public class BlogPostModelTests
     {
     var svc = new Mock<IContentService<PostDTO>>();
         svc.Setup(s => s.UpdateAsync(It.IsAny<PostDTO>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
-        var model = new BlogPostModel(svc.Object, _mapper);
+        var model = new ArticleModel(svc.Object, _mapper);
         var vm = new PostUpsertViewModel { Id = Guid.NewGuid(), Title = "T", Body = "B", AuthorName = "A", PublicationDate = DateTime.UtcNow };
         var (success, err) = await model.SaveUpsertAsync(vm);
         Assert.That(success, Is.True);
@@ -134,7 +134,7 @@ public class BlogPostModelTests
     {
     var svc = new Mock<IContentService<PostDTO>>();
         svc.Setup(s => s.UpdateAsync(It.IsAny<PostDTO>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
-        var model = new BlogPostModel(svc.Object, _mapper);
+        var model = new ArticleModel(svc.Object, _mapper);
         var vm = new PostUpsertViewModel { Id = Guid.NewGuid(), Title = "T", Body = "B", AuthorName = "A", PublicationDate = DateTime.UtcNow };
         var (success, err) = await model.SaveUpsertAsync(vm);
         Assert.That(success, Is.False);
@@ -145,7 +145,7 @@ public class BlogPostModelTests
     public void SaveUpsertAsync_NullModel_Throws()
     {
     var svc = new Mock<IContentService<PostDTO>>();
-        var model = new BlogPostModel(svc.Object, _mapper);
+        var model = new ArticleModel(svc.Object, _mapper);
         Assert.ThrowsAsync<ArgumentNullException>(async () => await model.SaveUpsertAsync(null!));
     }
 }

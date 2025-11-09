@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Authorization;
 
-namespace Comjustinspicer.CMS.Controllers
+namespace Comjustinspicer.CMS.Controllers.Admin
 {
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller

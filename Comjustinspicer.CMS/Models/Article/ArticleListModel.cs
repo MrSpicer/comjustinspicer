@@ -2,26 +2,28 @@ using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
 using AutoMapper;
 
-namespace Comjustinspicer.Models.Blog;
+namespace Comjustinspicer.CMS.Models.Article;
 
-public sealed class BlogModel : IBlogModel
+public sealed class ArticleListModel : IArticleListModel
 {
     private readonly IContentService<PostDTO> _postService;
+    private readonly IContentService<ArticleListDTO> _ArticleService;
     private readonly IMapper _mapper;
 
-    public BlogModel(IContentService<PostDTO> postService, IMapper mapper)
+    public ArticleListModel(IContentService<ArticleListDTO> ArticleService, IContentService<PostDTO> postService, IMapper mapper)
     {
         _postService = postService ?? throw new ArgumentNullException(nameof(postService));
+        _ArticleService = ArticleService ?? throw new ArgumentNullException(nameof(ArticleService));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<BlogViewModel> GetIndexViewModelAsync(CancellationToken ct = default)
+    public async Task<ArticleListViewModel> GetIndexViewModelAsync(CancellationToken ct = default)
     {
-        var vm = new BlogViewModel();
+        var vm = new ArticleListViewModel();
         var posts = await _postService.GetAllAsync(ct);
-        vm.Posts = posts
+        vm.Articles = posts
             .Where(p => p.PublicationDate <= DateTime.UtcNow)
-            .Select(p => _mapper.Map<PostViewModel>(p))
+            .Select(p => _mapper.Map<ArticleViewModel>(p))
             .ToList();
         return vm;
     }

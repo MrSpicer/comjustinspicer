@@ -4,7 +4,7 @@ using AutoMapper;
 using Comjustinspicer.CMS.Data;
 using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
-// using Comjustinspicer.CMS.Models.Blog;
+// using Comjustinspicer.CMS.Models.Article;
 using Comjustinspicer.CMS.Models.ContentBlock;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +15,7 @@ using Serilog;
 using Serilog.Events;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
+using Comjustinspicer.CMS.Models.Article;
 
 namespace Comjustinspicer.CMS;
 
@@ -58,9 +59,9 @@ public static class ServiceCollectionExtensions
 		services.AddDbContext<ApplicationDbContext>(options =>
 			options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_Application")));
 
-		// Blog DB/context can share the same connection or be configured separately in appsettings
-		services.AddDbContext<BlogContext>(options =>
-			options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_Blog")));
+		// Article DB/context can share the same connection or be configured separately in appsettings
+		services.AddDbContext<ArticleContext>(options =>
+			options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_Article")));
 
 		// ContentBlock DB/context
 		services.AddDbContext<ContentBlockContext>(options =>
@@ -82,9 +83,17 @@ public static class ServiceCollectionExtensions
 		// Note: Each T must be bound to the correct DbContext through constructor injection of DbContext.
 		services.AddScoped<IContentService<PostDTO>>(sp =>
 		{
-			var ctx = sp.GetRequiredService<BlogContext>();
+			var ctx = sp.GetRequiredService<ArticleContext>();
 			return new ContentService<PostDTO>(ctx);
 		});
+
+		services.AddScoped<IContentService<ArticleListDTO>>(sp =>
+		{
+			var ctx = sp.GetRequiredService<ArticleContext>();
+			return new ContentService<ArticleListDTO>(ctx);
+		});
+
+
 		services.AddScoped<IContentService<ContentBlockDTO>>(sp =>
 		{
 			var ctx = sp.GetRequiredService<ContentBlockContext>();
@@ -92,6 +101,8 @@ public static class ServiceCollectionExtensions
 		});
 
 		services.AddScoped<IContentBlockModel, ContentBlockModel>();
+		services.AddScoped<IArticleListModel, ArticleListModel>();
+		services.AddScoped<IArticleModel, ArticleModel>();
 
 		// AutoMapper profile from this assembly
 		services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>(), typeof(ServiceCollectionExtensions).Assembly);

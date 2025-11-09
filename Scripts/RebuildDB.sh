@@ -8,8 +8,8 @@ rm -rf Comjustinspicer.CMS/Migrations/* &&
 echo "Creating new migrations.." &&
 echo "ApplicationDbContext" &&
 dotnet ef migrations add InitialIdentity -s Comjustinspicer.Web/Comjustinspicer.Web.csproj -p Comjustinspicer.CMS/Comjustinspicer.CMS.csproj -c ApplicationDbContext -o Migrations/Identity &&
-echo "BlogContext" &&
-dotnet ef migrations add InitialBlog -s Comjustinspicer.Web/Comjustinspicer.Web.csproj -p Comjustinspicer.CMS/Comjustinspicer.CMS.csproj -c BlogContext -o Migrations/Blog &&
+echo "ArticleContext" &&
+dotnet ef migrations add InitialArticle -s Comjustinspicer.Web/Comjustinspicer.Web.csproj -p Comjustinspicer.CMS/Comjustinspicer.CMS.csproj -c ArticleContext -o Migrations/Article &&
 echo "ContentBlockContext" &&
 dotnet ef migrations add InitialContentBlock -s Comjustinspicer.Web/Comjustinspicer.Web.csproj -p Comjustinspicer.CMS/Comjustinspicer.CMS.csproj -c ContentBlockContext -o Migrations/ContentBlock &&
 echo "Applying migrations to new database..." &&

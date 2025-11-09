@@ -1,7 +1,7 @@
-namespace Comjustinspicer.Models.Blog;
+namespace Comjustinspicer.CMS.Models.Article;
 
 
-public sealed class PostViewModel
+public sealed class ArticleViewModel
 {
     public Guid Id { get; init; }
     public string Title { get; init; } = string.Empty;
@@ -14,5 +14,5 @@ public sealed class PostViewModel
 
     //todo: delete?
     // Parameterless for AutoMapper
-    public PostViewModel() { }
+    public ArticleViewModel() { }
 }

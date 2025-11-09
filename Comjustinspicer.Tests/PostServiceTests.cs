@@ -11,10 +11,10 @@ namespace Comjustinspicer.Tests;
 [TestFixture]
 public class PostServiceTests
 {
-    private DbContextOptions<BlogContext> CreateNewContextOptions()
+    private DbContextOptions<ArticleContext> CreateNewContextOptions()
     {
         // Each test gets its own in-memory database
-        return new DbContextOptionsBuilder<BlogContext>()
+        return new DbContextOptionsBuilder<ArticleContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
     }
@@ -26,7 +26,7 @@ public class PostServiceTests
 
         // Create
         PostDTO created;
-        using (var ctx = new BlogContext(options))
+        using (var ctx = new ArticleContext(options))
         {
             IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
             var post = new PostDTO
@@ -43,7 +43,7 @@ public class PostServiceTests
         }
 
         // Read All / ById
-        using (var ctx = new BlogContext(options))
+        using (var ctx = new ArticleContext(options))
         {
             IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
             var all = await svc.GetAllAsync();
@@ -55,7 +55,7 @@ public class PostServiceTests
         }
 
         // Update
-        using (var ctx = new BlogContext(options))
+        using (var ctx = new ArticleContext(options))
         {
             IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
             created.Title = "Updated Title";
@@ -63,7 +63,7 @@ public class PostServiceTests
             Assert.That(ok, Is.True);
         }
 
-        using (var ctx = new BlogContext(options))
+        using (var ctx = new ArticleContext(options))
         {
             IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
             var byId = await svc.GetByIdAsync(created.Id);
@@ -72,14 +72,14 @@ public class PostServiceTests
         }
 
         // Delete
-        using (var ctx = new BlogContext(options))
+        using (var ctx = new ArticleContext(options))
         {
             IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
             var ok = await svc.DeleteAsync(created.Id);
             Assert.That(ok, Is.True);
         }
 
-        using (var ctx = new BlogContext(options))
+        using (var ctx = new ArticleContext(options))
         {
             IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
             var all = await svc.GetAllAsync();
@@ -95,7 +95,7 @@ public class PostServiceTests
     {
         var options = CreateNewContextOptions();
 
-        using (var ctx = new BlogContext(options))
+        using (var ctx = new ArticleContext(options))
         {
             IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
             var post = new PostDTO { Id = Guid.NewGuid(), Title = "x" };
@@ -109,7 +109,7 @@ public class PostServiceTests
     {
         var options = CreateNewContextOptions();
 
-        using (var ctx = new BlogContext(options))
+        using (var ctx = new ArticleContext(options))
         {
             IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
             var ok = await svc.DeleteAsync(Guid.NewGuid());

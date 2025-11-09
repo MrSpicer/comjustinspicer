@@ -1,0 +1,45 @@
+@using Comjustinspicer.CMS.Data.Models
+@using Comjustinspicer.CMS.Models.Article
+@model ArticleListViewModel
+
+@{
+    ViewData["Title"] = "Article Posts";
+}
+
+<section class="section">
+    <div class="container">
+        <h1 class="title">Article Posts</h1>
+
+        <a asp-controller="AdminArticle" asp-action="PostEdit" class="button is-primary">New +</a>
+
+        <table class="table is-fullwidth is-striped">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Id</th>
+                    <th>Created</th>
+                    <th>Modified</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var post in Model.Articles)
+                {
+                    <tr>
+                        <td>@post.Title</td>
+                        <td>@post.Id</td>
+                        <td>@post.CreationDate.ToString("yyyy-MM-dd hh:mm")</td>
+                        <td>@post.ModificationDate.ToString("yyyy-MM-dd hh:mm")</td>
+                        <td>
+                            <a asp-controller="AdminArticle" asp-action="PostEdit" asp-route-id="@post.Id" class="button is-small">Edit</a>
+                            <form asp-controller="AdminArticle" asp-action="Delete" asp-route-id="@post.Id" method="post" style="display:inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="button is-small is-danger" onclick="return confirm('Delete this Article post?');">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

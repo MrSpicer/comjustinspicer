@@ -3,32 +3,32 @@ using System;
 using Comjustinspicer.CMS.Data.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Comjustinspicer.CMS.Migrations.Blog
+namespace Comjustinspicer.CMS.Migrations.ContentBlock
 {
-    [DbContext(typeof(BlogContext))]
-    partial class BlogContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(ContentBlockContext))]
+    [Migration("20251109183442_InitialContentBlock")]
+    partial class InitialContentBlock
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
 
-            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.PostDTO", b =>
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ContentBlockDTO", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("AuthorName")
+                    b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Body")
-                        .IsRequired()
+                        .HasMaxLength(10000)
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("CreatedBy")
@@ -63,12 +63,11 @@ namespace Comjustinspicer.CMS.Migrations.Blog
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(20000)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("ContentBlocks", (string)null);
                 });
 #pragma warning restore 612, 618
         }
