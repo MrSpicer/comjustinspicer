@@ -8,17 +8,62 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Comjustinspicer.CMS.Migrations.Blog
+namespace Comjustinspicer.CMS.Migrations.Article
 {
-    [DbContext(typeof(BlogContext))]
-    [Migration("20251014024212_InitialBlog")]
-    partial class InitialBlog
+    [DbContext(typeof(ArticleContext))]
+    [Migration("20251109183435_InitialArticle")]
+    partial class InitialArticle
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
+
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ArticleListDTO", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsHidden")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("LastModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ModificationDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("PublicationDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("PublicationEndDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ArticleLists");
+                });
 
             modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.PostDTO", b =>
                 {
@@ -62,6 +107,10 @@ namespace Comjustinspicer.CMS.Migrations.Blog
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("PublicationEndDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Summary")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")

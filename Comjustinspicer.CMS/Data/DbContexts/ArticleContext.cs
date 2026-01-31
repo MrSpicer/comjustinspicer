@@ -3,11 +3,13 @@ using Comjustinspicer.CMS.Data.Models;
 
 namespace Comjustinspicer.CMS.Data.DbContexts;
 
-public class BlogContext : DbContext
+public class ArticleContext : DbContext
 {
-    public BlogContext(DbContextOptions<BlogContext> options) : base(options) { }
+    public ArticleContext(DbContextOptions<ArticleContext> options) : base(options) { }
 
-    public DbSet<PostDTO> Posts { get; set; } = null!;
+    public DbSet<ArticleListDTO> ArticleLists { get; set; } = null!;
+
+    public DbSet<PostDTO> Articles { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

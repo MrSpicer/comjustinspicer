@@ -1,4 +1,4 @@
-@model Comjustinspicer.Models.Blog.PostViewModel?
+@model Comjustinspicer.CMS.Models.Article.ArticleViewModel?
 
 @using Comjustinspicer.CMS.Services;
 
@@ -32,10 +32,10 @@
             <p class="is-size-7 has-text-grey">Last Modified: @Model.ModificationDate.ToString("yyyy-MM-dd HH:mm")</p>
 
             <div class="mt-4">
-                <a asp-action="Index" asp-controller="Blog" class="button is-light">Back to blog</a>
+                <a asp-action="Index" asp-controller="Article" class="button is-light">Back to Article</a>
                 @if (isAuthor)
                 {
-                    <a asp-action="Edit" asp-controller="BlogPost" asp-route-id="@Model.Id"
+                    <a asp-action="Edit" asp-controller="AdminArticle" asp-route-id="@Model.Id"
                         class="button is-primary">Edit</a>
                 }
             </div>

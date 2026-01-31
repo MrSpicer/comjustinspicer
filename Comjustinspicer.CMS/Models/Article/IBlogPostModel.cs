@@ -1,10 +1,10 @@
 using System.Threading;
 
-namespace Comjustinspicer.Models.Blog;
+namespace Comjustinspicer.CMS.Models.Article;
 
-public interface IBlogModel
+public interface IArticleModel
 {
-    Task<BlogViewModel> GetIndexViewModelAsync(CancellationToken ct = default);
+    Task<ArticleViewModel?> GetPostViewModelAsync(Guid id, CancellationToken ct = default);
     Task<PostUpsertViewModel?> GetUpsertViewModelAsync(Guid? id, CancellationToken ct = default);
     Task<(bool Success, string? ErrorMessage)> SaveUpsertAsync(PostUpsertViewModel model, CancellationToken ct = default);
 }

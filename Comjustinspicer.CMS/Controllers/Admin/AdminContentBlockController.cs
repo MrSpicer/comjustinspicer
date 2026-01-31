@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Comjustinspicer.CMS.Models.ContentBlock;
 
-namespace Comjustinspicer.CMS.Controllers;
+namespace Comjustinspicer.CMS.Controllers.Admin;
 
 [Authorize(Roles = "Admin")]
 [Route("admin")]

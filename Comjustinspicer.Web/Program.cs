@@ -5,7 +5,6 @@ using Serilog;
 using Serilog.Events; // may still be used by other code; kept for now
 using Comjustinspicer.CMS.Logging;
 using Comjustinspicer.CMS.Data.DbContexts;
-using Comjustinspicer.Models.Blog;
 using Comjustinspicer;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -56,9 +55,6 @@ finally
 
 static void MapTypes(IServiceCollection services)
 {
-    services.AddScoped<IBlogModel, BlogModel>();
-    services.AddScoped<IBlogPostModel, BlogPostModel>();
-
     services.AddAutoMapper(cfg =>
     {
         cfg.AddProfile(new MappingProfile());

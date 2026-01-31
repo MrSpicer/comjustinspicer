@@ -2,24 +2,24 @@ using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
 using AutoMapper;
 
-namespace Comjustinspicer.Models.Blog;
+namespace Comjustinspicer.CMS.Models.Article;
 
-public sealed class BlogPostModel : IBlogPostModel
+public sealed class ArticleModel : IArticleModel
 {
     private readonly IContentService<PostDTO> _postService;
     private readonly IMapper _mapper;
 
-    public BlogPostModel(IContentService<PostDTO> postService, IMapper mapper)
+    public ArticleModel(IContentService<PostDTO> postService, IMapper mapper)
     {
         _postService = postService ?? throw new ArgumentNullException(nameof(postService));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<PostViewModel?> GetPostViewModelAsync(Guid id, CancellationToken ct = default)
+    public async Task<ArticleViewModel?> GetPostViewModelAsync(Guid id, CancellationToken ct = default)
     {
         var dto = await _postService.GetByIdAsync(id, ct);
     if (dto == null) return null;
-    return _mapper.Map<PostViewModel>(dto);
+    return _mapper.Map<ArticleViewModel>(dto);
     }
 
     public async Task<PostUpsertViewModel?> GetUpsertViewModelAsync(Guid? id, CancellationToken ct = default)
