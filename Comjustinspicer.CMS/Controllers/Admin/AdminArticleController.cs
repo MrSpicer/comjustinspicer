@@ -35,20 +35,22 @@ public class AdminArticleController : Controller
 
     [HttpGet("Article/post/edit/{id?}")]
     [Authorize(Roles = "Admin,Editor")]
-    public async Task<IActionResult> PostEdit(Guid? id)
+    public async Task<IActionResult> PostEdit(Guid? id, string? returnUrl)
     {
         var vm = await _postModel.GetUpsertViewModelAsync(id);
         if (vm == null && id != null) return NotFound();
+        if (!string.IsNullOrWhiteSpace(returnUrl)) ViewData["ReturnUrl"] = returnUrl;
         return View("Upsert", vm!);
     }
 
     [HttpPost("Article/post/edit/{id?}")]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin,Editor")]
-    public async Task<IActionResult> PostEdit(PostUpsertViewModel model)
+    public async Task<IActionResult> PostEdit(PostUpsertViewModel model, string? returnUrl)
     {
         if (!ModelState.IsValid)
         {
+            if (!string.IsNullOrWhiteSpace(returnUrl)) ViewData["ReturnUrl"] = returnUrl;
             return View("Upsert", model);
         }
 
@@ -56,9 +58,29 @@ public class AdminArticleController : Controller
         if (!result.Success)
         {
             ModelState.AddModelError(string.Empty, result.ErrorMessage ?? "An error occurred while saving the post.");
+            if (!string.IsNullOrWhiteSpace(returnUrl)) ViewData["ReturnUrl"] = returnUrl;
             return View("Upsert", model);
         }
 
-        return RedirectToAction("Index", "Article");
+        // If a returnUrl was supplied and it's a local url, redirect there instead of Index
+        if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+        {
+            return Redirect(returnUrl);
+        }
+
+        return RedirectToAction("Index");
+    }
+
+    [HttpPost("Article/delete/{id}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var ok = await _postModel.DeleteAsync(id);
+        if (!ok)
+        {
+            TempData["Error"] = "Could not delete article.";
+        }
+
+        return RedirectToAction("Index");
     }
 }

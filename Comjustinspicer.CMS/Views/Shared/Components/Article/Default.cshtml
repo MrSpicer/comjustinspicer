@@ -1,0 +1,17 @@
+@model Comjustinspicer.CMS.Models.Article.ArticleListViewModel
+@using Comjustinspicer.CMS.Models.Article
+
+@{
+	ViewData["Title"] = "Article";
+}
+
+<section class="section">
+	<div class="container">
+		<div class="columns is-multiline">
+			@foreach (var post in Model.Articles)
+			{
+				@await Component.InvokeAsync("Article", new { viewName = "Post", article = post })
+			}
+		</div>
+	</div>
+</section>

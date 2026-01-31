@@ -2,8 +2,6 @@
 
 namespace Comjustinspicer.Controllers;
 
-
-
 public class ArticleController : Controller
 {
     private readonly Serilog.ILogger _logger = Serilog.Log.ForContext<ArticleController>();
@@ -12,8 +10,11 @@ public class ArticleController : Controller
     {
     }
 
-    public IActionResult Index()
+    [Route("Article")]
+    [Route("Article/{id:guid}")]
+    public IActionResult Index(Guid? id = null)
     {
+        ViewData["ArticleId"] = id;
         return View();
     }
 }
