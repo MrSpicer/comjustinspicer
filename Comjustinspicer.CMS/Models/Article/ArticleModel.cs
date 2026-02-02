@@ -46,4 +46,9 @@ public sealed class ArticleModel : IArticleModel
         if (!success) return (false, "Unable to update post. It may have been removed.");
         return (true, null);
     }
+
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
+    {
+        return await _postService.DeleteAsync(id, ct);
+    }
 }

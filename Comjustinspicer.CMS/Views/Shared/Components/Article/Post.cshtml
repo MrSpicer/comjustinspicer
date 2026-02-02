@@ -1,4 +1,4 @@
-@model Comjustinspicer.CMS.Models.Article.ArticleViewModel?
+@model Comjustinspicer.CMS.Models.Article.ArticleViewModel
 
 @using Comjustinspicer.CMS.Services;
 
@@ -7,37 +7,30 @@
 @{
     if (Model == null)
     {
-        <div class="section">
-            <div class="container">
-                <div class="notification is-warning">Post not found.</div>
-            </div>
-        </div>
+        <div class="notification is-warning">Post not found.</div>
         return;
     }
 
     var isAuthor = UserService.IsUserAuthor;
-
-    ViewData["Title"] = Model.Title;
 }
 
-<section class="section">
-    <div class="container content">
-        <div class="box">
-            <p class="title">@Model.Title</p>
-            <p class="subtitle">@Model.PublicationDate.ToString("MMMM dd, yyyy")</p>
-            <hr />
-            @Html.Raw(Model.Body)
-        </div>
+<div class="column is-full">
+	<div class="card">
+		<div class="card-content">
+			<p class="title">
+				<a href="/Article/@Model.Id">@Model.Title</a>
+			</p>
+			<p class="subtitle">@Model.PublicationDate.ToString("MMMM dd, yyyy")</p>
+			<hr />
+			@Html.Raw(Model.Body)
 
-            <p class="is-size-7 has-text-grey">Last Modified: @Model.ModificationDate.ToString("yyyy-MM-dd HH:mm")</p>
-
-            <div class="mt-4">
-                <a asp-action="Index" asp-controller="Article" class="button is-light">Back to Article</a>
-                @if (isAuthor)
-                {
-                    <a asp-action="Edit" asp-controller="AdminArticle" asp-route-id="@Model.Id"
-                        class="button is-primary">Edit</a>
-                }
-            </div>
-        </div>
-</section>
+			<div class="mt-4">
+				@if (isAuthor)
+				{
+					<a asp-action="PostEdit" asp-controller="AdminArticle" asp-route-id="@Model.Id"
+						class="button is-primary">Edit</a>
+				}
+			</div>
+		</div>
+	</div>
+</div>
