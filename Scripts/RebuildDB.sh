@@ -12,6 +12,8 @@ echo "ArticleContext" &&
 dotnet ef migrations add InitialArticle -s Comjustinspicer.Web/Comjustinspicer.Web.csproj -p Comjustinspicer.CMS/Comjustinspicer.CMS.csproj -c ArticleContext -o Migrations/Article &&
 echo "ContentBlockContext" &&
 dotnet ef migrations add InitialContentBlock -s Comjustinspicer.Web/Comjustinspicer.Web.csproj -p Comjustinspicer.CMS/Comjustinspicer.CMS.csproj -c ContentBlockContext -o Migrations/ContentBlock &&
+echo "ContentZone" &&
+dotnet ef migrations add InitialContentZone -s Comjustinspicer.Web/Comjustinspicer.Web.csproj -p Comjustinspicer.CMS/Comjustinspicer.CMS.csproj -c ContentZoneContext -o Migrations/ContentZone &&
 echo "Applying migrations to new database..." &&
 #todo correct script or don't apply migrations because they will apply at startup
 # ./Scripts/ApplyMigrations.sh &&

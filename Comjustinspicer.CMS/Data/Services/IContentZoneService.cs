@@ -1,22 +1,19 @@
 using Comjustinspicer.CMS.Data.Models;
 
-namespace Comjustinspicer.CMS.Models.ContentZone;
+namespace Comjustinspicer.CMS.Data.Services;
 
 /// <summary>
-/// Model interface for content zone operations.
+/// Service interface for ContentZone-specific operations beyond generic CRUD.
 /// </summary>
-public interface IContentZoneModel
+public interface IContentZoneService
 {
     /// <summary>
-    /// Gets the view model for a content zone by name.
+    /// Gets a content zone by its unique name, including all active items.
     /// </summary>
-    /// <param name="contentZoneName">The content zone identifier/name.</param>
-    /// <param name="ct">Cancellation token.</param>
-    /// <returns>A view model for rendering the content zone.</returns>
-    Task<ContentZoneViewModel?> GetViewModelAsync(string contentZoneName, CancellationToken ct = default);
+    Task<ContentZoneDTO?> GetByNameAsync(string name, CancellationToken ct = default);
 
     /// <summary>
-    /// Gets a content zone by ID.
+    /// Gets a content zone by ID, including all items.
     /// </summary>
     Task<ContentZoneDTO?> GetByIdAsync(Guid id, CancellationToken ct = default);
 
@@ -36,7 +33,7 @@ public interface IContentZoneModel
     Task<bool> UpdateAsync(ContentZoneDTO zone, CancellationToken ct = default);
 
     /// <summary>
-    /// Deletes a content zone.
+    /// Deletes a content zone and all its items.
     /// </summary>
     Task<bool> DeleteAsync(Guid id, CancellationToken ct = default);
 
@@ -46,7 +43,7 @@ public interface IContentZoneModel
     Task<ContentZoneItemDTO> AddItemAsync(Guid zoneId, ContentZoneItemDTO item, CancellationToken ct = default);
 
     /// <summary>
-    /// Updates a zone item.
+    /// Updates an existing zone item.
     /// </summary>
     Task<bool> UpdateItemAsync(ContentZoneItemDTO item, CancellationToken ct = default);
 
@@ -56,7 +53,7 @@ public interface IContentZoneModel
     Task<bool> RemoveItemAsync(Guid itemId, CancellationToken ct = default);
 
     /// <summary>
-    /// Gets a zone item by ID.
+    /// Gets an item by ID.
     /// </summary>
     Task<ContentZoneItemDTO?> GetItemByIdAsync(Guid itemId, CancellationToken ct = default);
 

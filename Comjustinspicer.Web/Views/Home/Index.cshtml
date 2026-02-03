@@ -9,3 +9,9 @@
 		@await Component.InvokeAsync("ContentBlock", new { contentBlockID = new Guid("f83e7429-d163-4063-b8c3-ca3869b988dc") })
 	</div>
 </section>
+
+<section class="section">
+	<div class="container content">
+		@await Component.InvokeAsync("ContentZone", new { contentZoneName = "Home" })
+	</div>
+</section>

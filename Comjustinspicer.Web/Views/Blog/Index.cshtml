@@ -1,0 +1,21 @@
+@using Comjustinspicer.CMS.ViewComponents
+
+@{
+	var blogId = ViewData["BlogId"] as Guid?;
+	ViewData["Title"] = blogId.HasValue ? "Blog" : "Blog Posts";
+}
+
+<section class="section">
+	<div class="container content">
+		@if (blogId.HasValue)
+		{
+			<a href="/Blog" class="button is-light mb-4">← Back to Blog Posts</a>
+			@await Component.InvokeAsync("Article", new { id = blogId.Value })
+		}
+		else
+		{
+			<h1 class="title">Blog Posts</h1>
+			@await Component.InvokeAsync("Article")
+		}
+	</div>
+</section>

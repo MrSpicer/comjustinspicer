@@ -1,0 +1,73 @@
+@using Comjustinspicer.CMS.Data.Models
+
+@model List<ContentZoneDTO>
+
+@{
+    ViewData["Title"] = "Content Zones";
+}
+
+<section class="section">
+    <div class="container">
+        <h1 class="title">Content Zones</h1>
+
+        <a asp-controller="AdminContentZone" asp-action="Create" class="button is-primary">New +</a>
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="notification is-danger">
+                @TempData["Error"]
+            </div>
+        }
+
+        <table class="table is-fullwidth is-striped mt-4">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Items</th>
+                    <th>Published</th>
+                    <th>Modified</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var zone in Model)
+                {
+                    <tr>
+                        <td>@zone.Name</td>
+                        <td>@zone.Description</td>
+                        <td>@zone.Items.Count</td>
+                        <td>
+                            @if (zone.IsPublished)
+                            {
+                                <span class="tag is-success">Yes</span>
+                            }
+                            else
+                            {
+                                <span class="tag is-warning">No</span>
+                            }
+                        </td>
+                        <td>@zone.ModificationDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>
+                            <div class="buttons are-small">
+                                <a asp-controller="AdminContentZone" asp-action="Items" asp-route-zoneId="@zone.Id" class="button is-info">Items (@zone.Items.Count)</a>
+                                <a asp-controller="AdminContentZone" asp-action="Edit" asp-route-id="@zone.Id" class="button">Edit</a>
+                                <form asp-controller="AdminContentZone" asp-action="Delete" asp-route-id="@zone.Id" method="post" style="display:inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="button is-danger" onclick="return confirm('Delete this content zone and all its items?');">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if (!Model.Any())
+        {
+            <div class="notification is-info">
+                No content zones defined yet. Click "New +" to create one.
+            </div>
+        }
+    </div>
+</section>

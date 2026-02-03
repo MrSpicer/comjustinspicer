@@ -1,0 +1,76 @@
+@using Comjustinspicer.CMS.Data.Models
+@model ContentZoneItemDTO
+
+@{
+    var isNew = Model.Id == Guid.Empty;
+    ViewData["Title"] = isNew ? "Add Item to Zone" : "Edit Zone Item";
+    var zoneId = ViewData["ZoneId"] as Guid? ?? Model.ContentZoneId;
+    if (isNew)
+    {
+        Model.Id = Guid.NewGuid();
+    }
+}
+
+<section class="section">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+            <ul>
+                <li><a asp-controller="AdminContentZone" asp-action="Index">Content Zones</a></li>
+                <li><a asp-controller="AdminContentZone" asp-action="Items" asp-route-zoneId="@zoneId">Items</a></li>
+                <li class="is-active"><a href="#" aria-current="page">@(isNew ? "Add" : "Edit")</a></li>
+            </ul>
+        </nav>
+
+        <h1 class="title">@ViewData["Title"]</h1>
+
+        <form asp-controller="AdminContentZone" asp-action="SaveItem" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="ContentZoneId" value="@zoneId" />
+            <input type="hidden" asp-for="CreatedAt" />
+
+            <div class="field">
+                <label class="label">Component Name</label>
+                <div class="control">
+                    <input class="input" asp-for="ComponentName" placeholder="e.g., ContentBlock, Article, Layout" />
+                </div>
+                <p class="help">The name of the ViewComponent to render (without "ViewComponent" suffix).</p>
+                <span asp-validation-for="ComponentName" class="has-text-danger"></span>
+            </div>
+
+            <div class="field">
+                <label class="label">Component Properties (JSON)</label>
+                <div class="control">
+                    <textarea class="textarea" asp-for="ComponentPropertiesJson" rows="6" placeholder='{"contentBlockID": "00000000-0000-0000-0000-000000000000"}'></textarea>
+                </div>
+                <p class="help">JSON object with properties to pass to the ViewComponent. Property names should match the component's Invoke parameters.</p>
+                <span asp-validation-for="ComponentPropertiesJson" class="has-text-danger"></span>
+            </div>
+
+            <div class="field">
+                <label class="label">Ordinal (display order)</label>
+                <div class="control">
+                    <input class="input" type="number" asp-for="Ordinal" min="0" />
+                </div>
+                <p class="help">Lower numbers appear first. Leave at 0 to auto-assign.</p>
+            </div>
+
+            <div class="field">
+                <label class="checkbox">
+                    <input type="checkbox" asp-for="IsActive" />
+                    Active
+                </label>
+                <p class="help">Only active items will be rendered on the site.</p>
+            </div>
+
+            <div class="field is-grouped mt-4">
+                <div class="control">
+                    <button class="button is-primary" type="submit">Save</button>
+                </div>
+                <div class="control">
+                    <a asp-controller="AdminContentZone" asp-action="Items" asp-route-zoneId="@zoneId" class="button">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

@@ -1,0 +1,68 @@
+@using Comjustinspicer.CMS.Data.Models
+@model ContentZoneDTO
+
+@{
+    var isNew = Model.Id == Guid.Empty;
+    ViewData["Title"] = isNew ? "New Content Zone" : "Edit Content Zone";
+    if (isNew)
+    {
+        Model.Id = Guid.NewGuid();
+    }
+}
+
+<section class="section">
+    <div class="container">
+        <h1 class="title">@ViewData["Title"]</h1>
+        @if (!isNew)
+        {
+            <h2 class="subtitle">@Model.Id</h2>
+        }
+
+        <form asp-controller="AdminContentZone" asp-action="Save" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="CreationDate" />
+            <input type="hidden" asp-for="CreatedBy" />
+
+            <div class="field">
+                <label class="label">Name (unique identifier)</label>
+                <div class="control">
+                    <input class="input" asp-for="Name" placeholder="e.g., homepage-hero, sidebar-widgets" />
+                </div>
+                <p class="help">This is the name used to reference this zone in your views.</p>
+                <span asp-validation-for="Name" class="has-text-danger"></span>
+            </div>
+
+            <div class="field">
+                <label class="label">Title</label>
+                <div class="control">
+                    <input class="input" asp-for="Title" placeholder="Display title for admin" />
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Description</label>
+                <div class="control">
+                    <textarea class="textarea" asp-for="Description" rows="2" placeholder="Optional description of this zone's purpose"></textarea>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="checkbox">
+                    <input type="checkbox" asp-for="IsPublished" />
+                    Published
+                </label>
+                <p class="help">Only published zones will render their content on the site.</p>
+            </div>
+
+            <div class="field is-grouped mt-4">
+                <div class="control">
+                    <button class="button is-primary" type="submit">Save</button>
+                </div>
+                <div class="control">
+                    <a asp-controller="AdminContentZone" asp-action="Index" class="button">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

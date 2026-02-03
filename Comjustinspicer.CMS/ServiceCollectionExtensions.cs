@@ -6,6 +6,7 @@ using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
 // using Comjustinspicer.CMS.Models.Article;
 using Comjustinspicer.CMS.Models.ContentBlock;
+using Comjustinspicer.CMS.Models.ContentZone;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
@@ -67,6 +68,10 @@ public static class ServiceCollectionExtensions
 		services.AddDbContext<ContentBlockContext>(options =>
 			options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_ContentBlock")));
 
+		// ContentZone DB/context
+		services.AddDbContext<ContentZoneContext>(options =>
+			options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_ContentZone")));
+
 		services.AddDatabaseDeveloperPageExceptionFilter();
 	}
 
@@ -100,7 +105,11 @@ public static class ServiceCollectionExtensions
 			return new ContentService<ContentBlockDTO>(ctx);
 		});
 
+		// ContentZone service registration
+		services.AddScoped<IContentZoneService, ContentZoneService>();
+
 		services.AddScoped<IContentBlockModel, ContentBlockModel>();
+		services.AddScoped<IContentZoneModel, ContentZoneModel>();
 		services.AddScoped<IArticleListModel, ArticleListModel>();
 		services.AddScoped<IArticleModel, ArticleModel>();
 

@@ -1,0 +1,86 @@
+@using Comjustinspicer.CMS.Data.Models
+@model ContentZoneDTO
+
+@{
+    ViewData["Title"] = $"Items in: {Model.Name}";
+}
+
+<section class="section">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+            <ul>
+                <li><a asp-controller="AdminContentZone" asp-action="Index">Content Zones</a></li>
+                <li class="is-active"><a href="#" aria-current="page">@Model.Name</a></li>
+            </ul>
+        </nav>
+
+        <h1 class="title">@ViewData["Title"]</h1>
+        <p class="subtitle">@Model.Description</p>
+
+        <a asp-controller="AdminContentZone" asp-action="AddItem" asp-route-zoneId="@Model.Id" class="button is-primary">Add Item +</a>
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="notification is-danger mt-4">
+                @TempData["Error"]
+            </div>
+        }
+
+        <table class="table is-fullwidth is-striped mt-4" id="items-table">
+            <thead>
+                <tr>
+                    <th style="width: 60px;">Order</th>
+                    <th>Component</th>
+                    <th>Properties</th>
+                    <th>Active</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items.OrderBy(i => i.Ordinal))
+                {
+                    <tr data-item-id="@item.Id">
+                        <td>
+                            <span class="tag is-medium">@item.Ordinal</span>
+                        </td>
+                        <td><strong>@item.ComponentName</strong></td>
+                        <td>
+                            <code class="is-size-7">@(item.ComponentPropertiesJson.Length > 50 ? item.ComponentPropertiesJson.Substring(0, 50) + "..." : item.ComponentPropertiesJson)</code>
+                        </td>
+                        <td>
+                            @if (item.IsActive)
+                            {
+                                <span class="tag is-success">Yes</span>
+                            }
+                            else
+                            {
+                                <span class="tag is-warning">No</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="buttons are-small">
+                                <a asp-controller="AdminContentZone" asp-action="EditItem" asp-route-itemId="@item.Id" class="button">Edit</a>
+                                <form asp-controller="AdminContentZone" asp-action="DeleteItem" asp-route-itemId="@item.Id" method="post" style="display:inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="zoneId" value="@Model.Id" />
+                                    <button type="submit" class="button is-danger" onclick="return confirm('Delete this item?');">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if (!Model.Items.Any())
+        {
+            <div class="notification is-info">
+                No items in this zone yet. Click "Add Item +" to add a component.
+            </div>
+        }
+
+        <div class="mt-4">
+            <a asp-controller="AdminContentZone" asp-action="Index" class="button">Back to Zones</a>
+        </div>
+    </div>
+</section>
