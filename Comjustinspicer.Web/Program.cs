@@ -6,6 +6,7 @@ using Serilog.Events; // may still be used by other code; kept for now
 using Comjustinspicer.CMS.Logging;
 using Comjustinspicer.CMS.Data.DbContexts;
 using Comjustinspicer;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +42,10 @@ try
         pattern: "{controller=Home}/{action=Index}/{id?}");
 
     app.Run();
+}
+catch (HostAbortedException)
+{
+    // Expected when running EF Core tools (migrations, etc.) - not an error
 }
 catch (Exception ex)
 {

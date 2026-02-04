@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Comjustinspicer.CMS.Migrations.Article
 {
     [DbContext(typeof(ArticleContext))]
-    [Migration("20251109183435_InitialArticle")]
+    [Migration("20260204021347_InitialArticle")]
     partial class InitialArticle
     {
         /// <inheritdoc />
@@ -54,6 +54,10 @@ namespace Comjustinspicer.CMS.Migrations.Article
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("PublicationEndDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
@@ -109,6 +113,10 @@ namespace Comjustinspicer.CMS.Migrations.Article
                     b.Property<DateTime?>("PublicationEndDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Summary")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -121,6 +129,78 @@ namespace Comjustinspicer.CMS.Migrations.Article
                     b.HasKey("Id");
 
                     b.ToTable("Posts", (string)null);
+                });
+
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ArticleListDTO", b =>
+                {
+                    b.OwnsMany("Comjustinspicer.CMS.Data.Models.CustomField", "CustomFields", b1 =>
+                        {
+                            b1.Property<Guid>("ArticleListDTOId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<string>("FieldName")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("TypeName")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.HasKey("ArticleListDTOId", "Id");
+
+                            b1.ToTable("ArticleLists");
+
+                            b1.ToJson("CustomFields");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ArticleListDTOId");
+                        });
+
+                    b.Navigation("CustomFields");
+                });
+
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.PostDTO", b =>
+                {
+                    b.OwnsMany("Comjustinspicer.CMS.Data.Models.CustomField", "CustomFields", b1 =>
+                        {
+                            b1.Property<Guid>("PostDTOId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAddOrUpdate()
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<string>("FieldName")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("TypeName")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.HasKey("PostDTOId", "Id");
+
+                            b1.ToTable("Posts");
+
+                            b1.ToJson("CustomFields");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PostDTOId");
+                        });
+
+                    b.Navigation("CustomFields");
                 });
 #pragma warning restore 612, 618
         }

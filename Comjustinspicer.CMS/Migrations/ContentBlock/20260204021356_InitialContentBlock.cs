@@ -17,6 +17,7 @@ namespace Comjustinspicer.CMS.Migrations.ContentBlock
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Content = table.Column<string>(type: "TEXT", maxLength: 10000, nullable: false),
+                    Slug = table.Column<string>(type: "TEXT", nullable: false),
                     Title = table.Column<string>(type: "TEXT", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "TEXT", nullable: false),
                     LastModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false),
@@ -27,7 +28,8 @@ namespace Comjustinspicer.CMS.Migrations.ContentBlock
                     IsPublished = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsArchived = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsHidden = table.Column<bool>(type: "INTEGER", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CustomFields = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {

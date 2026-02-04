@@ -35,7 +35,7 @@ public class AdminContentBlockController : Controller
 
     [HttpPost("contentblocks/edit/{id?}")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(Data.Models.ContentBlockDTO model, string? returnUrl)
+    public async Task<IActionResult> Edit(ContentBlockUpsertViewModel model, string? returnUrl)
     {
         if (!ModelState.IsValid)
         {

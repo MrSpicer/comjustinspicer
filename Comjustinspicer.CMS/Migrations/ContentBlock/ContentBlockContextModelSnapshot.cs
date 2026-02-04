@@ -58,6 +58,10 @@ namespace Comjustinspicer.CMS.Migrations.ContentBlock
                     b.Property<DateTime?>("PublicationEndDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -65,6 +69,42 @@ namespace Comjustinspicer.CMS.Migrations.ContentBlock
                     b.HasKey("Id");
 
                     b.ToTable("ContentBlocks", (string)null);
+                });
+
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ContentBlockDTO", b =>
+                {
+                    b.OwnsMany("Comjustinspicer.CMS.Data.Models.CustomField", "CustomFields", b1 =>
+                        {
+                            b1.Property<Guid>("ContentBlockDTOId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<string>("FieldName")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("TypeName")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.HasKey("ContentBlockDTOId", "Id");
+
+                            b1.ToTable("ContentBlocks");
+
+                            b1.ToJson("CustomFields");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ContentBlockDTOId");
+                        });
+
+                    b.Navigation("CustomFields");
                 });
 #pragma warning restore 612, 618
         }

@@ -20,7 +20,7 @@
 			<p class="title">
 				<a href="/Article/@Model.Id">@Model.Title</a>
 			</p>
-			<p class="subtitle">@Model.PublicationDate.ToString("MMMM dd, yyyy")</p>
+			<p class="subtitle">@Model.PublicationDate?.ToString("MMMM dd, yyyy")</p>
 			<hr />
 			@Html.Raw(Model.Body)
 

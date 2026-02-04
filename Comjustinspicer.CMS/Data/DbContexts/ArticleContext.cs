@@ -19,6 +19,21 @@ public class ArticleContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Title).IsRequired().HasMaxLength(20000);
             entity.ToTable("Posts");
+            
+            // Store CustomFields as JSON
+            entity.OwnsMany(e => e.CustomFields, cf =>
+            {
+                cf.ToJson();
+            });
+        });
+        
+        modelBuilder.Entity<ArticleListDTO>(entity =>
+        {
+            // Store CustomFields as JSON
+            entity.OwnsMany(e => e.CustomFields, cf =>
+            {
+                cf.ToJson();
+            });
         });
     }
 }

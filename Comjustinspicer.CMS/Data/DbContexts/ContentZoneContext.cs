@@ -26,6 +26,12 @@ public class ContentZoneContext : DbContext
                   .WithOne(i => i.ContentZone)
                   .HasForeignKey(i => i.ContentZoneId)
                   .OnDelete(DeleteBehavior.Cascade);
+            
+            // Store CustomFields as JSON
+            entity.OwnsMany(e => e.CustomFields, cf =>
+            {
+                cf.ToJson();
+            });
         });
 
         modelBuilder.Entity<ContentZoneItemDTO>(entity =>

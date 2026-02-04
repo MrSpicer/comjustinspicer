@@ -16,6 +16,7 @@
             <thead>
                 <tr>
                     <th>Title</th>
+                    <th>Slug</th>
                     <th>Id</th>
                     <th>Created</th>
                     <th>Modified</th>
@@ -27,9 +28,10 @@
                 {
                     <tr>
                         <td>@post.Title</td>
+                        <td>@post.Slug</td>
                         <td>@post.Id</td>
-                        <td>@post.CreationDate.ToString("yyyy-MM-dd hh:mm")</td>
-                        <td>@post.ModificationDate.ToString("yyyy-MM-dd hh:mm")</td>
+                        <td>@post.CreationDate?.ToString("yyyy-MM-dd hh:mm")</td>
+                        <td>@post.ModificationDate?.ToString("yyyy-MM-dd hh:mm")</td>
                         <td>
                             <a asp-controller="AdminArticle" asp-action="PostEdit" asp-route-id="@post.Id" class="button is-small">Edit</a>
                             <form asp-controller="AdminArticle" asp-action="Delete" asp-route-id="@post.Id" method="post" style="display:inline">

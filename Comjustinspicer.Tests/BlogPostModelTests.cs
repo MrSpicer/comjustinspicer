@@ -109,7 +109,7 @@ public class ArticlePostModelTests
         svc.Setup(s => s.CreateAsync(It.IsAny<PostDTO>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((PostDTO p, CancellationToken _) => p);
         var model = new ArticleModel(svc.Object, _mapper);
-        var vm = new PostUpsertViewModel { Title = "T", Body = "B", AuthorName = "A", PublicationDate = DateTime.UtcNow };
+        var vm = new ArticleUpsertViewModel { Title = "T", Body = "B", AuthorName = "A", PublicationDate = DateTime.UtcNow };
         var (success, err) = await model.SaveUpsertAsync(vm);
         Assert.That(success, Is.True);
         Assert.That(err, Is.Null);
@@ -122,7 +122,7 @@ public class ArticlePostModelTests
     var svc = new Mock<IContentService<PostDTO>>();
         svc.Setup(s => s.UpdateAsync(It.IsAny<PostDTO>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
         var model = new ArticleModel(svc.Object, _mapper);
-        var vm = new PostUpsertViewModel { Id = Guid.NewGuid(), Title = "T", Body = "B", AuthorName = "A", PublicationDate = DateTime.UtcNow };
+        var vm = new ArticleUpsertViewModel { Id = Guid.NewGuid(), Title = "T", Body = "B", AuthorName = "A", PublicationDate = DateTime.UtcNow };
         var (success, err) = await model.SaveUpsertAsync(vm);
         Assert.That(success, Is.True);
         Assert.That(err, Is.Null);
@@ -135,7 +135,7 @@ public class ArticlePostModelTests
     var svc = new Mock<IContentService<PostDTO>>();
         svc.Setup(s => s.UpdateAsync(It.IsAny<PostDTO>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
         var model = new ArticleModel(svc.Object, _mapper);
-        var vm = new PostUpsertViewModel { Id = Guid.NewGuid(), Title = "T", Body = "B", AuthorName = "A", PublicationDate = DateTime.UtcNow };
+        var vm = new ArticleUpsertViewModel { Id = Guid.NewGuid(), Title = "T", Body = "B", AuthorName = "A", PublicationDate = DateTime.UtcNow };
         var (success, err) = await model.SaveUpsertAsync(vm);
         Assert.That(success, Is.False);
         Assert.That(err, Is.Not.Null);

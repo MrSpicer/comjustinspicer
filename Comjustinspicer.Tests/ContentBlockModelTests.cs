@@ -48,11 +48,18 @@ public class ContentBlockModelTests
 		ModificationDate = DateTime.UtcNow.AddMinutes(-5)
 	};
 
+	private static ContentBlockUpsertViewModel CreateViewModel(Guid? id = null) => new ContentBlockUpsertViewModel
+	{
+		Id = id ?? Guid.NewGuid(),
+		Title = "Title",
+		Content = "Content"
+	};
+
     [Test]
     public void FromIdAsync_Empty_Throws()
     {
     var svc = new Mock<IContentService<ContentBlockDTO>>();
-        var model = new ContentBlockModel(svc.Object);
+        var model = new ContentBlockModel(svc.Object, _mapper);
         Assert.ThrowsAsync<ArgumentException>(async () => await model.FromIdAsync(Guid.Empty));
     }
 
@@ -62,7 +69,7 @@ public class ContentBlockModelTests
         var dto = CreateDto();
     var svc = new Mock<IContentService<ContentBlockDTO>>();
         svc.Setup(s => s.GetByIdAsync(dto.Id, It.IsAny<CancellationToken>())).ReturnsAsync(dto);
-        var model = new ContentBlockModel(svc.Object);
+        var model = new ContentBlockModel(svc.Object, _mapper);
         var result = await model.FromIdAsync(dto.Id);
         Assert.That(result, Is.Not.Null);
         Assert.That(result!.Id, Is.EqualTo(dto.Id));
@@ -74,7 +81,7 @@ public class ContentBlockModelTests
         var list = new List<ContentBlockDTO> { CreateDto() };
     var svc = new Mock<IContentService<ContentBlockDTO>>();
         svc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(list);
-        var model = new ContentBlockModel(svc.Object);
+        var model = new ContentBlockModel(svc.Object, _mapper);
         var result = await model.GetAllAsync();
         Assert.That(result.Count, Is.EqualTo(1));
     }
@@ -83,7 +90,7 @@ public class ContentBlockModelTests
     public async Task GetUpsertModelAsync_NullId_ReturnsEmptyDto()
     {
     var svc = new Mock<IContentService<ContentBlockDTO>>();
-        var model = new ContentBlockModel(svc.Object);
+        var model = new ContentBlockModel(svc.Object, _mapper);
         var dto = await model.GetUpsertModelAsync(null);
         Assert.That(dto, Is.Not.Null);
         Assert.That(dto!.Id, Is.EqualTo(Guid.Empty));
@@ -95,7 +102,7 @@ public class ContentBlockModelTests
         var svc = new Mock<IContentService<ContentBlockDTO>>();
         svc.Setup(s => s.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(null as ContentBlockDTO);
-        var model = new ContentBlockModel(svc.Object);
+        var model = new ContentBlockModel(svc.Object, _mapper);
         var dto = await model.GetUpsertModelAsync(Guid.NewGuid());
         Assert.That(dto, Is.Not.Null);
         Assert.That(dto!.Id, Is.EqualTo(Guid.Empty));
@@ -107,7 +114,7 @@ public class ContentBlockModelTests
         var dto = CreateDto();
     var svc = new Mock<IContentService<ContentBlockDTO>>();
         svc.Setup(s => s.GetByIdAsync(dto.Id, It.IsAny<CancellationToken>())).ReturnsAsync(dto);
-        var model = new ContentBlockModel(svc.Object);
+        var model = new ContentBlockModel(svc.Object, _mapper);
         var result = await model.GetUpsertModelAsync(dto.Id);
         Assert.That(result, Is.Not.Null);
         Assert.That(result!.Id, Is.EqualTo(dto.Id));
@@ -119,9 +126,9 @@ public class ContentBlockModelTests
         var svc = new Mock<IContentService<ContentBlockDTO>>();
         svc.Setup(s => s.UpsertAsync(It.IsAny<ContentBlockDTO>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
-        var model = new ContentBlockModel(svc.Object);
-        var dto = CreateDto(Guid.NewGuid());
-        var (success, err) = await model.SaveUpsertAsync(dto);
+        var model = new ContentBlockModel(svc.Object, _mapper);
+        var viewModel = CreateViewModel(Guid.NewGuid());
+        var (success, err) = await model.SaveUpsertAsync(viewModel);
         Assert.That(success, Is.True);
         Assert.That(err, Is.Null);
     }
@@ -132,9 +139,9 @@ public class ContentBlockModelTests
         var svc = new Mock<IContentService<ContentBlockDTO>>();
         svc.Setup(s => s.UpsertAsync(It.IsAny<ContentBlockDTO>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
-        var model = new ContentBlockModel(svc.Object);
-        var dto = CreateDto(Guid.NewGuid());
-        var (success, err) = await model.SaveUpsertAsync(dto);
+        var model = new ContentBlockModel(svc.Object, _mapper);
+        var viewModel = CreateViewModel(Guid.NewGuid());
+        var (success, err) = await model.SaveUpsertAsync(viewModel);
         Assert.That(success, Is.False);
         Assert.That(err, Is.Not.Null);
     }
@@ -143,7 +150,7 @@ public class ContentBlockModelTests
     public void SaveUpsertAsync_Null_Throws()
     {
     var svc = new Mock<IContentService<ContentBlockDTO>>();
-        var model = new ContentBlockModel(svc.Object);
+        var model = new ContentBlockModel(svc.Object, _mapper);
         Assert.ThrowsAsync<ArgumentNullException>(async () => await model.SaveUpsertAsync(null!));
     }
 
@@ -152,7 +159,7 @@ public class ContentBlockModelTests
     {
     var svc = new Mock<IContentService<ContentBlockDTO>>();
         svc.Setup(s => s.DeleteAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
-        var model = new ContentBlockModel(svc.Object);
+        var model = new ContentBlockModel(svc.Object, _mapper);
         var ok = await model.DeleteAsync(Guid.NewGuid());
         Assert.That(ok, Is.True);
     }

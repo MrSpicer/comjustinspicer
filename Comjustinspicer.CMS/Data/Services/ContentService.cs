@@ -36,6 +36,10 @@ public sealed class ContentService<T> : IContentService<T> where T : BaseContent
         if (entity.Id == Guid.Empty)
             entity.Id = Guid.NewGuid();
 
+        // Auto-generate slug from title if slug is empty
+        if (string.IsNullOrWhiteSpace(entity.Slug) && !string.IsNullOrWhiteSpace(entity.Title))
+            entity.Slug = Uri.EscapeDataString(entity.Title);
+
         var now = DateTime.UtcNow;
         entity.CreationDate = now;
         entity.ModificationDate = now;
@@ -78,6 +82,10 @@ public sealed class ContentService<T> : IContentService<T> where T : BaseContent
         if (existing == null)
         {
             // treat as create
+            // Auto-generate slug from title if slug is empty
+            if (string.IsNullOrWhiteSpace(entity.Slug) && !string.IsNullOrWhiteSpace(entity.Title))
+                entity.Slug = Uri.EscapeDataString(entity.Title);
+
             var now = DateTime.UtcNow;
             entity.CreationDate = now;
             entity.ModificationDate = now;

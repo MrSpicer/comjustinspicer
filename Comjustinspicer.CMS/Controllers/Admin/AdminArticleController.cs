@@ -46,7 +46,7 @@ public class AdminArticleController : Controller
     [HttpPost("Article/post/edit/{id?}")]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin,Editor")]
-    public async Task<IActionResult> PostEdit(PostUpsertViewModel model, string? returnUrl)
+    public async Task<IActionResult> PostEdit(ArticleUpsertViewModel model, string? returnUrl)
     {
         if (!ModelState.IsValid)
         {

@@ -1,18 +1,18 @@
 @using Comjustinspicer.CMS.Data.Models
-@model ContentBlockDTO
+@model Comjustinspicer.CMS.Models.ContentBlock.ContentBlockUpsertViewModel
 
 @{
-    ViewData["Title"] = Model.Id == Guid.Empty ? "New Content Block" : "Edit Content Block";
-	if(Model.Id == Guid.Empty)
-	{
-		Model.Id = Guid.NewGuid();
-	}
+	var isEdit = Model?.Id != null && Model.Id != Guid.Empty;
+    ViewData["Title"] = isEdit ? "Edit Content Block" : "New Content Block";
 }
 
 <section class="section">
 	<div class="container">
 		<h1 class="title">@ViewData["Title"]</h1>
-		<h2 class="subtitle">@Model.Id</h2>
+		@if (isEdit)
+		{
+			<h2 class="subtitle">@Model?.Id</h2>
+		}
 		<form asp-action="Edit" method="post">
 			@Html.AntiForgeryToken()
 			@*todo: Is this really needed? can't we just use the querystring?*@
@@ -29,6 +29,15 @@
 				<div class="control">
 					<input class="input" asp-for="Title" />
 				</div>
+				<p class="help is-danger">@Html.ValidationMessageFor(m => m.Title)</p>
+			</div>
+
+			<div class="field">
+				<label class="label">Slug</label>
+				<div class="control">
+					<input class="input" asp-for="Slug" />
+				</div>
+				<p class="help is-danger">@Html.ValidationMessageFor(m => m.Slug)</p>
 			</div>
 
 			<div class="field">
@@ -36,6 +45,7 @@
 				<div class="control">
 					<textarea id="editor" class="textarea" asp-for="Content"></textarea>
 				</div>
+				<p class="help is-danger">@Html.ValidationMessageFor(m => m.Content)</p>
 			</div>
 
 			<div class="field is-grouped">

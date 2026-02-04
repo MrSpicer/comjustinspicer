@@ -3,7 +3,7 @@ namespace Comjustinspicer.CMS.Data.Models;
 public abstract class BaseContentDTO
 {
     public Guid Id { get; set; }
-    //public string Slug { get; set; } = string.Empty;
+    public string Slug { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public Guid CreatedBy { get; set; }
     public Guid LastModifiedBy { get; set; }
@@ -16,5 +16,5 @@ public abstract class BaseContentDTO
     public bool IsHidden { get; set; }
     public bool IsDeleted { get; set; }
 
-    //public List<CustomField> CustomFields { get; set; } = new();
+    public List<CustomField> CustomFields { get; set; } = new();
 }

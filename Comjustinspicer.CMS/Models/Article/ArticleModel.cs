@@ -22,15 +22,15 @@ public sealed class ArticleModel : IArticleModel
     return _mapper.Map<ArticleViewModel>(dto);
     }
 
-    public async Task<PostUpsertViewModel?> GetUpsertViewModelAsync(Guid? id, CancellationToken ct = default)
+    public async Task<ArticleUpsertViewModel?> GetUpsertViewModelAsync(Guid? id, CancellationToken ct = default)
     {
-        if (id == null) return new PostUpsertViewModel();
+        if (id == null) return new ArticleUpsertViewModel();
         var dto = await _postService.GetByIdAsync(id.Value, ct);
     if (dto == null) return null;
-    return _mapper.Map<PostUpsertViewModel>(dto);
+    return _mapper.Map<ArticleUpsertViewModel>(dto);
     }
 
-    public async Task<(bool Success, string? ErrorMessage)> SaveUpsertAsync(PostUpsertViewModel model, CancellationToken ct = default)
+    public async Task<(bool Success, string? ErrorMessage)> SaveUpsertAsync(ArticleUpsertViewModel model, CancellationToken ct = default)
     {
         if (model == null) throw new ArgumentNullException(nameof(model));
 

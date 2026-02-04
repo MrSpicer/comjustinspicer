@@ -16,6 +16,7 @@ namespace Comjustinspicer.CMS.Migrations.Article
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Slug = table.Column<string>(type: "TEXT", nullable: false),
                     Title = table.Column<string>(type: "TEXT", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "TEXT", nullable: false),
                     LastModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false),
@@ -26,7 +27,8 @@ namespace Comjustinspicer.CMS.Migrations.Article
                     IsPublished = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsArchived = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsHidden = table.Column<bool>(type: "INTEGER", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CustomFields = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -41,6 +43,7 @@ namespace Comjustinspicer.CMS.Migrations.Article
                     Body = table.Column<string>(type: "TEXT", nullable: false),
                     AuthorName = table.Column<string>(type: "TEXT", nullable: false),
                     Summary = table.Column<string>(type: "TEXT", nullable: false),
+                    Slug = table.Column<string>(type: "TEXT", nullable: false),
                     Title = table.Column<string>(type: "TEXT", maxLength: 20000, nullable: false),
                     CreatedBy = table.Column<Guid>(type: "TEXT", nullable: false),
                     LastModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false),
@@ -51,7 +54,8 @@ namespace Comjustinspicer.CMS.Migrations.Article
                     IsPublished = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsArchived = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsHidden = table.Column<bool>(type: "INTEGER", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CustomFields = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {

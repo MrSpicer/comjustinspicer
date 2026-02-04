@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Comjustinspicer.CMS.Migrations.ContentZone
 {
     [DbContext(typeof(ContentZoneContext))]
-    [Migration("20260202032743_InitialContentZone")]
+    [Migration("20260204021404_InitialContentZone")]
     partial class InitialContentZone
     {
         /// <inheritdoc />
@@ -66,6 +66,10 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                     b.Property<DateTime?>("PublicationEndDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -114,6 +118,42 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                     b.HasIndex("ContentZoneId", "Ordinal");
 
                     b.ToTable("ContentZoneItems", (string)null);
+                });
+
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ContentZoneDTO", b =>
+                {
+                    b.OwnsMany("Comjustinspicer.CMS.Data.Models.CustomField", "CustomFields", b1 =>
+                        {
+                            b1.Property<Guid>("ContentZoneDTOId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<string>("FieldName")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("TypeName")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.HasKey("ContentZoneDTOId", "Id");
+
+                            b1.ToTable("ContentZones");
+
+                            b1.ToJson("CustomFields");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ContentZoneDTOId");
+                        });
+
+                    b.Navigation("CustomFields");
                 });
 
             modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ContentZoneItemDTO", b =>

@@ -28,17 +28,17 @@ public sealed class ArticleListModel : IArticleListModel
         return vm;
     }
 
-    public async Task<PostUpsertViewModel?> GetUpsertViewModelAsync(Guid? id, CancellationToken ct = default)
+    public async Task<ArticleUpsertViewModel?> GetUpsertViewModelAsync(Guid? id, CancellationToken ct = default)
     {
-        if (id == null) return new PostUpsertViewModel();
+        if (id == null) return new ArticleUpsertViewModel();
 
         var post = await _postService.GetByIdAsync(id.Value, ct);
         if (post == null) return null;
 
-    return _mapper.Map<PostUpsertViewModel>(post);
+    return _mapper.Map<ArticleUpsertViewModel>(post);
     }
 
-    public async Task<(bool Success, string? ErrorMessage)> SaveUpsertAsync(PostUpsertViewModel model, CancellationToken ct = default)
+    public async Task<(bool Success, string? ErrorMessage)> SaveUpsertAsync(ArticleUpsertViewModel model, CancellationToken ct = default)
     {
         if (model == null) throw new ArgumentNullException(nameof(model));
 

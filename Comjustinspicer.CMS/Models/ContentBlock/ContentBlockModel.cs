@@ -1,14 +1,18 @@
 using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
+using AutoMapper;
 
 namespace Comjustinspicer.CMS.Models.ContentBlock;
 
 public class ContentBlockModel : IContentBlockModel
 {
-    private IContentService<ContentBlockDTO> _service { get; set; }
-    public ContentBlockModel(IContentService<ContentBlockDTO> service)
+    private readonly IContentService<ContentBlockDTO> _service;
+    private readonly IMapper _mapper;
+
+    public ContentBlockModel(IContentService<ContentBlockDTO> service, IMapper mapper)
     {
         _service = service ?? throw new ArgumentNullException(nameof(service));
+        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
     public async Task<ContentBlockDTO?> FromIdAsync(Guid id, CancellationToken ct = default)
@@ -23,27 +27,28 @@ public class ContentBlockModel : IContentBlockModel
         return await _service.GetAllAsync(ct);
     }
     
-    public async Task<ContentBlockDTO?> GetUpsertModelAsync(Guid? id, CancellationToken ct = default)
+    public async Task<ContentBlockUpsertViewModel?> GetUpsertModelAsync(Guid? id, CancellationToken ct = default)
     {
-        if (id == null)
+        if (id == null || id == Guid.Empty)
         {
-            return new ContentBlockDTO();
+            return new ContentBlockUpsertViewModel();
         }
         
         var dto = await _service.GetByIdAsync(id.Value, ct);
         if (dto == null)
         {
-            return new ContentBlockDTO();
+            return null;
         }
         
-        return dto;
+        return _mapper.Map<ContentBlockUpsertViewModel>(dto);
     }
     
-    public async Task<(bool Success, string? ErrorMessage)> SaveUpsertAsync(ContentBlockDTO model, CancellationToken ct = default)
+    public async Task<(bool Success, string? ErrorMessage)> SaveUpsertAsync(ContentBlockUpsertViewModel model, CancellationToken ct = default)
     {
         if (model == null) throw new ArgumentNullException(nameof(model));
         
-        var ok = await _service.UpsertAsync(model, ct);
+        var dto = _mapper.Map<ContentBlockDTO>(model);
+        var ok = await _service.UpsertAsync(dto, ct);
         if (!ok) return (false, "An error occurred while saving the content block.");
         return (true, null);
     }
