@@ -71,4 +71,15 @@ public class AdminContentBlockController : Controller
 
         return RedirectToAction("Index");
     }
+
+    /// <summary>
+    /// API endpoint to list content blocks for entity pickers.
+    /// </summary>
+    [HttpGet("contentblocks/api/list")]
+    public async Task<IActionResult> ApiList()
+    {
+        var all = await _model.GetAllAsync();
+        var result = all.Select(cb => new { id = cb.Id, title = cb.Title }).ToList();
+        return Json(result);
+    }
 }

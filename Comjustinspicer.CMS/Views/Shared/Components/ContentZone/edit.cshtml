@@ -1,5 +1,457 @@
 @model Comjustinspicer.CMS.Models.ContentZone.ContentZoneViewModel
 @using Comjustinspicer.CMS.Models.ContentZone
+@using Comjustinspicer.CMS.ContentZones
 @{
-
+    var componentsByCategory = ViewData["ComponentsByCategory"] as IReadOnlyDictionary<string, IReadOnlyList<ContentZoneComponentInfo>> 
+        ?? new Dictionary<string, IReadOnlyList<ContentZoneComponentInfo>>();
+    
+    // Generate a unique ID for this zone's modal (for multiple zones on one page)
+    var modalId = $"cz-modal-{Guid.NewGuid():N}";
+    var containerId = $"cz-container-{Guid.NewGuid():N}";
 }
+
+<div class="content-zone content-zone-edit" id="@containerId" data-zone-name="@Model.Name">
+    @* Hidden zone ID - never displayed to users *@
+    <input type="hidden" class="zone-id-field" value="@Model.Id" />
+    
+    @* Render existing zone items *@
+    @if (Model.ZoneObjects?.Any() == true)
+    {
+        foreach (var obj in Model.ZoneObjects.OrderBy(o => o.Ordinal))
+        {
+            <div class="zone-object zone-object-edit" data-item-id="@obj.Id" data-ordinal="@obj.Ordinal" data-zone-id="@obj.ZoneId">
+                <div class="zone-object-toolbar">
+                    <span class="zone-object-label">@obj.ComponentName</span>
+                    <button type="button" class="button is-small is-warning zone-edit-item" title="Edit">
+                        <span class="icon is-small"><i class="fas fa-edit"></i></span>
+                    </button>
+                    <button type="button" class="button is-small is-danger zone-delete-item" title="Delete">
+                        <span class="icon is-small"><i class="fas fa-trash"></i></span>
+                    </button>
+                </div>
+                <div class="zone-object-content">
+                    @await Component.InvokeAsync(obj.ComponentName, obj.ComponentProperties)
+                </div>
+            </div>
+        }
+    }
+
+    @* Add Widget Button *@
+    <div class="zone-add-widget">
+        <button type="button" class="button is-primary is-outlined zone-add-btn" data-modal="@modalId">
+            <span class="icon"><i class="fas fa-plus"></i></span>
+            <span>Add Widget</span>
+        </button>
+    </div>
+</div>
+
+@* Add Widget Modal *@
+<div id="@modalId" class="modal cz-add-modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Add Widget</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <form class="cz-widget-form" data-container="@containerId">
+                @* Hidden fields - IDs are auto-generated, never shown to users *@
+                <input type="hidden" name="zoneName" value="@Model.Name" />
+                <input type="hidden" name="componentPropertiesJson" class="component-props-json" />
+
+                <div class="field">
+                    <label class="label">Component</label>
+                    <div class="control">
+                        <div class="select is-fullwidth">
+                            <select name="componentName" class="component-selector" required>
+                                <option value="">-- Select a component --</option>
+                                @foreach (var category in componentsByCategory.OrderBy(c => c.Key))
+                                {
+                                    <optgroup label="@category.Key">
+                                        @foreach (var component in category.Value.OrderBy(c => c.Order).ThenBy(c => c.DisplayName))
+                                        {
+                                            <option value="@component.Name" data-description="@component.Description">
+                                                @component.DisplayName
+                                            </option>
+                                        }
+                                    </optgroup>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <p class="help component-description">Select a component to configure.</p>
+                </div>
+
+                <div class="dynamic-properties-container" style="display: none;">
+                    <hr />
+                    <h3 class="subtitle is-5">Configuration</h3>
+                    <div class="dynamic-properties">
+                        <!-- Dynamic form fields inserted here -->
+                    </div>
+                </div>
+            </form>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-success save-widget-btn">Save</button>
+            <button type="button" class="button cancel-btn">Cancel</button>
+        </footer>
+    </div>
+</div>
+
+<style>
+    .content-zone-edit {
+        position: relative;
+        min-height: 50px;
+        border: 2px dashed #ccc;
+        border-radius: 4px;
+        padding: 1rem;
+        margin: 0.5rem 0;
+        background: rgba(0,0,0,0.02);
+    }
+    .content-zone-edit:hover {
+        border-color: #3273dc;
+    }
+    .zone-object-edit {
+        position: relative;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 0.5rem;
+        background: white;
+    }
+    .zone-object-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0.5rem;
+        background: #f5f5f5;
+        border-bottom: 1px solid #ddd;
+        font-size: 0.85rem;
+    }
+    .zone-object-label {
+        flex: 1;
+        font-weight: 500;
+        color: #666;
+    }
+    .zone-object-content {
+        padding: 0.5rem;
+    }
+    .zone-add-widget {
+        text-align: center;
+        padding: 1rem;
+    }
+    .dynamic-properties-container {
+        margin-top: 1rem;
+    }
+</style>
+
+<script>
+(function() {
+    const modal = document.getElementById('@modalId');
+    const container = document.getElementById('@containerId');
+    const form = modal.querySelector('.cz-widget-form');
+    const componentSelector = form.querySelector('.component-selector');
+    const componentDescription = form.querySelector('.component-description');
+    const dynamicContainer = form.querySelector('.dynamic-properties-container');
+    const dynamicProperties = form.querySelector('.dynamic-properties');
+    const propsJsonInput = form.querySelector('.component-props-json');
+    
+    let currentProperties = [];
+    let existingProperties = {};
+
+    // Open modal
+    container.querySelector('.zone-add-btn').addEventListener('click', function() {
+        // Reset form for new item
+        form.reset();
+        existingProperties = {};
+        dynamicContainer.style.display = 'none';
+        dynamicProperties.innerHTML = '';
+        modal.classList.add('is-active');
+    });
+
+    // Close modal
+    modal.querySelector('.modal-background').addEventListener('click', closeModal);
+    modal.querySelector('.delete').addEventListener('click', closeModal);
+    modal.querySelector('.cancel-btn').addEventListener('click', closeModal);
+    
+    function closeModal() {
+        modal.classList.remove('is-active');
+    }
+
+    // Delete item handler
+    container.querySelectorAll('.zone-delete-item').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const zoneObject = this.closest('.zone-object-edit');
+            const itemId = zoneObject.dataset.itemId;
+            const componentName = zoneObject.querySelector('.zone-object-label')?.textContent || 'this widget';
+            
+            if (!itemId || itemId === '00000000-0000-0000-0000-000000000000') {
+                alert('Cannot delete: Item ID not found.');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to permanently delete "${componentName}"? This action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/contentzones/items/${encodeURIComponent(itemId)}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to delete');
+                }
+                
+                // Remove the item from the DOM
+                zoneObject.remove();
+            } catch (error) {
+                console.error('Error deleting widget:', error);
+                alert('Failed to delete widget: ' + error.message);
+            }
+        });
+    });
+
+    // Component selection change
+    componentSelector.addEventListener('change', async function() {
+        const componentName = this.value;
+        const selectedOption = this.options[this.selectedIndex];
+        
+        componentDescription.textContent = selectedOption.dataset.description || 'Select a component to configure.';
+        
+        if (!componentName) {
+            dynamicContainer.style.display = 'none';
+            dynamicProperties.innerHTML = '';
+            currentProperties = [];
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/admin/contentzones/components/${encodeURIComponent(componentName)}/properties`);
+            if (!response.ok) throw new Error('Failed to load properties');
+            
+            const data = await response.json();
+            currentProperties = data.properties || [];
+            
+            if (currentProperties.length === 0) {
+                dynamicContainer.style.display = 'none';
+                dynamicProperties.innerHTML = '';
+                return;
+            }
+            
+            renderPropertyFields(currentProperties);
+            dynamicContainer.style.display = 'block';
+        } catch (error) {
+            console.error('Error loading component properties:', error);
+            dynamicProperties.innerHTML = '<div class="notification is-danger">Failed to load component properties.</div>';
+            dynamicContainer.style.display = 'block';
+        }
+    });
+
+    function renderPropertyFields(properties) {
+        const groups = {};
+        properties.forEach(prop => {
+            const group = prop.group || 'General';
+            if (!groups[group]) groups[group] = [];
+            groups[group].push(prop);
+        });
+        
+        let html = '';
+        for (const [groupName, groupProps] of Object.entries(groups)) {
+            if (Object.keys(groups).length > 1) {
+                html += `<h4 class="is-size-6 has-text-weight-bold mt-3 mb-2">${escapeHtml(groupName)}</h4>`;
+            }
+            groupProps.sort((a, b) => (a.order || 0) - (b.order || 0));
+            for (const prop of groupProps) {
+                html += renderPropertyField(prop);
+            }
+        }
+        
+        dynamicProperties.innerHTML = html;
+        
+        dynamicProperties.querySelectorAll('input, select, textarea').forEach(input => {
+            input.addEventListener('change', updatePropertiesJson);
+            input.addEventListener('input', updatePropertiesJson);
+        });
+        
+        updatePropertiesJson();
+    }
+
+    function renderPropertyField(prop) {
+        const existingValue = existingProperties[prop.name];
+        const value = existingValue !== undefined ? existingValue : (prop.defaultValue || '');
+        const required = prop.isRequired ? 'required' : '';
+        const placeholder = prop.placeholder || '';
+        const helpText = prop.helpText || '';
+        
+        let fieldHtml = `<div class="field">`;
+        fieldHtml += `<label class="label">${escapeHtml(prop.label)}${prop.isRequired ? ' <span class="has-text-danger">*</span>' : ''}</label>`;
+        fieldHtml += `<div class="control">`;
+        
+        switch (prop.editorType) {
+            case 'checkbox':
+                const checked = value === true || value === 'true' || value === 'True' ? 'checked' : '';
+                fieldHtml += `<label class="checkbox"><input type="checkbox" data-prop="${prop.name}" ${checked} /></label>`;
+                break;
+            case 'number':
+                const min = prop.min !== null && !isNaN(prop.min) ? `min="${prop.min}"` : '';
+                const max = prop.max !== null && !isNaN(prop.max) ? `max="${prop.max}"` : '';
+                fieldHtml += `<input class="input" type="number" data-prop="${prop.name}" value="${escapeHtml(String(value))}" ${min} ${max} ${required} style="max-width: 200px;" />`;
+                break;
+            case 'textarea':
+                fieldHtml += `<textarea class="textarea" data-prop="${prop.name}" rows="3" ${required}>${escapeHtml(String(value))}</textarea>`;
+                break;
+            case 'viewpicker':
+            case 'dropdown':
+                fieldHtml += `<div class="select"><select data-prop="${prop.name}" ${required}>`;
+                if (!prop.isRequired) fieldHtml += `<option value="">-- Select --</option>`;
+                if (prop.dropdownOptions) {
+                    for (const [optValue, optLabel] of Object.entries(prop.dropdownOptions)) {
+                        const selected = String(value) === optValue ? 'selected' : '';
+                        fieldHtml += `<option value="${escapeHtml(optValue)}" ${selected}>${escapeHtml(optLabel)}</option>`;
+                    }
+                }
+                fieldHtml += `</select></div>`;
+                break;
+            case 'guid':
+                // For GUID fields with an entity type, show entity picker
+                // For raw GUID fields, show hidden input (auto-generated)
+                if (prop.entityType) {
+                    fieldHtml += `<div class="select is-fullwidth"><select data-prop="${prop.name}" class="entity-picker" data-entity-type="${prop.entityType}" ${required}>`;
+                    fieldHtml += `<option value="">-- Loading ${escapeHtml(prop.entityType)}s... --</option>`;
+                    fieldHtml += `</select></div>`;
+                    // Trigger loading entities after render
+                    setTimeout(() => loadEntities(prop.name, prop.entityType, value), 0);
+                } else {
+                    // Hidden GUID - auto-generated, not shown to user
+                    fieldHtml = `<input type="hidden" data-prop="${prop.name}" value="${escapeHtml(String(value))}" />`;
+                    return fieldHtml; // Skip the field wrapper for hidden inputs
+                }
+                break;
+            default:
+                fieldHtml += `<input class="input" type="text" data-prop="${prop.name}" value="${escapeHtml(String(value))}" placeholder="${escapeHtml(placeholder)}" ${required} />`;
+                break;
+        }
+        
+        fieldHtml += `</div>`;
+        if (helpText) fieldHtml += `<p class="help">${escapeHtml(helpText)}</p>`;
+        fieldHtml += `</div>`;
+        
+        return fieldHtml;
+    }
+
+    // Load entities for entity picker dropdowns
+    async function loadEntities(propName, entityType, selectedValue) {
+        const select = dynamicProperties.querySelector(`select[data-prop="${propName}"]`);
+        if (!select) return;
+        
+        try {
+            // Map entity types to their API endpoints
+            const endpoints = {
+                'ContentBlock': '/admin/contentblocks/api/list',
+                'Article': '/admin/article/api/list',
+                'ContentZone': '/admin/contentzones/api/list'
+            };
+            
+            const endpoint = endpoints[entityType];
+            if (!endpoint) {
+                select.innerHTML = `<option value="">-- Unknown entity type: ${escapeHtml(entityType)} --</option>`;
+                return;
+            }
+            
+            const response = await fetch(endpoint);
+            if (!response.ok) throw new Error('Failed to load entities');
+            
+            const entities = await response.json();
+            
+            let options = '<option value="">-- Select --</option>';
+            for (const entity of entities) {
+                const id = entity.id || entity.Id;
+                const title = entity.title || entity.Title || entity.name || entity.Name || id;
+                const selected = String(id) === String(selectedValue) ? 'selected' : '';
+                options += `<option value="${escapeHtml(id)}" ${selected}>${escapeHtml(title)}</option>`;
+            }
+            select.innerHTML = options;
+            
+            // Attach change handler
+            select.addEventListener('change', updatePropertiesJson);
+            updatePropertiesJson();
+        } catch (error) {
+            console.error('Error loading entities:', error);
+            select.innerHTML = `<option value="">-- Failed to load ${escapeHtml(entityType)}s --</option>`;
+        }
+    }
+
+    function updatePropertiesJson() {
+        const properties = {};
+        dynamicProperties.querySelectorAll('[data-prop]').forEach(input => {
+            const propName = input.dataset.prop;
+            if (input.type === 'checkbox') {
+                properties[propName] = input.checked;
+            } else if (input.type === 'number') {
+                properties[propName] = input.value ? Number(input.value) : null;
+            } else {
+                properties[propName] = input.value || null;
+            }
+        });
+        propsJsonInput.value = JSON.stringify(properties);
+    }
+
+    // GUID generation - kept for any remaining GUID fields
+    dynamicProperties.addEventListener('click', function(e) {
+        if (e.target.classList.contains('guid-gen-btn')) {
+            const input = e.target.closest('.has-addons').querySelector('input[data-prop]');
+            if (input) {
+                input.value = crypto.randomUUID();
+                updatePropertiesJson();
+            }
+        }
+    });
+
+    // Save widget
+    modal.querySelector('.save-widget-btn').addEventListener('click', async function() {
+        updatePropertiesJson();
+        
+        const componentName = componentSelector.value;
+        if (!componentName) {
+            alert('Please select a component.');
+            return;
+        }
+        
+        const zoneName = form.querySelector('[name="zoneName"]').value;
+        const zoneId = container.querySelector('.zone-id-field').value;
+        const propertiesJson = propsJsonInput.value;
+        
+        try {
+            const response = await fetch('/api/contentzones/items', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    zoneName: zoneName,
+                    zoneId: zoneId && zoneId !== '00000000-0000-0000-0000-000000000000' ? zoneId : null,
+                    componentName: componentName,
+                    componentPropertiesJson: propertiesJson
+                })
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to save');
+            }
+            
+            // Reload the page to show updated content
+            window.location.reload();
+        } catch (error) {
+            console.error('Error saving widget:', error);
+            alert('Failed to save widget: ' + error.message);
+        }
+    });
+
+    function escapeHtml(text) {
+        if (text === null || text === undefined) return '';
+        const div = document.createElement('div');
+        div.textContent = String(text);
+        return div.innerHTML;
+    }
+})();
+</script>

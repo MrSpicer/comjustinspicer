@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using AutoMapper;
+using Comjustinspicer.CMS.ContentZones;
 using Comjustinspicer.CMS.Data;
 using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
@@ -83,6 +84,20 @@ public static class ServiceCollectionExtensions
 		// Needed for UserService to inspect current HttpContext/User
 		services.AddHttpContextAccessor();
 		services.AddSingleton<Services.UserService>();
+
+		// ViewComponent view discovery service
+		services.AddScoped<Services.IViewComponentViewDiscoveryService, Services.ViewComponentViewDiscoveryService>();
+
+		// Content Zone Component Registry - scans assemblies for registered ViewComponents
+		services.AddSingleton<IContentZoneComponentRegistry>(sp =>
+		{
+			var assemblies = new[]
+			{
+				typeof(ServiceCollectionExtensions).Assembly,
+				Assembly.GetEntryAssembly()
+			}.Where(a => a != null).Distinct().Cast<Assembly>();
+			return new ContentZoneComponentRegistry(assemblies);
+		});
 
 		// Generic content service registrations to enable consumers to request IContentService<T>
 		// Note: Each T must be bound to the correct DbContext through constructor injection of DbContext.

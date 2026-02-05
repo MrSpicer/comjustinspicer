@@ -83,4 +83,15 @@ public class AdminArticleController : Controller
 
         return RedirectToAction("Index");
     }
+
+    /// <summary>
+    /// API endpoint to list articles for entity pickers.
+    /// </summary>
+    [HttpGet("article/api/list")]
+    public async Task<IActionResult> ApiList()
+    {
+        var vm = await _ArticleListModel.GetIndexViewModelAsync();
+        var result = vm.Articles.Select(p => new { id = p.Id, title = p.Title }).ToList();
+        return Json(result);
+    }
 }

@@ -10,7 +10,7 @@
 		<div class="columns is-multiline">
 			@foreach (var post in Model.Articles)
 			{
-				@await Component.InvokeAsync("Article", new { viewName = "Post", article = post })
+				@await Component.InvokeAsync("Article", new ArticleContentZoneConfiguration { ViewName = "Article", Article = post })
 			}
 		</div>
 	</div>

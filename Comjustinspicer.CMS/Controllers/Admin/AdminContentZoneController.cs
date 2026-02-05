@@ -2,6 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Comjustinspicer.CMS.Models.ContentZone;
 using Comjustinspicer.CMS.Data.Models;
+using Comjustinspicer.CMS.Data.Services;
+using Comjustinspicer.CMS.ContentZones;
+using Comjustinspicer.CMS.Services;
+using Comjustinspicer.CMS.Attributes;
 
 namespace Comjustinspicer.CMS.Controllers.Admin;
 
@@ -11,10 +15,17 @@ public class AdminContentZoneController : Controller
 {
     private readonly Serilog.ILogger _logger = Serilog.Log.ForContext<AdminContentZoneController>();
     private readonly IContentZoneModel _model;
+    private readonly IContentZoneComponentRegistry _registry;
+    private readonly IViewComponentViewDiscoveryService _viewDiscoveryService;
 
-    public AdminContentZoneController(IContentZoneModel model)
+    public AdminContentZoneController(
+        IContentZoneModel model, 
+        IContentZoneComponentRegistry registry,
+        IViewComponentViewDiscoveryService viewDiscoveryService)
     {
         _model = model ?? throw new ArgumentNullException(nameof(model));
+        _registry = registry ?? throw new ArgumentNullException(nameof(registry));
+        _viewDiscoveryService = viewDiscoveryService ?? throw new ArgumentNullException(nameof(viewDiscoveryService));
     }
 
     #region Content Zones
@@ -191,6 +202,94 @@ public class AdminContentZoneController : Controller
         }
 
         return Ok();
+    }
+
+    #endregion
+
+    #region Component Registry
+
+    /// <summary>
+    /// Get properties for a registered content zone component (AJAX endpoint).
+    /// Used by the inline edit modal to dynamically generate configuration forms.
+    /// </summary>
+    [HttpGet("contentzones/components/{componentName}/properties")]
+    public IActionResult GetComponentProperties(string componentName)
+    {
+        if (string.IsNullOrWhiteSpace(componentName))
+        {
+            return BadRequest(new { error = "Component name is required." });
+        }
+
+        var component = _registry.GetByName(componentName);
+        if (component == null)
+        {
+            return NotFound(new { error = $"Component '{componentName}' not found." });
+        }
+
+        var properties = component.Properties.Select(p =>
+        {
+            Dictionary<string, string> dropdownOptions = p.DropdownOptions;
+            
+            // For ViewPicker, dynamically discover views
+            if (p.EditorType == EditorType.ViewPicker && !string.IsNullOrWhiteSpace(p.ViewComponentName))
+            {
+                var views = _viewDiscoveryService.GetAvailableViews(p.ViewComponentName);
+                if (views.Any())
+                {
+                    // Create dictionary with view name as both key and value
+                    dropdownOptions = views.ToDictionary(v => v, v => v);
+                }
+                else
+                {
+                    _logger.Warning("No views found for ViewComponent '{ComponentName}'", p.ViewComponentName);
+                    dropdownOptions = new Dictionary<string, string>();
+                }
+            }
+
+            return new
+            {
+                name = p.Name,
+                label = p.Label,
+                helpText = p.HelpText,
+                placeholder = p.Placeholder,
+                editorType = p.EditorType.ToString().ToLowerInvariant(),
+                isRequired = p.IsRequired,
+                defaultValue = p.DefaultValue,
+                order = p.Order,
+                group = p.Group,
+                entityType = p.EntityType,
+                dropdownOptions,
+                viewComponentName = p.ViewComponentName,
+                min = p.Min,
+                max = p.Max,
+                maxLength = p.MaxLength
+            };
+        }).OrderBy(p => p.order).ToList();
+
+        return Json(new
+        {
+            componentName = component.Name,
+            displayName = component.DisplayName,
+            category = component.Category,
+            properties
+        });
+    }
+
+    /// <summary>
+    /// Get all registered content zone components (AJAX endpoint).
+    /// </summary>
+    [HttpGet("contentzones/components")]
+    public IActionResult GetAllComponents()
+    {
+        var components = _registry.GetAllComponents().Select(c => new
+        {
+            name = c.Name,
+            displayName = c.DisplayName,
+            description = c.Description,
+            category = c.Category
+        }).ToList();
+
+        return Json(components);
     }
 
     #endregion

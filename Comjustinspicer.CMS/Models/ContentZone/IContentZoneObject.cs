@@ -6,6 +6,11 @@ namespace Comjustinspicer.CMS.Models.ContentZone;
 
 public interface IContentZoneObject
 {
+	/// <summary>
+	/// The unique identifier of this content zone item.
+	/// </summary>
+	Guid Id { get; set; }
+
 	int Ordinal { get; set; }
 	Guid ZoneId { get; set; }
 
