@@ -22,11 +22,15 @@
             <div class="zone-object zone-object-edit" data-item-id="@obj.Id" data-ordinal="@obj.Ordinal" data-zone-id="@obj.ZoneId">
                 <div class="zone-object-toolbar">
                     <span class="zone-object-label">@obj.ComponentName</span>
-                    <button type="button" class="button is-small is-warning zone-edit-item" title="Edit">
-                        <span class="icon is-small"><i class="fas fa-edit"></i></span>
+                    <button type="button" class="zone-edit-item" title="Edit">
+                        <span class="icon">
+                        <i class="fas fa-edit"></i>
+                        </span>
                     </button>
-                    <button type="button" class="button is-small is-danger zone-delete-item" title="Delete">
-                        <span class="icon is-small"><i class="fas fa-trash"></i></span>
+                    <button type="button" class="zone-delete-item" title="Delete">
+                        <span class="icon">
+                        <i class="fas fa-trash"></i>
+                        </span>
                     </button>
                 </div>
                 <div class="zone-object-content">
@@ -132,6 +136,19 @@
         font-weight: 500;
         color: #666;
     }
+    .zone-object-toolbar button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.25rem;
+        font-size: 1rem;
+    }
+    .zone-object-toolbar .zone-edit-item {
+        color: #3273dc;
+    }
+    .zone-object-toolbar .zone-delete-item {
+        color: #f14668;
+    }
     .zone-object-content {
         padding: 0.5rem;
     }
@@ -157,12 +174,16 @@
     
     let currentProperties = [];
     let existingProperties = {};
+    let editingItemId = null;
 
-    // Open modal
+    // Open modal for adding new item
     container.querySelector('.zone-add-btn').addEventListener('click', function() {
         // Reset form for new item
         form.reset();
         existingProperties = {};
+        editingItemId = null;
+        componentSelector.disabled = false;
+        modal.querySelector('.modal-card-title').textContent = 'Add Widget';
         dynamicContainer.style.display = 'none';
         dynamicProperties.innerHTML = '';
         modal.classList.add('is-active');
@@ -175,6 +196,8 @@
     
     function closeModal() {
         modal.classList.remove('is-active');
+        editingItemId = null;
+        componentSelector.disabled = false;
     }
 
     // Delete item handler
@@ -208,6 +231,51 @@
             } catch (error) {
                 console.error('Error deleting widget:', error);
                 alert('Failed to delete widget: ' + error.message);
+            }
+        });
+    });
+
+    // Edit item handler
+    container.querySelectorAll('.zone-edit-item').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const zoneObject = this.closest('.zone-object-edit');
+            const itemId = zoneObject.dataset.itemId;
+            
+            if (!itemId || itemId === '00000000-0000-0000-0000-000000000000') {
+                alert('Cannot edit: Item ID not found.');
+                return;
+            }
+            
+            try {
+                // Fetch item data from API
+                const response = await fetch(`/api/contentzones/items/${encodeURIComponent(itemId)}`);
+                if (!response.ok) {
+                    throw new Error('Failed to load item data');
+                }
+                
+                const data = await response.json();
+                
+                // Store the item ID for the save handler
+                editingItemId = itemId;
+                
+                // Set the component selector and disable it (component type locked during edit)
+                componentSelector.value = data.componentName;
+                componentSelector.disabled = true;
+                
+                // Parse and store existing properties
+                existingProperties = JSON.parse(data.componentPropertiesJson || '{}');
+                
+                // Update modal title
+                modal.querySelector('.modal-card-title').textContent = 'Edit Widget';
+                
+                // Trigger change event to load property fields with existing values
+                componentSelector.dispatchEvent(new Event('change'));
+                
+                // Open modal
+                modal.classList.add('is-active');
+            } catch (error) {
+                console.error('Error loading widget data:', error);
+                alert('Failed to load widget data: ' + error.message);
             }
         });
     });
@@ -304,7 +372,6 @@
             case 'viewpicker':
             case 'dropdown':
                 fieldHtml += `<div class="select"><select data-prop="${prop.name}" ${required}>`;
-                if (!prop.isRequired) fieldHtml += `<option value="">-- Select --</option>`;
                 if (prop.dropdownOptions) {
                     for (const [optValue, optLabel] of Object.entries(prop.dropdownOptions)) {
                         const selected = String(value) === optValue ? 'selected' : '';
@@ -429,6 +496,7 @@
                 body: JSON.stringify({
                     zoneName: zoneName,
                     zoneId: zoneId && zoneId !== '00000000-0000-0000-0000-000000000000' ? zoneId : null,
+                    itemId: editingItemId,
                     componentName: componentName,
                     componentPropertiesJson: propertiesJson
                 })

@@ -8,6 +8,7 @@
 
 <section class="section">
 	<div class="container content">
+		@await Component.InvokeAsync("ContentZone", new { zoneName = "Blog Top" })
 		@if (blogId.HasValue)
 		{
 			<a href="/Blog" class="button is-light mb-4">← Back to Blog Posts</a>

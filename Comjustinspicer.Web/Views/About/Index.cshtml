@@ -8,8 +8,7 @@
 <div class="column is-8 is-offset-2">
 	<div class="box">
 		<div class="content is-medium">
-			@await Component.InvokeAsync("ContentBlock", 
-				new ContentBlockContentZoneConfiguration { ContentBlockID = new Guid("bffabbe5-5420-46b5-a122-fb96691d7111") })
+			@await Component.InvokeAsync(name: "ContentZone", new { zoneName = "Main" })
 		</div>
 	</div>
 </div>

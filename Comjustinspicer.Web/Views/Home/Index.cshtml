@@ -5,20 +5,4 @@
 	ViewData["Title"] = "Home Page";
 }
 
-<section class="section">
-	<div class="container content">
-		@await Component.InvokeAsync("ContentBlock", new ContentBlockContentZoneConfiguration { ContentBlockID = new Guid("f83e7429-d163-4063-b8c3-ca3869b988dc") })
-	</div>
-</section>
-
-<section class="section">
-	<div class="container content">
-		@await Component.InvokeAsync("ContentZone", new { zoneName = "Main" })
-	</div>
-</section>
-
-<section class="section">
-	<div class="container content">
-		@await Component.InvokeAsync("ContentZone", new { zoneName = "Side" })
-	</div>
-</section>
+@await Component.InvokeAsync("ContentZone", new { zoneName = "Main" })
