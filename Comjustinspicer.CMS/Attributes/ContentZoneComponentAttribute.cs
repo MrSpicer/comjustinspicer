@@ -28,7 +28,7 @@ public sealed class ContentZoneComponentAttribute : Attribute
     /// <summary>
     /// Gets or sets the Type of the configuration model class.
     /// This class defines the properties that can be configured in the admin UI.
-    /// Properties on this class should be decorated with <see cref="ContentZonePropertyAttribute"/>.
+    /// Properties on this class should be decorated with <see cref="FormPropertyAttribute"/>.
     /// </summary>
     public Type? ConfigurationType { get; set; }
 
