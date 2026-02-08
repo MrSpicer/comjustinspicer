@@ -3,13 +3,14 @@ using System.Linq;
 using NUnit.Framework;
 using Comjustinspicer.CMS.Attributes;
 using Comjustinspicer.CMS.ContentZones;
+using Comjustinspicer.CMS.Forms;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
 namespace Comjustinspicer.Tests;
 
 /// <summary>
-/// Tests for the ContentZoneComponentRegistry and related attribute system.
+/// Tests for the ContentZoneComponentRegistry, FormPropertyBuilder, and related attribute system.
 /// </summary>
 [TestFixture]
 public class ContentZoneComponentRegistryTests
@@ -18,14 +19,14 @@ public class ContentZoneComponentRegistryTests
 
     public class TestConfiguration
     {
-        [ContentZoneProperty(Label = "Test Property", EditorType = EditorType.Text, IsRequired = true, Order = 1)]
+        [FormProperty(Label = "Test Property", EditorType = EditorType.Text, IsRequired = true, Order = 1)]
         [Required]
         public string TestProperty { get; set; } = string.Empty;
 
-        [ContentZoneProperty(Label = "Optional Number", EditorType = EditorType.Number, Min = 0, Max = 100, Order = 2)]
+        [FormProperty(Label = "Optional Number", EditorType = EditorType.Number, Min = 0, Max = 100, Order = 2)]
         public int OptionalNumber { get; set; }
 
-        [ContentZoneProperty(Label = "Test Guid", EditorType = EditorType.Guid, EntityType = "TestEntity", Order = 3)]
+        [FormProperty(Label = "Test Guid", EditorType = EditorType.Guid, EntityType = "TestEntity", Order = 3)]
         public Guid TestGuid { get; set; }
     }
 
@@ -398,6 +399,70 @@ public class ContentZoneComponentRegistryTests
         Assert.That(grouped.ContainsKey("Other"), Is.True);
         Assert.That(grouped["Testing"].Count, Is.EqualTo(2));
         Assert.That(grouped["Other"].Count, Is.EqualTo(1));
+    }
+
+    #endregion
+
+    #region FormPropertyBuilder Tests
+
+    [Test]
+    public void FormPropertyBuilder_BuildPropertyInfos_ReturnsCorrectCount()
+    {
+        var properties = FormPropertyBuilder.BuildPropertyInfos(typeof(TestConfiguration));
+
+        Assert.That(properties, Is.Not.Null);
+        Assert.That(properties.Count, Is.EqualTo(3));
+    }
+
+    [Test]
+    public void FormPropertyBuilder_BuildPropertyInfos_SortsByOrder()
+    {
+        var properties = FormPropertyBuilder.BuildPropertyInfos(typeof(TestConfiguration));
+        var orders = properties.Select(p => p.Order).ToList();
+
+        Assert.That(orders, Is.Ordered);
+    }
+
+    [Test]
+    public void FormPropertyBuilder_InferEditorType_InfersCorrectTypes()
+    {
+        Assert.That(FormPropertyBuilder.InferEditorType(typeof(string)), Is.EqualTo(EditorType.Text));
+        Assert.That(FormPropertyBuilder.InferEditorType(typeof(int)), Is.EqualTo(EditorType.Number));
+        Assert.That(FormPropertyBuilder.InferEditorType(typeof(bool)), Is.EqualTo(EditorType.Checkbox));
+        Assert.That(FormPropertyBuilder.InferEditorType(typeof(Guid)), Is.EqualTo(EditorType.Guid));
+        Assert.That(FormPropertyBuilder.InferEditorType(typeof(DateTime)), Is.EqualTo(EditorType.DateTime));
+        Assert.That(FormPropertyBuilder.InferEditorType(typeof(DateOnly)), Is.EqualTo(EditorType.Date));
+        Assert.That(FormPropertyBuilder.InferEditorType(typeof(int?)), Is.EqualTo(EditorType.Number));
+    }
+
+    [Test]
+    public void FormPropertyBuilder_InsertSpaces_InsertsCorrectly()
+    {
+        Assert.That(FormPropertyBuilder.InsertSpaces("PublicationDate"), Is.EqualTo("Publication Date"));
+        Assert.That(FormPropertyBuilder.InsertSpaces("IsPublished"), Is.EqualTo("Is Published"));
+        Assert.That(FormPropertyBuilder.InsertSpaces("Title"), Is.EqualTo("Title"));
+        Assert.That(FormPropertyBuilder.InsertSpaces(""), Is.EqualTo(""));
+    }
+
+    [Test]
+    public void FormPropertyBuilder_ParseDropdownOptions_ParsesCorrectly()
+    {
+        var options = FormPropertyBuilder.ParseDropdownOptions("a:Alpha,b:Beta,c:Charlie");
+
+        Assert.That(options.Count, Is.EqualTo(3));
+        Assert.That(options["a"], Is.EqualTo("Alpha"));
+        Assert.That(options["b"], Is.EqualTo("Beta"));
+        Assert.That(options["c"], Is.EqualTo("Charlie"));
+    }
+
+    [Test]
+    public void FormPropertyBuilder_ParseDropdownOptions_ValueOnlyFormat()
+    {
+        var options = FormPropertyBuilder.ParseDropdownOptions("foo,bar,baz");
+
+        Assert.That(options.Count, Is.EqualTo(3));
+        Assert.That(options["foo"], Is.EqualTo("foo"));
+        Assert.That(options["bar"], Is.EqualTo("bar"));
     }
 
     #endregion

@@ -13,7 +13,7 @@ public class ArticleContentZoneConfiguration
     /// Gets or sets the ID of a specific article to display.
     /// If set, displays a single article. If empty, displays the article list.
     /// </summary>
-    [ContentZoneProperty(
+    [FormProperty(
         Label = "Article",
         HelpText = "Select a specific article to display, or leave empty to show the article list.",
         EditorType = EditorType.Guid,
@@ -27,7 +27,7 @@ public class ArticleContentZoneConfiguration
     /// Gets or sets the name of the view to use for rendering.
     /// Common values: "List" (list), "Post" (single article), "Summary".
     /// </summary>
-    [ContentZoneProperty(
+    [FormProperty(
         Label = "View Name",
         HelpText = "The view template to use. Leave empty for default behavior.",
         Placeholder = "e.g., Post, List, Summary",

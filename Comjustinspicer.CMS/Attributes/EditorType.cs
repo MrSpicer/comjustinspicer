@@ -67,7 +67,7 @@ public enum EditorType
 
     /// <summary>
     /// Dropdown populated with available views for a ViewComponent.
-    /// Requires ViewComponentName to be specified in the ContentZonePropertyAttribute.
+    /// Requires ViewComponentName to be specified in the FormPropertyAttribute.
     /// </summary>
     ViewPicker,
 

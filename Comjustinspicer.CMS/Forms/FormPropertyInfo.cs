@@ -1,15 +1,15 @@
 using Comjustinspicer.CMS.Attributes;
 
-namespace Comjustinspicer.CMS.ContentZones;
+namespace Comjustinspicer.CMS.Forms;
 
 /// <summary>
-/// Contains metadata about a configuration property for a content zone component.
+/// Contains metadata about a configurable property on a model.
 /// Used by the admin UI to generate form fields dynamically.
 /// </summary>
-public class ContentZonePropertyInfo
+public class FormPropertyInfo
 {
     /// <summary>
-    /// Gets or sets the property name (used as the JSON key when serializing).
+    /// Gets or sets the property name (used as the form field name / JSON key).
     /// </summary>
     public string Name { get; set; } = string.Empty;
 

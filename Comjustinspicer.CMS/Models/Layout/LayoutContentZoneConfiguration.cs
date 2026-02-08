@@ -11,7 +11,7 @@ public class LayoutContentZoneConfiguration
     /// <summary>
     /// Gets or sets the name of the view to render.
     /// </summary>
-    [ContentZoneProperty(
+    [FormProperty(
         Label = "View Name",
         HelpText = "Select the view template to render.",
         EditorType = EditorType.ViewPicker,

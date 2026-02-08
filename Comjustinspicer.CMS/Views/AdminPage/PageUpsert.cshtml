@@ -19,33 +19,14 @@
 
         <form asp-controller="AdminPage" asp-action="SavePage" method="post" id="pageForm">
             @Html.AntiForgeryToken()
-            <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="CreationDate" />
-            <input type="hidden" asp-for="CreatedBy" />
 
-            <div class="field">
-                <label class="label">Title</label>
-                <div class="control">
-                    <input class="input" asp-for="Title" placeholder="Page title" required />
-                </div>
-                <span asp-validation-for="Title" class="has-text-danger"></span>
-            </div>
-
-            <div class="field">
-                <label class="label">Route</label>
-                <div class="control">
-                    <input class="input" asp-for="Route" placeholder="/about" required
-                           pattern="^\/[a-z0-9\-\/]*[a-z0-9\-]$|^\/$" />
-                </div>
-                <p class="help">Must start with "/", no trailing slash (except root "/"). Lowercase letters, numbers, hyphens, and slashes only.</p>
-                <span asp-validation-for="Route" class="has-text-danger"></span>
-            </div>
+            <form-fields for="@Model" />
 
             <div class="field">
                 <label class="label">Page Controller</label>
                 <div class="control">
                     <div class="select is-fullwidth">
-                        <select asp-for="ControllerName" id="controllerSelect" required>
+                        <select name="ControllerName" id="controllerSelect" required>
                             <option value="">-- Select a controller --</option>
                         </select>
                     </div>
@@ -57,16 +38,6 @@
             <div id="configurationArea" style="display:none;">
                 <h2 class="subtitle mt-4">Configuration</h2>
                 <div id="configFields"></div>
-            </div>
-
-            <input type="hidden" asp-for="ConfigurationJson" id="configurationJson" />
-
-            <div class="field">
-                <label class="checkbox">
-                    <input type="checkbox" asp-for="IsPublished" />
-                    Published
-                </label>
-                <p class="help">Only published pages are accessible via their route.</p>
             </div>
 
             <div class="field is-grouped mt-4">
@@ -86,7 +57,7 @@
     const controllerSelect = document.getElementById('controllerSelect');
     const configArea = document.getElementById('configurationArea');
     const configFields = document.getElementById('configFields');
-    const configJsonInput = document.getElementById('configurationJson');
+    const configJsonInput = document.getElementById('ConfigurationJson');
     const form = document.getElementById('pageForm');
     const currentControllerName = '@Html.Raw(Model.ControllerName)';
     let currentConfig = {};
@@ -121,13 +92,16 @@
 
     controllerSelect.addEventListener('change', function () {
         const name = this.value;
+        // Sync to the hidden field
+        var hiddenCtrl = document.querySelector('input[name="ControllerName"]');
+        if (hiddenCtrl) hiddenCtrl.value = name;
         if (name) {
             currentConfig = {};
             loadControllerProperties(name);
         } else {
             configArea.style.display = 'none';
             configFields.innerHTML = '';
-            configJsonInput.value = '{}';
+            if (configJsonInput) configJsonInput.value = '{}';
         }
     });
 
@@ -141,7 +115,7 @@
                 } else {
                     configArea.style.display = 'none';
                     configFields.innerHTML = '';
-                    configJsonInput.value = '{}';
+                    if (configJsonInput) configJsonInput.value = '{}';
                 }
             })
             .catch(() => {
@@ -256,7 +230,7 @@
                 config[name] = el.value;
             }
         });
-        configJsonInput.value = JSON.stringify(config);
+        if (configJsonInput) configJsonInput.value = JSON.stringify(config);
     });
 })();
 </script>

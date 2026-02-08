@@ -14,51 +14,7 @@
         }
 
 <form asp-action="PostEdit" asp-controller="AdminArticle" method="post">
-    <input type="hidden" asp-for="Id" />
-
-    <div class="field">
-        <label class="label" asp-for="Title"></label>
-        <div class="control">
-            <input class="input" asp-for="Title" />
-        </div>
-        <p class="help is-danger">@Html.ValidationMessageFor(m => m.Title)</p>
-    </div>
-
-    <div class="field">
-        <label class="label" asp-for="Slug"></label>
-        <div class="control">
-            <input class="input" asp-for="Slug" />
-        </div>
-        <p class="help is-danger">@Html.ValidationMessageFor(m => m.Slug)</p>
-    </div>
-
-    <div class="field">
-        <label class="label" asp-for="Body"></label>
-        <div class="control">
-            <textarea class="textarea" asp-for="Body" rows="10"></textarea>
-        </div>
-        <p class="help is-danger">@Html.ValidationMessageFor(m => m.Body)</p>
-    </div>
-
-    <div class="field is-horizontal">
-        <div class="field-body">
-            <div class="field">
-                <label class="label" asp-for="PublicationDate"></label>
-                <div class="control">
-                    <input class="input" asp-for="PublicationDate" type="datetime-local" />
-                </div>
-                <p class="help is-danger">@Html.ValidationMessageFor(m => m.PublicationDate)</p>
-            </div>
-
-            <div class="field">
-                <label class="label" asp-for="AuthorName"></label>
-                <div class="control">
-                    <input class="input" asp-for="AuthorName" />
-                </div>
-                <p class="help is-danger">@Html.ValidationMessageFor(m => m.AuthorName)</p>
-            </div>
-        </div>
-    </div>
+    <form-fields for="@Model" />
 
     <div class="field is-grouped">
         <div class="control">

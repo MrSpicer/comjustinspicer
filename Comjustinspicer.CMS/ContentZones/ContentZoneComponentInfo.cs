@@ -1,3 +1,5 @@
+using Comjustinspicer.CMS.Forms;
+
 namespace Comjustinspicer.CMS.ContentZones;
 
 /// <summary>
@@ -50,7 +52,7 @@ public class ContentZoneComponentInfo
     /// <summary>
     /// Gets or sets the list of configurable properties for this component.
     /// </summary>
-    public List<ContentZonePropertyInfo> Properties { get; set; } = new();
+    public List<FormPropertyInfo> Properties { get; set; } = new();
 
     /// <summary>
     /// Gets a value indicating whether this component has configurable properties.

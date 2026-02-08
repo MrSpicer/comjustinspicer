@@ -9,22 +9,22 @@ namespace Comjustinspicer.Controllers;
 /// </summary>
 public class GenericPageConfiguration
 {
-    [ContentZoneProperty("View Name", EditorType.Text,
+    [FormProperty("View Name", EditorType.Text,
         HelpText = "Reserved for future use.",
         Order = 0)]
     public string ViewName { get; set; } = string.Empty;
 
-    [ContentZoneProperty("Custom CSS", EditorType.TextArea,
+    [FormProperty("Custom CSS", EditorType.TextArea,
         HelpText = "Inline CSS styles to be injected into the page head. Do not include <style> tags.",
         Order = 10)]
     public string Style { get; set; } = string.Empty;
 
-    [ContentZoneProperty("Custom JavaScript", EditorType.TextArea,
+    [FormProperty("Custom JavaScript", EditorType.TextArea,
         HelpText = "Inline JavaScript to be injected at the bottom of the page. Do not include <script> tags.",
         Order = 20)]
     public string Script { get; set; } = string.Empty;
 
-    [ContentZoneProperty("Meta Tags", EditorType.TextArea,
+    [FormProperty("Meta Tags", EditorType.TextArea,
         HelpText = "HTML meta tags for SEO and social media. Include full tags, e.g., <meta name=\"description\" content=\"...\">",
         Order = 30)]
     public string Meta { get; set; } = string.Empty;

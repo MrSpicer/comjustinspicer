@@ -12,7 +12,7 @@ public class ContentBlockContentZoneConfiguration
     /// <summary>
     /// Gets or sets the ID of the content block to render.
     /// </summary>
-    [ContentZoneProperty(
+    [FormProperty(
         Label = "Content Block",
         HelpText = "Select the content block to display in this zone.",
         EditorType = EditorType.Guid,
@@ -23,7 +23,7 @@ public class ContentBlockContentZoneConfiguration
     [Required(ErrorMessage = "Please select a content block.")]
     public Guid ContentBlockID { get; set; }
 
-    [ContentZoneProperty(
+    [FormProperty(
     Label = "View Name",
     HelpText = "The view template to use. Leave empty for default behavior.",
     Placeholder = "e.g., Post, Default, Summary",

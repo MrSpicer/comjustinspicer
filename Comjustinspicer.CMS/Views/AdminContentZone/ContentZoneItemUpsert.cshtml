@@ -25,43 +25,8 @@
 
         <form asp-controller="AdminContentZone" asp-action="SaveItem" method="post">
             @Html.AntiForgeryToken()
-            <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="ContentZoneId" value="@zoneId" />
-            <input type="hidden" asp-for="CreatedAt" />
 
-            <div class="field">
-                <label class="label">Component Name</label>
-                <div class="control">
-                    <input class="input" asp-for="ComponentName" placeholder="e.g., ContentBlock, Article, Layout" />
-                </div>
-                <p class="help">The name of the ViewComponent to render (without "ViewComponent" suffix).</p>
-                <span asp-validation-for="ComponentName" class="has-text-danger"></span>
-            </div>
-
-            <div class="field">
-                <label class="label">Component Properties (JSON)</label>
-                <div class="control">
-                    <textarea class="textarea" asp-for="ComponentPropertiesJson" rows="6" placeholder='{"contentBlockID": "00000000-0000-0000-0000-000000000000"}'></textarea>
-                </div>
-                <p class="help">JSON object with properties to pass to the ViewComponent. Property names should match the component's Invoke parameters.</p>
-                <span asp-validation-for="ComponentPropertiesJson" class="has-text-danger"></span>
-            </div>
-
-            <div class="field">
-                <label class="label">Ordinal (display order)</label>
-                <div class="control">
-                    <input class="input" type="number" asp-for="Ordinal" min="0" />
-                </div>
-                <p class="help">Lower numbers appear first. Leave at 0 to auto-assign.</p>
-            </div>
-
-            <div class="field">
-                <label class="checkbox">
-                    <input type="checkbox" asp-for="IsActive" />
-                    Active
-                </label>
-                <p class="help">Only active items will be rendered on the site.</p>
-            </div>
+            <form-fields for="@Model" />
 
             <div class="field is-grouped mt-4">
                 <div class="control">

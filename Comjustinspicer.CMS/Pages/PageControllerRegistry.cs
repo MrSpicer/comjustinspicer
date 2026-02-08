@@ -1,9 +1,8 @@
-using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Comjustinspicer.CMS.Attributes;
-using Comjustinspicer.CMS.ContentZones;
+using Comjustinspicer.CMS.Forms;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Comjustinspicer.CMS.Pages;
@@ -106,7 +105,7 @@ public class PageControllerRegistry : IPageControllerRegistry
         var info = new PageControllerInfo
         {
             Name = controllerName,
-            DisplayName = string.IsNullOrEmpty(attribute.DisplayName) ? InsertSpaces(controllerName) : attribute.DisplayName,
+            DisplayName = string.IsNullOrEmpty(attribute.DisplayName) ? FormPropertyBuilder.InsertSpaces(controllerName) : attribute.DisplayName,
             Description = attribute.Description,
             Category = attribute.Category,
             IconClass = attribute.IconClass,
@@ -117,142 +116,10 @@ public class PageControllerRegistry : IPageControllerRegistry
 
         if (attribute.ConfigurationType != null)
         {
-            info.Properties = BuildPropertyInfos(attribute.ConfigurationType);
+            info.Properties = FormPropertyBuilder.BuildPropertyInfos(attribute.ConfigurationType);
         }
 
         return info;
-    }
-
-    private static List<ContentZonePropertyInfo> BuildPropertyInfos(Type configurationType)
-    {
-        var properties = new List<ContentZonePropertyInfo>();
-
-        foreach (var prop in configurationType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
-        {
-            if (!prop.CanRead || !prop.CanWrite)
-                continue;
-
-            var attr = prop.GetCustomAttribute<ContentZonePropertyAttribute>();
-            var requiredAttr = prop.GetCustomAttribute<RequiredAttribute>();
-            var rangeAttr = prop.GetCustomAttribute<RangeAttribute>();
-            var stringLengthAttr = prop.GetCustomAttribute<StringLengthAttribute>();
-            var regexAttr = prop.GetCustomAttribute<RegularExpressionAttribute>();
-
-            var propInfo = new ContentZonePropertyInfo
-            {
-                Name = prop.Name,
-                Label = attr?.Label ?? InsertSpaces(prop.Name),
-                HelpText = attr?.HelpText ?? string.Empty,
-                Placeholder = attr?.Placeholder ?? string.Empty,
-                EditorType = attr?.EditorType ?? InferEditorType(prop.PropertyType),
-                PropertyType = prop.PropertyType,
-                Order = attr?.Order ?? 0,
-                CssClass = attr?.CssClass ?? string.Empty,
-                GroupWithNext = attr?.GroupWithNext ?? false,
-                Group = attr?.Group ?? string.Empty,
-                IsRequired = attr?.IsRequired == true || requiredAttr != null,
-                EntityType = attr?.EntityType ?? string.Empty,
-                ViewComponentName = attr?.ViewComponentName ?? string.Empty,
-                Min = GetMinValue(attr, rangeAttr),
-                Max = GetMaxValue(attr, rangeAttr),
-                MaxLength = GetMaxLengthValue(attr, stringLengthAttr),
-                Pattern = attr?.Pattern ?? regexAttr?.Pattern ?? string.Empty,
-                PatternErrorMessage = attr?.PatternErrorMessage ?? regexAttr?.ErrorMessage ?? string.Empty,
-                DefaultValue = GetDefaultValue(prop.PropertyType)
-            };
-
-            if (!string.IsNullOrEmpty(attr?.DropdownOptions))
-            {
-                propInfo.DropdownOptions = ParseDropdownOptions(attr.DropdownOptions);
-            }
-
-            properties.Add(propInfo);
-        }
-
-        properties.Sort((a, b) =>
-        {
-            var orderCompare = a.Order.CompareTo(b.Order);
-            return orderCompare != 0 ? orderCompare : string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase);
-        });
-
-        return properties;
-    }
-
-    private static EditorType InferEditorType(Type propertyType)
-    {
-        var underlying = Nullable.GetUnderlyingType(propertyType) ?? propertyType;
-
-        if (underlying == typeof(Guid))
-            return EditorType.Guid;
-        if (underlying == typeof(bool))
-            return EditorType.Checkbox;
-        if (underlying == typeof(int) || underlying == typeof(long) || underlying == typeof(short) ||
-            underlying == typeof(decimal) || underlying == typeof(double) || underlying == typeof(float))
-            return EditorType.Number;
-        if (underlying == typeof(DateTime) || underlying == typeof(DateTimeOffset))
-            return EditorType.DateTime;
-        if (underlying == typeof(DateOnly))
-            return EditorType.Date;
-        if (underlying.IsEnum)
-            return EditorType.Dropdown;
-
-        return EditorType.Text;
-    }
-
-    private static object? GetDefaultValue(Type propertyType)
-    {
-        if (propertyType.IsValueType)
-            return Activator.CreateInstance(propertyType);
-        return null;
-    }
-
-    private static double? GetMinValue(ContentZonePropertyAttribute? attr, RangeAttribute? rangeAttr)
-    {
-        if (attr != null && !double.IsNaN(attr.Min))
-            return attr.Min;
-        if (rangeAttr?.Minimum != null && double.TryParse(rangeAttr.Minimum.ToString(), out var min))
-            return min;
-        return null;
-    }
-
-    private static double? GetMaxValue(ContentZonePropertyAttribute? attr, RangeAttribute? rangeAttr)
-    {
-        if (attr != null && !double.IsNaN(attr.Max))
-            return attr.Max;
-        if (rangeAttr?.Maximum != null && double.TryParse(rangeAttr.Maximum.ToString(), out var max))
-            return max;
-        return null;
-    }
-
-    private static int? GetMaxLengthValue(ContentZonePropertyAttribute? attr, StringLengthAttribute? stringLengthAttr)
-    {
-        if (attr != null && attr.MaxLength >= 0)
-            return attr.MaxLength;
-        return stringLengthAttr?.MaximumLength;
-    }
-
-    private static Dictionary<string, string> ParseDropdownOptions(string options)
-    {
-        var result = new Dictionary<string, string>();
-        var pairs = options.Split(',', StringSplitOptions.RemoveEmptyEntries);
-
-        foreach (var pair in pairs)
-        {
-            var parts = pair.Split(':', 2);
-            var value = parts[0].Trim();
-            var label = parts.Length > 1 ? parts[1].Trim() : value;
-            result[value] = label;
-        }
-
-        return result;
-    }
-
-    private static string InsertSpaces(string input)
-    {
-        if (string.IsNullOrEmpty(input))
-            return input;
-
-        return Regex.Replace(input, "(?<!^)([A-Z])", " $1");
     }
 
     #region IPageControllerRegistry Implementation

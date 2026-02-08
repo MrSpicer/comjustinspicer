@@ -1,11 +1,11 @@
 namespace Comjustinspicer.CMS.Attributes;
 
 /// <summary>
-/// Marks a property on a content zone configuration model as configurable in the admin UI.
+/// Marks a property on a model as configurable in the admin UI.
 /// Provides metadata for form generation including labels, editor types, and validation hints.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-public sealed class ContentZonePropertyAttribute : Attribute
+public sealed class FormPropertyAttribute : Attribute
 {
     /// <summary>
     /// Gets or sets the label displayed for this property in the configuration form.
@@ -107,19 +107,19 @@ public sealed class ContentZonePropertyAttribute : Attribute
     public string PatternErrorMessage { get; set; } = string.Empty;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ContentZonePropertyAttribute"/> class.
+    /// Initializes a new instance of the <see cref="FormPropertyAttribute"/> class.
     /// </summary>
-    public ContentZonePropertyAttribute()
+    public FormPropertyAttribute()
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ContentZonePropertyAttribute"/> class
+    /// Initializes a new instance of the <see cref="FormPropertyAttribute"/> class
     /// with a label and editor type.
     /// </summary>
     /// <param name="label">The label for the property.</param>
     /// <param name="editorType">The type of editor to use.</param>
-    public ContentZonePropertyAttribute(string label, EditorType editorType = EditorType.Text)
+    public FormPropertyAttribute(string label, EditorType editorType = EditorType.Text)
     {
         Label = label;
         EditorType = editorType;

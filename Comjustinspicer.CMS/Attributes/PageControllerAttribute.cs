@@ -26,7 +26,7 @@ public sealed class PageControllerAttribute : Attribute
 
     /// <summary>
     /// Gets or sets the Type of the configuration model class.
-    /// Properties on this class should be decorated with <see cref="ContentZonePropertyAttribute"/>.
+    /// Properties on this class should be decorated with <see cref="FormPropertyAttribute"/>.
     /// </summary>
     public Type? ConfigurationType { get; set; }
 

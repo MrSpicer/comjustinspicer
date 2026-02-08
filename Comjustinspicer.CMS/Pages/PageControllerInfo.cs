@@ -1,4 +1,4 @@
-using Comjustinspicer.CMS.ContentZones;
+using Comjustinspicer.CMS.Forms;
 
 namespace Comjustinspicer.CMS.Pages;
 
@@ -52,7 +52,7 @@ public class PageControllerInfo
     /// <summary>
     /// Gets or sets the list of configurable properties for this page type.
     /// </summary>
-    public List<ContentZonePropertyInfo> Properties { get; set; } = new();
+    public List<FormPropertyInfo> Properties { get; set; } = new();
 
     /// <summary>
     /// Gets a value indicating whether this page type has configurable properties.
