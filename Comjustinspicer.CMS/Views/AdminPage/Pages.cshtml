@@ -1,0 +1,118 @@
+@using Comjustinspicer.CMS.Models.Page
+
+@model List<PageTreeNode>
+
+@{
+    ViewData["Title"] = "Pages";
+}
+
+<section class="section">
+    <div class="container">
+        <h1 class="title">Pages</h1>
+
+        <a asp-controller="AdminPage" asp-action="CreatePage" class="button is-primary">New +</a>
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="notification is-danger mt-4">
+                @TempData["Error"]
+            </div>
+        }
+
+        <table class="table is-fullwidth is-striped mt-4">
+            <thead>
+                <tr>
+                    <th>Route</th>
+                    <th>Title</th>
+                    <th>Controller</th>
+                    <th>Published</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ await RenderTreeNodes(Model, 0); }
+            </tbody>
+        </table>
+
+        @if (!Model.Any())
+        {
+            <div class="notification is-info">
+                No pages defined yet. Click "New +" to create one.
+            </div>
+        }
+    </div>
+</section>
+
+@functions {
+    async Task RenderTreeNodes(List<PageTreeNode> nodes, int depth)
+    {
+        foreach (var node in nodes)
+        {
+            <tr>
+                <td>
+                    <span style="padding-left: @(depth * 1.5)rem;">
+                        @if (depth > 0)
+                        {
+                            <span class="has-text-grey-light">└─ </span>
+                        }
+                        @node.Route
+                        <a asp-controller="AdminPage"
+                           asp-action="CreatePage"
+                           asp-route-parentRoute="@node.Route"
+                           class="has-text-grey-light ml-2"
+                           title="Create child page under @node.Route">
+                            <i class="fas fa-plus-circle"></i>
+                        </a>
+                    </span>
+                </td>
+                <td>
+                    @if (node.PageId.HasValue)
+                    {
+                        @node.Title
+                    }
+                    else
+                    {
+                        <span class="has-text-grey-light is-italic">—</span>
+                    }
+                </td>
+                <td>
+                    @if (!string.IsNullOrEmpty(node.ControllerName))
+                    {
+                        <span class="tag is-light">@node.ControllerName</span>
+                    }
+                </td>
+                <td>
+                    @if (node.PageId.HasValue)
+                    {
+                        if (node.IsPublished)
+                        {
+                            <span class="tag is-success">Yes</span>
+                        }
+                        else
+                        {
+                            <span class="tag is-warning">No</span>
+                        }
+                    }
+                </td>
+                <td>
+                    @if (node.PageId.HasValue)
+                    {
+                        <div class="buttons are-small">
+                            <a href="@node.Route" target="_blank" class="button is-info">View</a>
+                            <a asp-controller="AdminPage" asp-action="EditPage" asp-route-id="@node.PageId" class="button">Edit</a>
+                            <form asp-controller="AdminPage" asp-action="DeletePage" asp-route-id="@node.PageId" method="post" style="display:inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="button is-danger" onclick="return confirm('Delete this page?');">Delete</button>
+                            </form>
+                        </div>
+                    }
+                </td>
+            </tr>
+
+            if (node.Children.Any())
+            {
+                await RenderTreeNodes(node.Children, depth + 1);
+            }
+        }
+    }
+}

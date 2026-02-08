@@ -5,6 +5,7 @@ using Serilog;
 using Serilog.Events; // may still be used by other code; kept for now
 using Comjustinspicer.CMS.Logging;
 using Comjustinspicer.CMS.Data.DbContexts;
+using Comjustinspicer.CMS.Routing;
 using Comjustinspicer;
 using Microsoft.Extensions.Hosting;
 
@@ -36,6 +37,8 @@ try
         // Route status code pages (like 404) to the ErrorController status handler
         app.UseStatusCodePagesWithReExecute("/Error/{0}");
     }
+
+    app.MapDynamicControllerRoute<PageRouteTransformer>("{**slug}");
 
     app.MapControllerRoute(
         name: "default",

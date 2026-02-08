@@ -46,6 +46,7 @@ public static class CMSExtensions
 			Migrate<ArticleContext>(services, logger);
 			Migrate<ContentBlockContext>(services, logger);
 			Migrate<ContentZoneContext>(services, logger);
+			Migrate<PageContext>(services, logger);
 		}
 		catch (Exception ex)
 		{

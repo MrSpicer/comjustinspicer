@@ -1,0 +1,262 @@
+@using Comjustinspicer.CMS.Data.Models
+@model PageDTO
+
+@{
+    var isNew = Model.Id == Guid.Empty;
+    ViewData["Title"] = isNew ? "Create Page" : "Edit Page";
+}
+
+<section class="section">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+            <ul>
+                <li><a asp-controller="AdminPage" asp-action="Pages">Pages</a></li>
+                <li class="is-active"><a href="#" aria-current="page">@(isNew ? "Create" : "Edit")</a></li>
+            </ul>
+        </nav>
+
+        <h1 class="title">@ViewData["Title"]</h1>
+
+        <form asp-controller="AdminPage" asp-action="SavePage" method="post" id="pageForm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="CreationDate" />
+            <input type="hidden" asp-for="CreatedBy" />
+
+            <div class="field">
+                <label class="label">Title</label>
+                <div class="control">
+                    <input class="input" asp-for="Title" placeholder="Page title" required />
+                </div>
+                <span asp-validation-for="Title" class="has-text-danger"></span>
+            </div>
+
+            <div class="field">
+                <label class="label">Route</label>
+                <div class="control">
+                    <input class="input" asp-for="Route" placeholder="/about" required
+                           pattern="^\/[a-z0-9\-\/]*[a-z0-9\-]$|^\/$" />
+                </div>
+                <p class="help">Must start with "/", no trailing slash (except root "/"). Lowercase letters, numbers, hyphens, and slashes only.</p>
+                <span asp-validation-for="Route" class="has-text-danger"></span>
+            </div>
+
+            <div class="field">
+                <label class="label">Page Controller</label>
+                <div class="control">
+                    <div class="select is-fullwidth">
+                        <select asp-for="ControllerName" id="controllerSelect" required>
+                            <option value="">-- Select a controller --</option>
+                        </select>
+                    </div>
+                </div>
+                <p class="help">The page type determines what the page renders and what configuration options are available.</p>
+                <span asp-validation-for="ControllerName" class="has-text-danger"></span>
+            </div>
+
+            <div id="configurationArea" style="display:none;">
+                <h2 class="subtitle mt-4">Configuration</h2>
+                <div id="configFields"></div>
+            </div>
+
+            <input type="hidden" asp-for="ConfigurationJson" id="configurationJson" />
+
+            <div class="field">
+                <label class="checkbox">
+                    <input type="checkbox" asp-for="IsPublished" />
+                    Published
+                </label>
+                <p class="help">Only published pages are accessible via their route.</p>
+            </div>
+
+            <div class="field is-grouped mt-4">
+                <div class="control">
+                    <button class="button is-primary" type="submit">Save</button>
+                </div>
+                <div class="control">
+                    <a asp-controller="AdminPage" asp-action="Pages" class="button">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<script>
+(function () {
+    const controllerSelect = document.getElementById('controllerSelect');
+    const configArea = document.getElementById('configurationArea');
+    const configFields = document.getElementById('configFields');
+    const configJsonInput = document.getElementById('configurationJson');
+    const form = document.getElementById('pageForm');
+    const currentControllerName = '@Html.Raw(Model.ControllerName)';
+    let currentConfig = {};
+
+    // Try to parse existing configuration
+    try {
+        const raw = '@Html.Raw(Model.ConfigurationJson?.Replace("'", "\\'").Replace("\n", "").Replace("\r", ""))';
+        if (raw && raw !== '{}') {
+            currentConfig = JSON.parse(raw);
+        }
+    } catch (e) { }
+
+    // Load controllers list
+    fetch('/admin/pages/controllers')
+        .then(r => r.json())
+        .then(controllers => {
+            controllers.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.name;
+                opt.textContent = c.displayName + (c.description ? ' - ' + c.description : '');
+                if (c.name === currentControllerName) {
+                    opt.selected = true;
+                }
+                controllerSelect.appendChild(opt);
+            });
+
+            // If editing, load properties for current controller
+            if (currentControllerName) {
+                loadControllerProperties(currentControllerName);
+            }
+        });
+
+    controllerSelect.addEventListener('change', function () {
+        const name = this.value;
+        if (name) {
+            currentConfig = {};
+            loadControllerProperties(name);
+        } else {
+            configArea.style.display = 'none';
+            configFields.innerHTML = '';
+            configJsonInput.value = '{}';
+        }
+    });
+
+    function loadControllerProperties(name) {
+        fetch('/admin/pages/controllers/' + encodeURIComponent(name) + '/properties')
+            .then(r => r.json())
+            .then(data => {
+                if (data.properties && data.properties.length > 0) {
+                    configArea.style.display = '';
+                    renderFields(data.properties);
+                } else {
+                    configArea.style.display = 'none';
+                    configFields.innerHTML = '';
+                    configJsonInput.value = '{}';
+                }
+            })
+            .catch(() => {
+                configArea.style.display = 'none';
+                configFields.innerHTML = '';
+            });
+    }
+
+    function renderFields(properties) {
+        configFields.innerHTML = '';
+
+        properties.forEach(prop => {
+            const fieldDiv = document.createElement('div');
+            fieldDiv.className = 'field';
+
+            const label = document.createElement('label');
+            label.className = 'label';
+            label.textContent = prop.label;
+            fieldDiv.appendChild(label);
+
+            const controlDiv = document.createElement('div');
+            controlDiv.className = 'control';
+
+            let input;
+            const existingValue = currentConfig[prop.name];
+
+            switch (prop.editorType) {
+                case 'textarea':
+                case 'richtext':
+                case 'html':
+                case 'markdown':
+                case 'code':
+                    input = document.createElement('textarea');
+                    input.className = 'textarea';
+                    input.rows = 4;
+                    input.value = existingValue ?? prop.defaultValue ?? '';
+                    break;
+
+                case 'checkbox':
+                    input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.checked = existingValue ?? prop.defaultValue ?? false;
+                    break;
+
+                case 'number':
+                    input = document.createElement('input');
+                    input.type = 'number';
+                    input.className = 'input';
+                    input.value = existingValue ?? prop.defaultValue ?? '';
+                    if (prop.min !== null && prop.min !== undefined) input.min = prop.min;
+                    if (prop.max !== null && prop.max !== undefined) input.max = prop.max;
+                    break;
+
+                case 'dropdown':
+                    input = document.createElement('select');
+                    input.className = 'select';
+                    const emptyOpt = document.createElement('option');
+                    emptyOpt.value = '';
+                    emptyOpt.textContent = '-- Select --';
+                    input.appendChild(emptyOpt);
+                    if (prop.dropdownOptions) {
+                        Object.entries(prop.dropdownOptions).forEach(([val, lbl]) => {
+                            const opt = document.createElement('option');
+                            opt.value = val;
+                            opt.textContent = lbl;
+                            if (val === (existingValue ?? '').toString()) opt.selected = true;
+                            input.appendChild(opt);
+                        });
+                    }
+                    break;
+
+                default:
+                    input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'input';
+                    input.value = existingValue ?? prop.defaultValue ?? '';
+                    if (prop.placeholder) input.placeholder = prop.placeholder;
+                    if (prop.maxLength) input.maxLength = prop.maxLength;
+                    break;
+            }
+
+            input.dataset.propName = prop.name;
+            input.dataset.editorType = prop.editorType;
+            if (prop.isRequired) input.required = true;
+
+            controlDiv.appendChild(input);
+            fieldDiv.appendChild(controlDiv);
+
+            if (prop.helpText) {
+                const help = document.createElement('p');
+                help.className = 'help';
+                help.textContent = prop.helpText;
+                fieldDiv.appendChild(help);
+            }
+
+            configFields.appendChild(fieldDiv);
+        });
+    }
+
+    // Collect config values before form submission
+    form.addEventListener('submit', function () {
+        const config = {};
+        configFields.querySelectorAll('[data-prop-name]').forEach(el => {
+            const name = el.dataset.propName;
+            const editorType = el.dataset.editorType;
+
+            if (editorType === 'checkbox') {
+                config[name] = el.checked;
+            } else if (editorType === 'number') {
+                config[name] = el.value !== '' ? parseFloat(el.value) : null;
+            } else {
+                config[name] = el.value;
+            }
+        });
+        configJsonInput.value = JSON.stringify(config);
+    });
+})();
+</script>

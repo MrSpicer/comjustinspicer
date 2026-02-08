@@ -18,6 +18,9 @@ using Serilog.Events;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Comjustinspicer.CMS.Models.Article;
+using Comjustinspicer.CMS.Models.Page;
+using Comjustinspicer.CMS.Pages;
+using Comjustinspicer.CMS.Routing;
 
 namespace Comjustinspicer.CMS;
 
@@ -73,6 +76,10 @@ public static class ServiceCollectionExtensions
 		services.AddDbContext<ContentZoneContext>(options =>
 			options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_ContentZone")));
 
+		// Page DB/context
+		services.AddDbContext<PageContext>(options =>
+			options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_Page")));
+
 		services.AddDatabaseDeveloperPageExceptionFilter();
 	}
 
@@ -122,6 +129,24 @@ public static class ServiceCollectionExtensions
 
 		// ContentZone service registration
 		services.AddScoped<IContentZoneService, ContentZoneService>();
+
+		// Page service and model registrations
+		services.AddScoped<IPageService, PageService>();
+		services.AddScoped<IPageModel, PageModel>();
+
+		// Page Controller Registry - scans assemblies for registered page controllers
+		services.AddSingleton<IPageControllerRegistry>(sp =>
+		{
+			var assemblies = new[]
+			{
+				typeof(ServiceCollectionExtensions).Assembly,
+				Assembly.GetEntryAssembly()
+			}.Where(a => a != null).Distinct().Cast<Assembly>();
+			return new PageControllerRegistry(assemblies);
+		});
+
+		// PageRouteTransformer for dynamic page routing
+		services.AddScoped<PageRouteTransformer>();
 
 		services.AddScoped<IContentBlockModel, ContentBlockModel>();
 		services.AddScoped<IContentZoneModel, ContentZoneModel>();

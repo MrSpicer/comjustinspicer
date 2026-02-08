@@ -1,0 +1,34 @@
+@model Comjustinspicer.Controllers.GenericPageConfiguration
+
+@{
+    ViewData["Title"] = ViewContext.RouteData.Values["title"]?.ToString() ?? "Page";
+}
+@* 
+@if (!string.IsNullOrWhiteSpace(Model.Meta))
+{
+    @section Meta {
+        @Html.Raw(Model.Meta)
+    }
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.Style))
+{
+    @section Styles {
+        <style>
+            @Html.Raw(Model.Style)
+        </style>
+    }
+} *@
+
+<div class="generic-page">
+    @await Component.InvokeAsync("ContentZone", new { zoneName = "Main" })
+</div>
+
+@* @if (!string.IsNullOrWhiteSpace(Model.Script))
+{
+    @section Scripts {
+        <script>
+            @Html.Raw(Model.Script)
+        </script>
+    }
+} *@
