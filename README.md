@@ -19,16 +19,30 @@ CC BY-SA 4.0
 
 ## Setup
 
-
 ### Make Scripts Executable
 ```
 chmod +x ./Scripts/*
 ```
 
+### Linux Development Setup
+
+#### Fix dotnet watch inotify Limits
+
+If you encounter "The configured user limit on the number of inotify instances has been reached" error when running hot reload:
+
+```bash
+echo "fs.inotify.max_user_instances=8192" | sudo tee /etc/sysctl.d/99-inotify.conf
+sudo sysctl -p /etc/sysctl.d/99-inotify.conf
+```
+
+This is a one-time setup per machine. The project includes `.dotnetwatch.json` which automatically excludes build artifacts and IDE files from file watching.
+
 ### Development - Hot Reload
 ```
 ./Scripts/HotReloadRun.sh
 ```
+
+The watch system monitors source files (`.cs`, `.cshtml`, `.csproj`, `.json`) and automatically rebuilds when you save changes.
 
 ### Run Tests
 ```
