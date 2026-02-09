@@ -19,4 +19,8 @@
     <ProjectReference Include="..\Comjustinspicer.CMS\Comjustinspicer.CMS.csproj" />
   </ItemGroup>
 
+
+  <Target Name="CompileSass" BeforeTargets="Build">
+    <Exec Command="npx sass Views/Shared/site.scss:wwwroot/css/site.css --no-source-map --style=compressed" />
+  </Target>
 </Project>

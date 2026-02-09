@@ -1,0 +1,27 @@
+@import "https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css";
+
+html {
+  font-size: 14px;
+  position: relative;
+  min-height: 100%;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+body {
+  margin-bottom: 60px;
+  height: 100vh;
+}
+
+.footer {
+  color: #0a0a0a;
+  padding: 10px;
+}
+
+.footer-social-icons {
+  padding-right: 2em;
+}

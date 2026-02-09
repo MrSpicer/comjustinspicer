@@ -59,6 +59,7 @@
 
         <div class="navbar-end">
             @await Component.InvokeAsync(name: "ContentZone", new { zoneName = "NavBar End" })
+            <partial name="_LoginNavPartial" />
         </div>
     </div>
 </nav>

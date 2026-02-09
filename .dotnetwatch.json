@@ -17,14 +17,17 @@
     "**/*.db-wal",
     "**/.dotnet/**",
     "**/TestResults/**",
-    "**/.idea/**"
+    "**/.idea/**",
+    "**/*.scss"
   ],
   "reload": {
     "include": [
       "**/*.cs",
       "**/*.cshtml",
       "**/*.csproj",
-      "**/*.json"
+      "**/*.json",
+      "**/*.css",
+      "**/*.js"
     ]
   }
 }

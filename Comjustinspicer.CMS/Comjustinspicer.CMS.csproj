@@ -25,4 +25,15 @@
 	<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
   	<PackageReference Include="Serilog.Sinks.SQLite" Version="6.0.0" />
   </ItemGroup>
+
+  <Target Name="CompileSass" BeforeTargets="Build">
+    <Exec Command="npx sass Views/Shared/Components/ContentZone/edit.scss:wwwroot/css/content-zone-edit.css --no-source-map --style=compressed" />
+  </Target>
+
+  <Target Name="CopyViewScripts" BeforeTargets="Build">
+    <Copy SourceFiles="Views/Shared/Components/ContentZone/edit.js"
+          DestinationFiles="wwwroot/js/content-zone-edit.js" />
+    <Copy SourceFiles="Views/AdminPage/PageUpsert.js"
+          DestinationFiles="wwwroot/js/page-upsert.js" />
+  </Target>
 </Project>
