@@ -11,14 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Comjustinspicer.CMS.Migrations.Article
 {
     [DbContext(typeof(ArticleContext))]
-    [Migration("20260204021347_InitialArticle")]
+    [Migration("20260209044356_InitialArticle")]
     partial class InitialArticle
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.0");
 
             modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ArticleListDTO", b =>
                 {
@@ -47,6 +47,9 @@ namespace Comjustinspicer.CMS.Migrations.Article
                     b.Property<Guid>("LastModifiedBy")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("MasterId")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("ModificationDate")
                         .HasColumnType("TEXT");
 
@@ -63,6 +66,9 @@ namespace Comjustinspicer.CMS.Migrations.Article
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -104,6 +110,9 @@ namespace Comjustinspicer.CMS.Migrations.Article
                     b.Property<Guid>("LastModifiedBy")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("MasterId")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("ModificationDate")
                         .HasColumnType("TEXT");
 
@@ -126,6 +135,9 @@ namespace Comjustinspicer.CMS.Migrations.Article
                         .HasMaxLength(20000)
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("Version")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.ToTable("Posts", (string)null);
@@ -135,26 +147,21 @@ namespace Comjustinspicer.CMS.Migrations.Article
                 {
                     b.OwnsMany("Comjustinspicer.CMS.Data.Models.CustomField", "CustomFields", b1 =>
                         {
-                            b1.Property<Guid>("ArticleListDTOId")
-                                .HasColumnType("TEXT");
+                            b1.Property<Guid>("ArticleListDTOId");
 
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("INTEGER");
+                            b1.Property<int>("__synthesizedOrdinal")
+                                .ValueGeneratedOnAddOrUpdate();
 
                             b1.Property<string>("FieldName")
-                                .IsRequired()
-                                .HasColumnType("TEXT");
+                                .IsRequired();
 
                             b1.Property<string>("TypeName")
-                                .IsRequired()
-                                .HasColumnType("TEXT");
+                                .IsRequired();
 
                             b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasColumnType("TEXT");
+                                .IsRequired();
 
-                            b1.HasKey("ArticleListDTOId", "Id");
+                            b1.HasKey("ArticleListDTOId", "__synthesizedOrdinal");
 
                             b1.ToTable("ArticleLists");
 
@@ -171,26 +178,21 @@ namespace Comjustinspicer.CMS.Migrations.Article
                 {
                     b.OwnsMany("Comjustinspicer.CMS.Data.Models.CustomField", "CustomFields", b1 =>
                         {
-                            b1.Property<Guid>("PostDTOId")
-                                .HasColumnType("TEXT");
+                            b1.Property<Guid>("PostDTOId");
 
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAddOrUpdate()
-                                .HasColumnType("INTEGER");
+                            b1.Property<int>("__synthesizedOrdinal")
+                                .ValueGeneratedOnAddOrUpdate();
 
                             b1.Property<string>("FieldName")
-                                .IsRequired()
-                                .HasColumnType("TEXT");
+                                .IsRequired();
 
                             b1.Property<string>("TypeName")
-                                .IsRequired()
-                                .HasColumnType("TEXT");
+                                .IsRequired();
 
                             b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasColumnType("TEXT");
+                                .IsRequired();
 
-                            b1.HasKey("PostDTOId", "Id");
+                            b1.HasKey("PostDTOId", "__synthesizedOrdinal");
 
                             b1.ToTable("Posts");
 

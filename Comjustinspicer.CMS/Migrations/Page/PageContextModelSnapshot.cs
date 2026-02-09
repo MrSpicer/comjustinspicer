@@ -54,6 +54,9 @@ namespace Comjustinspicer.CMS.Migrations.Page
                     b.Property<Guid>("LastModifiedBy")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("MasterId")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("ModificationDate")
                         .HasColumnType("TEXT");
 
@@ -76,6 +79,9 @@ namespace Comjustinspicer.CMS.Migrations.Page
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 

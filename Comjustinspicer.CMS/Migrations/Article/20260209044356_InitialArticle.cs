@@ -3,21 +3,19 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Comjustinspicer.CMS.Migrations.ContentZone
+namespace Comjustinspicer.CMS.Migrations.Article
 {
     /// <inheritdoc />
-    public partial class InitialContentZone : Migration
+    public partial class InitialArticle : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ContentZones",
+                name: "ArticleLists",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 256, nullable: false),
-                    Description = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: false),
                     Slug = table.Column<string>(type: "TEXT", nullable: false),
                     Title = table.Column<string>(type: "TEXT", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "TEXT", nullable: false),
@@ -30,57 +28,53 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                     IsArchived = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsHidden = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    MasterId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Version = table.Column<int>(type: "INTEGER", nullable: false),
                     CustomFields = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ContentZones", x => x.Id);
+                    table.PrimaryKey("PK_ArticleLists", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ContentZoneItems",
+                name: "Posts",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ContentZoneId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Ordinal = table.Column<int>(type: "INTEGER", nullable: false),
-                    ComponentName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: false),
-                    ComponentPropertiesJson = table.Column<string>(type: "TEXT", maxLength: 4000, nullable: false),
-                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    Body = table.Column<string>(type: "TEXT", nullable: false),
+                    AuthorName = table.Column<string>(type: "TEXT", nullable: false),
+                    Summary = table.Column<string>(type: "TEXT", nullable: false),
+                    Slug = table.Column<string>(type: "TEXT", nullable: false),
+                    Title = table.Column<string>(type: "TEXT", maxLength: 20000, nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "TEXT", nullable: false),
+                    LastModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false),
+                    PublicationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    PublicationEndDate = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    ModificationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    IsPublished = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsArchived = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsHidden = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    MasterId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Version = table.Column<int>(type: "INTEGER", nullable: false),
+                    CustomFields = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ContentZoneItems", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ContentZoneItems_ContentZones_ContentZoneId",
-                        column: x => x.ContentZoneId,
-                        principalTable: "ContentZones",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_Posts", x => x.Id);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ContentZoneItems_ContentZoneId_Ordinal",
-                table: "ContentZoneItems",
-                columns: new[] { "ContentZoneId", "Ordinal" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ContentZones_Name",
-                table: "ContentZones",
-                column: "Name",
-                unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ContentZoneItems");
+                name: "ArticleLists");
 
             migrationBuilder.DropTable(
-                name: "ContentZones");
+                name: "Posts");
         }
     }
 }

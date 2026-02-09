@@ -31,6 +31,8 @@ namespace Comjustinspicer.CMS.Migrations.Page
                     IsArchived = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsHidden = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    MasterId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Version = table.Column<int>(type: "INTEGER", nullable: false),
                     CustomFields = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>

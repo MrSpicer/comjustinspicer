@@ -25,9 +25,9 @@
     <div id="siteNav" class="navbar-menu">
         <div class="navbar-start">
             @await Component.InvokeAsync(name: "ContentZone", new { zoneName = "NavBar" })
-            <a class="navbar-item" href="/">
+            @* <a class="navbar-item" href="/">
                 Home
-            </a>
+            </a> *@
 
             @if (isAuthor)
             {

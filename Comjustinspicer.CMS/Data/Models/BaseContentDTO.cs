@@ -43,5 +43,11 @@ public abstract class BaseContentDTO
     [FormProperty(Label = "Deleted", EditorType = EditorType.Checkbox, Group = "Status", Order = 22)]
     public bool IsDeleted { get; set; }
 
+    [FormProperty(EditorType = EditorType.Hidden, Order = 99)]
+    public Guid MasterId { get; set; }
+
+    [FormProperty(EditorType = EditorType.Hidden, Order = 99)]
+    public int Version { get; set; }
+
     public List<CustomField> CustomFields { get; set; } = new();
 }

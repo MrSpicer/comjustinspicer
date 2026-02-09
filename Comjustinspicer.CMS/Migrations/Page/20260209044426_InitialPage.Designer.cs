@@ -8,27 +8,32 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Comjustinspicer.CMS.Migrations.ContentBlock
+namespace Comjustinspicer.CMS.Migrations.Page
 {
-    [DbContext(typeof(ContentBlockContext))]
-    [Migration("20260204021356_InitialContentBlock")]
-    partial class InitialContentBlock
+    [DbContext(typeof(PageContext))]
+    [Migration("20260209044426_InitialPage")]
+    partial class InitialPage
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.0");
 
-            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ContentBlockDTO", b =>
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.PageDTO", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Content")
+                    b.Property<string>("ConfigurationJson")
                         .IsRequired()
-                        .HasMaxLength(10000)
+                        .HasMaxLength(4000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ControllerName")
+                        .IsRequired()
+                        .HasMaxLength(256)
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("CreatedBy")
@@ -52,6 +57,9 @@ namespace Comjustinspicer.CMS.Migrations.ContentBlock
                     b.Property<Guid>("LastModifiedBy")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("MasterId")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("ModificationDate")
                         .HasColumnType("TEXT");
 
@@ -61,50 +69,57 @@ namespace Comjustinspicer.CMS.Migrations.ContentBlock
                     b.Property<DateTime?>("PublicationEndDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Route")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
                         .IsRequired()
+                        .HasMaxLength(256)
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.ToTable("ContentBlocks", (string)null);
+                    b.HasIndex("Route")
+                        .IsUnique();
+
+                    b.ToTable("Pages", (string)null);
                 });
 
-            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ContentBlockDTO", b =>
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.PageDTO", b =>
                 {
                     b.OwnsMany("Comjustinspicer.CMS.Data.Models.CustomField", "CustomFields", b1 =>
                         {
-                            b1.Property<Guid>("ContentBlockDTOId")
-                                .HasColumnType("TEXT");
+                            b1.Property<Guid>("PageDTOId");
 
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("INTEGER");
+                            b1.Property<int>("__synthesizedOrdinal")
+                                .ValueGeneratedOnAddOrUpdate();
 
                             b1.Property<string>("FieldName")
-                                .IsRequired()
-                                .HasColumnType("TEXT");
+                                .IsRequired();
 
                             b1.Property<string>("TypeName")
-                                .IsRequired()
-                                .HasColumnType("TEXT");
+                                .IsRequired();
 
                             b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasColumnType("TEXT");
+                                .IsRequired();
 
-                            b1.HasKey("ContentBlockDTOId", "Id");
+                            b1.HasKey("PageDTOId", "__synthesizedOrdinal");
 
-                            b1.ToTable("ContentBlocks");
+                            b1.ToTable("Pages");
 
                             b1.ToJson("CustomFields");
 
                             b1.WithOwner()
-                                .HasForeignKey("ContentBlockDTOId");
+                                .HasForeignKey("PageDTOId");
                         });
 
                     b.Navigation("CustomFields");

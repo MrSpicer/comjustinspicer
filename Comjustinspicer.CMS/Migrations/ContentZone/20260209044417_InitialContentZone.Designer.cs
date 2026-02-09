@@ -11,14 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Comjustinspicer.CMS.Migrations.ContentZone
 {
     [DbContext(typeof(ContentZoneContext))]
-    [Migration("20260204021404_InitialContentZone")]
+    [Migration("20260209044417_InitialContentZone")]
     partial class InitialContentZone
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.0");
 
             modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ContentZoneDTO", b =>
                 {
@@ -52,6 +52,9 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                     b.Property<Guid>("LastModifiedBy")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("MasterId")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("ModificationDate")
                         .HasColumnType("TEXT");
 
@@ -73,6 +76,9 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -124,26 +130,21 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                 {
                     b.OwnsMany("Comjustinspicer.CMS.Data.Models.CustomField", "CustomFields", b1 =>
                         {
-                            b1.Property<Guid>("ContentZoneDTOId")
-                                .HasColumnType("TEXT");
+                            b1.Property<Guid>("ContentZoneDTOId");
 
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("INTEGER");
+                            b1.Property<int>("__synthesizedOrdinal")
+                                .ValueGeneratedOnAddOrUpdate();
 
                             b1.Property<string>("FieldName")
-                                .IsRequired()
-                                .HasColumnType("TEXT");
+                                .IsRequired();
 
                             b1.Property<string>("TypeName")
-                                .IsRequired()
-                                .HasColumnType("TEXT");
+                                .IsRequired();
 
                             b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasColumnType("TEXT");
+                                .IsRequired();
 
-                            b1.HasKey("ContentZoneDTOId", "Id");
+                            b1.HasKey("ContentZoneDTOId", "__synthesizedOrdinal");
 
                             b1.ToTable("ContentZones");
 
