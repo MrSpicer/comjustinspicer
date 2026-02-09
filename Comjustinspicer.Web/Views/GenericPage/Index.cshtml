@@ -20,9 +20,7 @@
     }
 } *@
 
-<div class="generic-page">
-    @await Component.InvokeAsync("ContentZone", new { zoneName = "Main" })
-</div>
+@await Component.InvokeAsync("ContentZone", new { zoneName = "Main" })
 
 @* @if (!string.IsNullOrWhiteSpace(Model.Script))
 {

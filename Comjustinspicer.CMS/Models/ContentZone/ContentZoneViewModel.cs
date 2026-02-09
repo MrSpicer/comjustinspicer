@@ -12,9 +12,15 @@ public class ContentZoneViewModel
 	public Guid Id { get; set; } = Guid.Empty;
 
 	/// <summary>
-	/// The unique path/name that identifies this content zone.
+	/// The unique path/name that identifies this content zone (includes ordinal suffix).
 	/// </summary>
 	public string Name { get; set; } = string.Empty;
+
+	/// <summary>
+	/// The raw zone name passed to the ViewComponent (without ordinal suffix).
+	/// Used for display purposes in admin view.
+	/// </summary>
+	public string RawZoneName { get; set; } = string.Empty;
 
 	/// <summary>
 	/// The zone objects (items) to render in this zone.

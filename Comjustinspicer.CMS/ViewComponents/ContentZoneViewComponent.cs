@@ -52,7 +52,7 @@ public class ContentZoneViewComponent : ViewComponent
 
 		// Try to get the zone - it may not exist yet
 		var vm = await _model.GetViewModelAsync(effectivePath, HttpContext.RequestAborted);
-		
+
 		if (vm == null)
 		{
 			// Zone doesn't exist - create an empty view model for edit mode
@@ -60,6 +60,7 @@ public class ContentZoneViewComponent : ViewComponent
 			{
 				Id = Guid.Empty,
 				Name = effectivePath,
+				RawZoneName = zoneName ?? string.Empty,
 				ZoneObjects = new List<ContentZoneObject>(),
 				CanEdit = isAdmin
 			};
@@ -67,6 +68,7 @@ public class ContentZoneViewComponent : ViewComponent
 		else
 		{
 			vm.CanEdit = isAdmin;
+			vm.RawZoneName = zoneName ?? string.Empty;
 		}
 
 		// Store the current path in ViewData for nested zones to access

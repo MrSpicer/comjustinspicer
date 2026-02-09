@@ -1,5 +1,4 @@
 ﻿@using Comjustinspicer.CMS.ViewComponents
 @using Comjustinspicer.CMS.Models.ContentBlock
 
-@await Component.InvokeAsync("ContentBlock", new ContentBlockContentZoneConfiguration { ContentBlockID = new
-Guid("f1858727-4931-4505-83cb-8c4fd2aeb0e1") })
+@await Component.InvokeAsync(name: "ContentZone", new { zoneName = "Footer" })

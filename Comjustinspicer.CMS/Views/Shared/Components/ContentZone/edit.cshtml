@@ -10,6 +10,16 @@
     var containerId = $"cz-container-{Guid.NewGuid():N}";
 }
 
+@* Zone name identifier for admin *@
+<div class="zone-name-header">
+    <span class="tag is-light is-small">
+        <span class="icon is-small">
+            <i class="fas fa-th-large"></i>
+        </span>
+        <span>@Model.RawZoneName</span>
+    </span>
+</div>
+
 <div class="content-zone content-zone-edit" id="@containerId" data-zone-name="@Model.Name">
     @* Hidden zone ID - never displayed to users *@
     <input type="hidden" class="zone-id-field" value="@Model.Id" />
@@ -103,6 +113,20 @@
 </div>
 
 <style>
+    .zone-name-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .zone-name-header .tag {
+        font-size: 0.7rem;
+        height: auto;
+        padding: 0.25rem 0.5rem;
+        font-family: 'Courier New', Courier, monospace;
+    }
+
     .content-zone-edit {
         position: relative;
         min-height: 50px;

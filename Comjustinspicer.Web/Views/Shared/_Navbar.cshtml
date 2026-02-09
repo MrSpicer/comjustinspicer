@@ -10,7 +10,8 @@
 <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <a class="navbar-item" href="/">
-            <img src="/logo.png" width="112" height="28">
+            @await Component.InvokeAsync(name: "ContentZone", new { zoneName = "Logo" })
+
         </a>
 
         <a id="nav-toggle" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
@@ -23,22 +24,10 @@
 
     <div id="siteNav" class="navbar-menu">
         <div class="navbar-start">
+            @await Component.InvokeAsync(name: "ContentZone", new { zoneName = "NavBar" })
             <a class="navbar-item" href="/">
                 Home
             </a>
-
-            <a class="navbar-item" href="/about">
-                About
-            </a>
-
-            <a class="navbar-item" href="/Blog">
-                Blog
-            </a>
-
-            @*Todo: readd as data*@
-            @* <a class="navbar-item" href="https://github.com/MrSpicer/Resume_public/blob/main/justin_resume.pdf">
-                Resume
-            </a> *@
 
             @if (isAuthor)
             {
@@ -69,9 +58,7 @@
         </div>
 
         <div class="navbar-end">
-            @await Component.InvokeAsync("ContentBlock", new Comjustinspicer.CMS.Models.ContentBlock.ContentBlockContentZoneConfiguration { ContentBlockID = new
-            Guid("9033b373-ca8a-43ba-86a5-f3ecceab65ce") })
-            <partial name="_LoginNavPartial" />
+            @await Component.InvokeAsync(name: "ContentZone", new { zoneName = "NavBar End" })
         </div>
     </div>
 </nav>
