@@ -2,7 +2,7 @@ using Comjustinspicer.CMS.Attributes;
 using Comjustinspicer.CMS.Controllers;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Comjustinspicer.Controllers;
+namespace Comjustinspicer.CMS.Controllers;
 
 /// <summary>
 /// Configuration model for generic pages.

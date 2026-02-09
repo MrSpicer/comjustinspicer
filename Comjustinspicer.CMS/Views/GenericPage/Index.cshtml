@@ -1,9 +1,9 @@
-@model Comjustinspicer.Controllers.GenericPageConfiguration
+@model Comjustinspicer.CMS.Controllers.GenericPageConfiguration
 
 @{
     ViewData["Title"] = ViewContext.RouteData.Values["title"]?.ToString() ?? "Page";
 }
-@* 
+@*
 @if (!string.IsNullOrWhiteSpace(Model.Meta))
 {
     @section Meta {

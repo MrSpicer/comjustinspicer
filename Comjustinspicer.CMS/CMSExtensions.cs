@@ -1,4 +1,6 @@
 using Comjustinspicer.CMS.Data.DbContexts;
+using Comjustinspicer.CMS.Data.Models;
+using Comjustinspicer.CMS.Data.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +17,7 @@ public static class CMSExtensions
 	{
 		app.ApplyCmsPendingMigrations(throwOnError);
 		app.EnsureCmsRolesAndAdminSeeded(throwOnError);
+		app.EnsureDefaultHomePage(throwOnError);
 		app.ConfigureMiddleware(throwOnError);
 		return app;
 	}
@@ -144,6 +147,66 @@ public static class CMSExtensions
 		catch (Exception ex)
 		{
 			Log.ForContext(typeof(CMSExtensions)).Error(ex, "An error occurred seeding roles/admin user.");
+			if (throwOnError)
+			{
+				throw;
+			}
+		}
+
+		return app;
+	}
+
+	private static WebApplication EnsureDefaultHomePage(this WebApplication app, bool throwOnError = false)
+	{
+		// Allow skipping via env var
+		if (string.Equals(Environment.GetEnvironmentVariable("COMJUSTINSPICER_SKIP_DEFAULTPAGE"), "true", StringComparison.OrdinalIgnoreCase))
+		{
+			Log.ForContext(typeof(CMSExtensions)).Information("Skipping default home page seeding due to COMJUSTINSPICER_SKIP_DEFAULTPAGE=true");
+			return app;
+		}
+
+		using var scope = app.Services.CreateScope();
+		var services = scope.ServiceProvider;
+		var logger = Log.ForContext(typeof(CMSExtensions));
+
+		try
+		{
+			var pageService = services.GetRequiredService<IPageService>();
+
+			// Check if any pages exist
+			var existingPages = pageService.GetByRouteAsync("/").GetAwaiter().GetResult();
+
+			if (existingPages == null)
+			{
+				logger.Information("No page was found in database. Creating default Home page at route '/'.");
+
+				var homePage = new PageDTO
+				{
+					Id = Guid.NewGuid(),
+					Route = "/",
+					ControllerName = "GenericPage",
+					Title = "Home",
+					Slug = "home",
+					ConfigurationJson = "{}",
+					IsPublished = true,
+					PublicationDate = DateTime.UtcNow,
+					CreationDate = DateTime.UtcNow,
+					ModificationDate = DateTime.UtcNow,
+					CreatedBy = Guid.Empty,
+					LastModifiedBy = Guid.Empty
+				};
+
+				var created = pageService.CreateAsync(homePage).GetAwaiter().GetResult();
+				logger.Information("Created default Home page with ID {PageId}", created.Id);
+			}
+			else
+			{
+				logger.Debug("Pages already exist, skipping default home page creation.");
+			}
+		}
+		catch (Exception ex)
+		{
+			logger.Error(ex, "An error occurred creating default home page.");
 			if (throwOnError)
 			{
 				throw;
