@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp", "--vision", "--browser", "chromium", "--executable-path", "/usr/bin/chromium-browser"],
+      "cwd": "/home/justin/Projects/comjustinspicer"
+    }
+  }
+}

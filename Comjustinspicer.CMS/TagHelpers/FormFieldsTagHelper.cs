@@ -227,7 +227,7 @@ public class FormFieldsTagHelper : TagHelper
 
         if (!string.IsNullOrEmpty(prop.Placeholder))
             attrs += $" placeholder=\"{HtmlEncoder.Default.Encode(prop.Placeholder)}\"";
-        if (prop.IsRequired)
+        if (prop.IsRequired && prop.EditorType != EditorType.RichText)
             attrs += " required";
         if (prop.MaxLength.HasValue)
             attrs += $" maxlength=\"{prop.MaxLength.Value}\"";

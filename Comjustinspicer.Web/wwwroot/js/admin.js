@@ -35,7 +35,7 @@ const {
 
 // CKEditor dynamic configuration (license key injected server-side)
 (() => {
-	const editorElement = document.querySelector('#editor');
+	const editorElement = document.querySelector('.rich-text-editor');
 	if (!editorElement) {
 		return; // No editor on this page.
 	}
@@ -85,6 +85,14 @@ const {
 							styles: true
 						}
 					]
+				}
+			})
+			.then(editor => {
+				const form = editorElement.closest('form');
+				if (form) {
+					form.addEventListener('submit', () => {
+						editor.updateSourceElement();
+					});
 				}
 			})
 			.catch(error => console.log(error));
