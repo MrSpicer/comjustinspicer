@@ -13,6 +13,7 @@ env:
   AdminUser__Email: ${{ secrets.ADMIN_EMAIL }}
   AdminUser__Password: ${{ secrets.ADMIN_PASSWORD }}
   CKEditor__LicenseKey: ${{ secrets.CKEDITOR_LICENSE_KEY }}
+  AutoMapper__LicenseKey: ${{ secrets.AUTOMAPPER_LICENSE_KEY }}
 
 jobs:
   build:

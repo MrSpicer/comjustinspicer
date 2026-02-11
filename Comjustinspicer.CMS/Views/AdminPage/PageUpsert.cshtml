@@ -1,8 +1,8 @@
-@using Comjustinspicer.CMS.Data.Models
-@model PageDTO
+@using Comjustinspicer.CMS.Models.Page
+@model PageUpsertViewModel
 
 @{
-    var isNew = Model.Id == Guid.Empty;
+    var isNew = Model.Id == null || Model.Id == Guid.Empty;
     ViewData["Title"] = isNew ? "Create Page" : "Edit Page";
 }
 

@@ -1,28 +1,18 @@
+using AutoMapper;
 using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
-using Comjustinspicer.CMS.Pages;
 
 namespace Comjustinspicer.CMS.Models.Page;
 
-public class PageModel : IPageModel
+public sealed class PageModel : IPageModel
 {
     private readonly IPageService _service;
-    private readonly IPageControllerRegistry _registry;
+    private readonly IMapper _mapper;
 
-    public PageModel(IPageService service, IPageControllerRegistry registry)
+    public PageModel(IPageService service, IMapper mapper)
     {
         _service = service ?? throw new ArgumentNullException(nameof(service));
-        _registry = registry ?? throw new ArgumentNullException(nameof(registry));
-    }
-
-    public async Task<List<PageDTO>> GetAllAsync(CancellationToken ct = default)
-    {
-        return await _service.GetAllAsync(ct);
-    }
-
-    public async Task<PageDTO?> GetByIdAsync(Guid id, CancellationToken ct = default)
-    {
-        return await _service.GetByIdAsync(id, ct);
+        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
     public async Task<PageDTO?> GetByRouteAsync(string route, CancellationToken ct = default)
@@ -30,34 +20,62 @@ public class PageModel : IPageModel
         return await _service.GetByRouteAsync(route, ct);
     }
 
-    public async Task<PageDTO> CreateAsync(PageDTO page, CancellationToken ct = default)
+    public async Task<PageIndexViewModel> GetPageIndexAsync(CancellationToken ct = default)
     {
-        return await _service.CreateAsync(page, ct);
+        var pages = await _service.GetAllAsync(ct);
+        return new PageIndexViewModel { Pages = BuildTree(pages) };
     }
 
-    public async Task<bool> UpdateAsync(PageDTO page, CancellationToken ct = default)
+    public async Task<PageUpsertViewModel?> GetPageUpsertAsync(Guid? id, CancellationToken ct = default)
     {
-        return await _service.UpdateAsync(page, ct);
+        if (id == null || id == Guid.Empty)
+        {
+            return new PageUpsertViewModel();
+        }
+
+        var dto = await _service.GetByIdAsync(id.Value, ct);
+        if (dto == null)
+        {
+            return null;
+        }
+
+        return _mapper.Map<PageUpsertViewModel>(dto);
     }
 
-    public async Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
+    public async Task<(bool Success, string? ErrorMessage)> SavePageUpsertAsync(PageUpsertViewModel model, CancellationToken ct = default)
+    {
+        if (model == null) throw new ArgumentNullException(nameof(model));
+
+        var dto = _mapper.Map<PageDTO>(model);
+
+        if (model.Id.HasValue && model.Id != Guid.Empty)
+        {
+            var ok = await _service.UpdateAsync(dto, ct);
+            if (!ok) return (false, "Failed to update page.");
+        }
+        else
+        {
+            await _service.CreateAsync(dto, ct);
+        }
+
+        return (true, null);
+    }
+
+    public async Task<bool> DeletePageAsync(Guid id, CancellationToken ct = default)
     {
         return await _service.DeleteAsync(id, ct);
     }
 
-    public async Task<List<PageTreeNode>> GetRouteTreeAsync(CancellationToken ct = default)
+    public async Task<bool> IsRouteAvailableAsync(string route, Guid? excludeId = null, CancellationToken ct = default)
     {
-        var pages = await _service.GetAllAsync(ct);
-        return BuildTree(pages);
+        return await _service.IsRouteAvailableAsync(route, excludeId, ct);
     }
 
     private static List<PageTreeNode> BuildTree(List<PageDTO> pages)
     {
         var roots = new List<PageTreeNode>();
-        // Map route → node for quick parent lookup
         var nodeMap = new Dictionary<string, PageTreeNode>(StringComparer.OrdinalIgnoreCase);
 
-        // Sort by route so parents are processed before children
         var sortedPages = pages.OrderBy(p => p.Route).ToList();
 
         foreach (var page in sortedPages)
@@ -72,7 +90,6 @@ public class PageModel : IPageModel
 
                 if (!nodeMap.TryGetValue(currentPath, out var node))
                 {
-                    // Create intermediate or leaf node
                     node = new PageTreeNode
                     {
                         Route = currentPath,
@@ -98,7 +115,6 @@ public class PageModel : IPageModel
                 }
                 else if (isLeaf)
                 {
-                    // Node exists as intermediate — upgrade to real page
                     node.Title = page.Title;
                     node.PageId = page.Id;
                     node.ControllerName = page.ControllerName;

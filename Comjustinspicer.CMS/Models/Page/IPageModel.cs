@@ -7,11 +7,10 @@ namespace Comjustinspicer.CMS.Models.Page;
 /// </summary>
 public interface IPageModel
 {
-    Task<List<PageDTO>> GetAllAsync(CancellationToken ct = default);
-    Task<PageDTO?> GetByIdAsync(Guid id, CancellationToken ct = default);
     Task<PageDTO?> GetByRouteAsync(string route, CancellationToken ct = default);
-    Task<PageDTO> CreateAsync(PageDTO page, CancellationToken ct = default);
-    Task<bool> UpdateAsync(PageDTO page, CancellationToken ct = default);
-    Task<bool> DeleteAsync(Guid id, CancellationToken ct = default);
-    Task<List<PageTreeNode>> GetRouteTreeAsync(CancellationToken ct = default);
+    Task<PageIndexViewModel> GetPageIndexAsync(CancellationToken ct = default);
+    Task<PageUpsertViewModel?> GetPageUpsertAsync(Guid? id, CancellationToken ct = default);
+    Task<(bool Success, string? ErrorMessage)> SavePageUpsertAsync(PageUpsertViewModel model, CancellationToken ct = default);
+    Task<bool> DeletePageAsync(Guid id, CancellationToken ct = default);
+    Task<bool> IsRouteAvailableAsync(string route, Guid? excludeId = null, CancellationToken ct = default);
 }

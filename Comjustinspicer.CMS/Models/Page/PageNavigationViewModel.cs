@@ -1,0 +1,6 @@
+namespace Comjustinspicer.CMS.Models.Page;
+
+public sealed class PageNavigationViewModel
+{
+    public List<PageNavigationItem> Items { get; init; } = new();
+}

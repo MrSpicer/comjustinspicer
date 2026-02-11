@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Comjustinspicer.CMS.Models.Page;
-using Comjustinspicer.CMS.Data.Models;
-using Comjustinspicer.CMS.Data.Services;
 using Comjustinspicer.CMS.Pages;
 
 namespace Comjustinspicer.CMS.Controllers.Admin;
@@ -13,41 +11,36 @@ public class AdminPageController : Controller
 {
     private readonly Serilog.ILogger _logger = Serilog.Log.ForContext<AdminPageController>();
     private readonly IPageModel _model;
-    private readonly IPageService _pageService;
     private readonly IPageControllerRegistry _registry;
 
     public AdminPageController(
         IPageModel model,
-        IPageService pageService,
         IPageControllerRegistry registry)
     {
         _model = model ?? throw new ArgumentNullException(nameof(model));
-        _pageService = pageService ?? throw new ArgumentNullException(nameof(pageService));
         _registry = registry ?? throw new ArgumentNullException(nameof(registry));
     }
 
     [HttpGet("pages")]
     public async Task<IActionResult> Pages()
     {
-        var tree = await _model.GetRouteTreeAsync();
-        return View("Pages", tree);
+        var vm = await _model.GetPageIndexAsync();
+        return View("Pages", vm);
     }
 
     [HttpGet("pages/create")]
     public IActionResult CreatePage(string? parentRoute = null)
     {
-        var vm = new PageDTO();
+        var vm = new PageUpsertViewModel();
 
         if (!string.IsNullOrWhiteSpace(parentRoute))
         {
-            // Normalize parent route
             parentRoute = parentRoute.TrimEnd('/');
             if (!parentRoute.StartsWith('/'))
             {
                 parentRoute = "/" + parentRoute;
             }
 
-            // Set initial route as parent + /
             vm.Route = parentRoute == "/" ? "/" : parentRoute + "/";
         }
 
@@ -57,56 +50,37 @@ public class AdminPageController : Controller
     [HttpGet("pages/edit/{id}")]
     public async Task<IActionResult> EditPage(Guid id)
     {
-        var page = await _model.GetByIdAsync(id);
-        if (page == null)
+        var vm = await _model.GetPageUpsertAsync(id);
+        if (vm == null)
         {
             TempData["Error"] = "Page not found.";
             return RedirectToAction("Pages");
         }
-        return View("PageUpsert", page);
+        return View("PageUpsert", vm);
     }
 
     [HttpPost("pages/save")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SavePage(PageDTO model)
+    public async Task<IActionResult> SavePage(PageUpsertViewModel model)
     {
         if (!ModelState.IsValid)
         {
             return View("PageUpsert", model);
         }
 
-        // Validate route uniqueness
-        var excludeId = model.Id != Guid.Empty ? model.Id : (Guid?)null;
-        var routeAvailable = await _pageService.IsRouteAvailableAsync(model.Route, excludeId);
+        var excludeId = model.Id.HasValue && model.Id != Guid.Empty ? model.Id : null;
+        var routeAvailable = await _model.IsRouteAvailableAsync(model.Route, excludeId);
         if (!routeAvailable)
         {
             ModelState.AddModelError("Route", "This route is already in use by another page.");
             return View("PageUpsert", model);
         }
 
-        // Populate user audit fields
-        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        if (Guid.TryParse(userId, out var currentUserId))
+        var result = await _model.SavePageUpsertAsync(model);
+        if (!result.Success)
         {
-            if (model.Id == Guid.Empty)
-            {
-                model.CreatedBy = currentUserId;
-            }
-            model.LastModifiedBy = currentUserId;
-        }
-
-        if (model.Id == Guid.Empty)
-        {
-            await _model.CreateAsync(model);
-        }
-        else
-        {
-            var updated = await _model.UpdateAsync(model);
-            if (!updated)
-            {
-                ModelState.AddModelError(string.Empty, "Failed to update page.");
-                return View("PageUpsert", model);
-            }
+            ModelState.AddModelError(string.Empty, result.ErrorMessage ?? "An error occurred while saving the page.");
+            return View("PageUpsert", model);
         }
 
         return RedirectToAction("Pages");
@@ -116,7 +90,7 @@ public class AdminPageController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeletePage(Guid id)
     {
-        var ok = await _model.DeleteAsync(id);
+        var ok = await _model.DeletePageAsync(id);
         if (!ok)
         {
             TempData["Error"] = "Could not delete page.";

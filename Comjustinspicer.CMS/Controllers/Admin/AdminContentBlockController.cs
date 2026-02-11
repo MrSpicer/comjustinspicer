@@ -17,12 +17,11 @@ public class AdminContentBlockController : Controller
         _model = model ?? throw new ArgumentNullException(nameof(model));
     }
 
-    // List all content blocks for admin management
     [HttpGet("contentblocks")]
     public async Task<IActionResult> Index()
     {
-        var all = await _model.GetAllAsync();
-        return View("ContentBlocks", all);
+        var vm = await _model.GetContentBlockIndexAsync();
+        return View("ContentBlocks", vm);
     }
 
     [HttpGet("contentblocks/edit/{id?}")]
@@ -78,8 +77,8 @@ public class AdminContentBlockController : Controller
     [HttpGet("contentblocks/api/list")]
     public async Task<IActionResult> ApiList()
     {
-        var all = await _model.GetAllAsync();
-        var result = all.Select(cb => new { id = cb.Id, title = cb.Title }).ToList();
+        var vm = await _model.GetContentBlockIndexAsync();
+        var result = vm.ContentBlocks.Select(cb => new { id = cb.Id, title = cb.Title }).ToList();
         return Json(result);
     }
 }

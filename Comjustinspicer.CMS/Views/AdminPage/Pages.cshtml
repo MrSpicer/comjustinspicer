@@ -1,6 +1,6 @@
 @using Comjustinspicer.CMS.Models.Page
 
-@model List<PageTreeNode>
+@model PageIndexViewModel
 
 @{
     ViewData["Title"] = "Pages";
@@ -30,11 +30,11 @@
                 </tr>
             </thead>
             <tbody>
-                @{ await RenderTreeNodes(Model, 0); }
+                @{ await RenderTreeNodes(Model.Pages, 0); }
             </tbody>
         </table>
 
-        @if (!Model.Any())
+        @if (!Model.Pages.Any())
         {
             <div class="notification is-info">
                 No pages defined yet. Click "New +" to create one.

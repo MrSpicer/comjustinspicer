@@ -1,0 +1,36 @@
+@using Comjustinspicer.CMS.Models.Page
+@using Microsoft.CodeAnalysis
+@model PageNavigationViewModel
+
+@if (Model.Items.Any())
+{
+    @foreach (var item in Model.Items)
+    {
+        await RenderNavItem(item);
+    }
+}
+
+@functions {
+    async Task RenderNavItem(PageNavigationItem item)
+    {
+        if (!item.Children.Any())
+        {
+            <a href="@item.Route" class="navbar-item">@item.Title</a>
+        }
+        else
+        {
+            <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link">
+                    @item.Title
+                </a>
+
+                <div class="navbar-dropdown">
+                    @foreach (var child in item.Children)
+                    {
+                        await RenderNavItem(child);
+                    }
+                </div>
+            </div>
+        }
+    }
+}

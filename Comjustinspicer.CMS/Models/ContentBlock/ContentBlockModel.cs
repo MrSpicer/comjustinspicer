@@ -4,7 +4,7 @@ using AutoMapper;
 
 namespace Comjustinspicer.CMS.Models.ContentBlock;
 
-public class ContentBlockModel : IContentBlockModel
+public sealed class ContentBlockModel : IContentBlockModel
 {
     private readonly IContentService<ContentBlockDTO> _service;
     private readonly IMapper _mapper;
@@ -22,9 +22,11 @@ public class ContentBlockModel : IContentBlockModel
         return await _service.GetByIdAsync(id);
     }
     
-    public async Task<List<ContentBlockDTO>> GetAllAsync(CancellationToken ct = default)
+    public async Task<ContentBlockIndexViewModel> GetContentBlockIndexAsync(CancellationToken ct = default)
     {
-        return await _service.GetAllAsync(ct);
+        var dtos = await _service.GetAllAsync(ct);
+        var items = dtos.Select(d => _mapper.Map<ContentBlockItemViewModel>(d)).ToList();
+        return new ContentBlockIndexViewModel { ContentBlocks = items };
     }
     
     public async Task<ContentBlockUpsertViewModel?> GetUpsertModelAsync(Guid? id, CancellationToken ct = default)

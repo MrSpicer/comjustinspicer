@@ -76,36 +76,36 @@ public class ContentBlockModelTests
     }
 
     [Test]
-    public async Task GetAllAsync_ReturnsList()
+    public async Task GetContentBlockIndexAsync_ReturnsIndex()
     {
         var list = new List<ContentBlockDTO> { CreateDto() };
-    var svc = new Mock<IContentService<ContentBlockDTO>>();
+        var svc = new Mock<IContentService<ContentBlockDTO>>();
         svc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(list);
         var model = new ContentBlockModel(svc.Object, _mapper);
-        var result = await model.GetAllAsync();
-        Assert.That(result.Count, Is.EqualTo(1));
+        var result = await model.GetContentBlockIndexAsync();
+        Assert.That(result.ContentBlocks.Count, Is.EqualTo(1));
+        Assert.That(result.ContentBlocks[0].Title, Is.EqualTo("Title"));
     }
 
     [Test]
-    public async Task GetUpsertModelAsync_NullId_ReturnsEmptyDto()
+    public async Task GetUpsertModelAsync_NullId_ReturnsEmptyViewModel()
     {
-    var svc = new Mock<IContentService<ContentBlockDTO>>();
+        var svc = new Mock<IContentService<ContentBlockDTO>>();
         var model = new ContentBlockModel(svc.Object, _mapper);
-        var dto = await model.GetUpsertModelAsync(null);
-        Assert.That(dto, Is.Not.Null);
-        Assert.That(dto!.Id, Is.EqualTo(Guid.Empty));
+        var result = await model.GetUpsertModelAsync(null);
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result!.Id, Is.Null);
     }
 
     [Test]
-    public async Task GetUpsertModelAsync_NotFound_ReturnsEmptyDto()
+    public async Task GetUpsertModelAsync_NotFound_ReturnsNull()
     {
         var svc = new Mock<IContentService<ContentBlockDTO>>();
         svc.Setup(s => s.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(null as ContentBlockDTO);
         var model = new ContentBlockModel(svc.Object, _mapper);
-        var dto = await model.GetUpsertModelAsync(Guid.NewGuid());
-        Assert.That(dto, Is.Not.Null);
-        Assert.That(dto!.Id, Is.EqualTo(Guid.Empty));
+        var result = await model.GetUpsertModelAsync(Guid.NewGuid());
+        Assert.That(result, Is.Null);
     }
 
     [Test]

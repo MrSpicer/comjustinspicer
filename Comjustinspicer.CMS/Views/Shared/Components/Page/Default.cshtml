@@ -1,0 +1,30 @@
+@using Comjustinspicer.CMS.Models.Page
+@model PageNavigationViewModel
+
+@if (Model.Items.Any())
+{
+    <ul>
+        @foreach (var item in Model.Items)
+        {
+            await RenderNavItem(item);
+        }
+    </ul>
+}
+
+@functions {
+    async Task RenderNavItem(PageNavigationItem item)
+    {
+        <li>
+            <a href="@item.Route">@item.Title</a>
+            @if (item.Children.Any())
+            {
+                <ul>
+                    @foreach (var child in item.Children)
+                    {
+                        await RenderNavItem(child);
+                    }
+                </ul>
+            }
+        </li>
+    }
+}

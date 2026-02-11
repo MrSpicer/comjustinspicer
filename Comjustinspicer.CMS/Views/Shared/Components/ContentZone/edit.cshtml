@@ -20,7 +20,11 @@
     </span>
 </div>
 
-<link rel="stylesheet" href="~/_content/Comjustinspicer.CMS/css/content-zone-edit.css" />
+@if (!Context.Items.ContainsKey("ContentZoneEditCssLoaded"))
+{
+    Context.Items["ContentZoneEditCssLoaded"] = true;
+    <link rel="stylesheet" href="~/_content/Comjustinspicer.CMS/css/content-zone-edit.css" />
+}
 
 <div class="content-zone content-zone-edit" id="@containerId" data-zone-name="@Model.Name" data-modal-id="@modalId">
     @* Hidden zone ID - never displayed to users *@
@@ -114,4 +118,8 @@
     </div>
 </div>
 
-<script src="~/_content/Comjustinspicer.CMS/js/content-zone-edit.js"></script>
+@if (!Context.Items.ContainsKey("ContentZoneEditJsLoaded"))
+{
+    Context.Items["ContentZoneEditJsLoaded"] = true;
+    <script src="~/_content/Comjustinspicer.CMS/js/content-zone-edit.js"></script>
+}

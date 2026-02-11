@@ -1,6 +1,6 @@
-@using Comjustinspicer.CMS.Data.Models
+@using Comjustinspicer.CMS.Models.ContentBlock
 
-@model List<ContentBlockDTO>
+@model ContentBlockIndexViewModel
 
 @{
     ViewData["Title"] = "Content Blocks";
@@ -24,7 +24,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				@foreach (var cb in Model)
+				@foreach (var cb in Model.ContentBlocks)
 				{
 					<tr>
 						<td>@cb.Title</td>

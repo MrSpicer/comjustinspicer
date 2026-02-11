@@ -2,6 +2,7 @@ using AutoMapper;
 using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Models.Article;
 using Comjustinspicer.CMS.Models.ContentBlock;
+using Comjustinspicer.CMS.Models.Page;
 
 namespace Comjustinspicer.CMS.Data;
 
@@ -81,5 +82,35 @@ public class MappingProfile : Profile
     CreateMap<ArticleListDTO, ArticleListItemViewModel>()
         .ForMember(d => d.Slug, opt => opt.MapFrom(s => s.Slug ?? string.Empty))
         .ForMember(d => d.ArticleCount, opt => opt.Ignore());
+
+    // Page mappings
+    CreateMap<PageDTO, PageUpsertViewModel>()
+        .ForMember(d => d.Title, opt => opt.MapFrom(s => s.Title ?? string.Empty))
+        .ForMember(d => d.Slug, opt => opt.MapFrom(s => s.Slug ?? string.Empty))
+        .ForMember(d => d.Route, opt => opt.MapFrom(s => s.Route ?? string.Empty))
+        .ForMember(d => d.ControllerName, opt => opt.MapFrom(s => s.ControllerName ?? string.Empty))
+        .ForMember(d => d.ConfigurationJson, opt => opt.MapFrom(s => s.ConfigurationJson ?? "{}"))
+        .ForMember(d => d.PublicationDate, opt => opt.MapFrom(s => s.PublicationDate == default ? (DateTime?)null : s.PublicationDate));
+
+    CreateMap<PageUpsertViewModel, PageDTO>()
+        .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id.HasValue && s.Id != Guid.Empty ? s.Id!.Value : Guid.NewGuid()))
+        .ForMember(d => d.Title, opt => opt.MapFrom(s => s.Title ?? string.Empty))
+        .ForMember(d => d.Slug, opt => opt.MapFrom(s => Uri.EscapeDataString(s.Slug ?? string.Empty)))
+        .ForMember(d => d.Route, opt => opt.MapFrom(s => s.Route ?? string.Empty))
+        .ForMember(d => d.ControllerName, opt => opt.MapFrom(s => s.ControllerName ?? string.Empty))
+        .ForMember(d => d.ConfigurationJson, opt => opt.MapFrom(s => s.ConfigurationJson ?? "{}"))
+        .ForMember(d => d.CreationDate, opt => opt.MapFrom(_ => DateTime.UtcNow))
+        .ForMember(d => d.ModificationDate, opt => opt.MapFrom(_ => DateTime.UtcNow))
+        .ForMember(d => d.PublicationDate, opt => opt.MapFrom(s => s.PublicationDate ?? DateTime.UtcNow))
+        .ForMember(d => d.PublicationEndDate, opt => opt.MapFrom(s => s.PublicationEndDate))
+        .ForMember(d => d.IsPublished, opt => opt.MapFrom(s => s.IsPublished))
+        .ForMember(d => d.IsArchived, opt => opt.MapFrom(s => s.IsArchived))
+        .ForMember(d => d.IsHidden, opt => opt.MapFrom(s => s.IsHidden))
+        .ForMember(d => d.IsDeleted, opt => opt.MapFrom(s => s.IsDeleted));
+
+    CreateMap<PageDTO, PageItemViewModel>();
+
+    // ContentBlock index item mapping
+    CreateMap<ContentBlockDTO, ContentBlockItemViewModel>();
   }
 }
