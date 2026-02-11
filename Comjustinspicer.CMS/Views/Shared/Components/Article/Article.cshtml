@@ -12,20 +12,33 @@
     }
 
     var isAuthor = UserService.IsUserAuthor;
+
+    // Build slug-based detail link from the current page route
+    var pageData = Context.Items["CMS:PageData"] as Comjustinspicer.CMS.Data.Models.PageDTO;
+    var pageRoute = pageData?.Route?.TrimEnd('/') ?? "";
+    var articleSlug = (Model.Slug ?? Model.Id?.ToString() ?? "").TrimStart('/');
+    var detailLink = $"{pageRoute}/{articleSlug}";
+
+    var listSlug = ViewData["ArticleListSlug"] as string ?? "";
 }
 
 <div class="column is-full">
 	<div class="card">
 		<div class="card-content">
 			<p class="title">
-				<a href="/Article/@Model.Id">@Model.Title</a>
+				<a href="@detailLink">@Model.Title</a>
 			</p>
 			<p class="subtitle">@Model.PublicationDate?.ToString("MMMM dd, yyyy")</p>
 			<hr />
 			@Html.Raw(Model.Body)
 
 			<div class="mt-4">
-				@if (isAuthor)
+				@if (isAuthor && !string.IsNullOrEmpty(listSlug))
+				{
+					<a asp-action="PostEdit" asp-controller="AdminArticle" asp-route-listSlug="@listSlug" asp-route-id="@Model.Id"
+						class="button is-primary">Edit</a>
+				}
+				else if (isAuthor)
 				{
 					<a asp-action="PostEdit" asp-controller="AdminArticle" asp-route-id="@Model.Id"
 						class="button is-primary">Edit</a>

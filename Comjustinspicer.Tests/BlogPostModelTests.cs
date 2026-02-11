@@ -1,50 +1,47 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using Moq;
-using System.Threading.Tasks;
-using System.Threading;
-using System;
-using Comjustinspicer.CMS.Models.Article;
-using Comjustinspicer.CMS.Data.Models;
-using Comjustinspicer.CMS.Data.Services;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
+using Comjustinspicer.CMS.Data;
+using Comjustinspicer.CMS.Data.Models;
+using Comjustinspicer.CMS.Data.Services;
+using Comjustinspicer.CMS.Models.Article;
 
 namespace Comjustinspicer.Tests;
 
 [TestFixture]
 public class ArticlePostModelTests
 {
-	private IMapper _mapper;
-	private MapperConfiguration _config;
+    private IMapper _mapper;
 
-	[SetUp]
-	public void Setup()
-	{
-		// Configure AutoMapper here. 
-		// You can add individual profiles or scan for profiles in an assembly.
-		//todo: maybe a better way to do the logfactory
-		_config = new MapperConfiguration(cfg =>
-		{
-			// Example: Adding a specific profile
-			cfg.AddProfile<MappingProfile>();
+    [SetUp]
+    public void Setup()
+    {
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<MappingProfile>();
+        }, LoggerFactory.Create(builder => builder.AddConsole()));
 
-			// Example: Scanning an assembly for all profiles
-			// cfg.AddMaps(typeof(MyApplicationProfile).Assembly); 
-		}, LoggerFactory.Create(builder => builder.AddConsole()));
+        _mapper = config.CreateMapper();
+    }
 
-		_mapper = _config.CreateMapper();
-	}
+    private static readonly Guid DefaultListId = Guid.NewGuid();
 
-	private static PostDTO CreatePost(Guid? id = null) => new PostDTO
-	{
-		Id = id ?? Guid.NewGuid(),
-		Title = "T",
-		Body = "B",
-		AuthorName = "A",
-		PublicationDate = DateTime.UtcNow.AddMinutes(-1),
-		CreationDate = DateTime.UtcNow.AddMinutes(-10),
-		ModificationDate = DateTime.UtcNow.AddMinutes(-5)
-	};
+    private static PostDTO CreatePost(Guid? id = null) => new PostDTO
+    {
+        Id = id ?? Guid.NewGuid(),
+        Title = "T",
+        Body = "B",
+        AuthorName = "A",
+        ArticleListId = DefaultListId,
+        PublicationDate = DateTime.UtcNow.AddMinutes(-1),
+        CreationDate = DateTime.UtcNow.AddMinutes(-10),
+        ModificationDate = DateTime.UtcNow.AddMinutes(-5)
+    };
 
     [Test]
     public async Task GetPostViewModelAsync_NotFound_ReturnsNull()
@@ -105,11 +102,11 @@ public class ArticlePostModelTests
     [Test]
     public async Task SaveUpsertAsync_Create_Path()
     {
-    var svc = new Mock<IContentService<PostDTO>>();
+        var svc = new Mock<IContentService<PostDTO>>();
         svc.Setup(s => s.CreateAsync(It.IsAny<PostDTO>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((PostDTO p, CancellationToken _) => p);
         var model = new ArticleModel(svc.Object, _mapper);
-        var vm = new ArticleUpsertViewModel { Title = "T", Body = "B", AuthorName = "A", PublicationDate = DateTime.UtcNow };
+        var vm = new ArticleUpsertViewModel { Title = "T", Body = "B", AuthorName = "A", ArticleListId = DefaultListId, PublicationDate = DateTime.UtcNow };
         var (success, err) = await model.SaveUpsertAsync(vm);
         Assert.That(success, Is.True);
         Assert.That(err, Is.Null);
@@ -119,10 +116,10 @@ public class ArticlePostModelTests
     [Test]
     public async Task SaveUpsertAsync_Update_Path_Success()
     {
-    var svc = new Mock<IContentService<PostDTO>>();
+        var svc = new Mock<IContentService<PostDTO>>();
         svc.Setup(s => s.UpdateAsync(It.IsAny<PostDTO>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
         var model = new ArticleModel(svc.Object, _mapper);
-        var vm = new ArticleUpsertViewModel { Id = Guid.NewGuid(), Title = "T", Body = "B", AuthorName = "A", PublicationDate = DateTime.UtcNow };
+        var vm = new ArticleUpsertViewModel { Id = Guid.NewGuid(), Title = "T", Body = "B", AuthorName = "A", ArticleListId = DefaultListId, PublicationDate = DateTime.UtcNow };
         var (success, err) = await model.SaveUpsertAsync(vm);
         Assert.That(success, Is.True);
         Assert.That(err, Is.Null);
@@ -132,10 +129,10 @@ public class ArticlePostModelTests
     [Test]
     public async Task SaveUpsertAsync_Update_Path_Failure()
     {
-    var svc = new Mock<IContentService<PostDTO>>();
+        var svc = new Mock<IContentService<PostDTO>>();
         svc.Setup(s => s.UpdateAsync(It.IsAny<PostDTO>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
         var model = new ArticleModel(svc.Object, _mapper);
-        var vm = new ArticleUpsertViewModel { Id = Guid.NewGuid(), Title = "T", Body = "B", AuthorName = "A", PublicationDate = DateTime.UtcNow };
+        var vm = new ArticleUpsertViewModel { Id = Guid.NewGuid(), Title = "T", Body = "B", AuthorName = "A", ArticleListId = DefaultListId, PublicationDate = DateTime.UtcNow };
         var (success, err) = await model.SaveUpsertAsync(vm);
         Assert.That(success, Is.False);
         Assert.That(err, Is.Not.Null);
@@ -144,7 +141,7 @@ public class ArticlePostModelTests
     [Test]
     public void SaveUpsertAsync_NullModel_Throws()
     {
-    var svc = new Mock<IContentService<PostDTO>>();
+        var svc = new Mock<IContentService<PostDTO>>();
         var model = new ArticleModel(svc.Object, _mapper);
         Assert.ThrowsAsync<ArgumentNullException>(async () => await model.SaveUpsertAsync(null!));
     }

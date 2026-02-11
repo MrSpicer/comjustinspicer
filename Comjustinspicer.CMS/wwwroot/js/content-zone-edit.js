@@ -168,6 +168,22 @@ document.querySelectorAll('.content-zone-edit').forEach(function(container) {
             input.addEventListener('input', updatePropertiesJson);
         });
 
+        // Mode-based field visibility
+        var modeSelect = dynamicProperties.querySelector('[data-prop="Mode"]');
+        if (modeSelect) {
+            function updateModeVisibility() {
+                var mode = modeSelect.value;
+                var idField = dynamicProperties.querySelector('[data-prop="Id"]');
+                var listField = dynamicProperties.querySelector('[data-prop="ArticleListId"]');
+                var idContainer = idField ? idField.closest('.field') : null;
+                var listContainer = listField ? listField.closest('.field') : null;
+                if (idContainer) idContainer.style.display = (mode === 'List') ? 'none' : '';
+                if (listContainer) listContainer.style.display = (mode === 'Single') ? 'none' : '';
+            }
+            modeSelect.addEventListener('change', updateModeVisibility);
+            setTimeout(updateModeVisibility, 100);
+        }
+
         updatePropertiesJson();
     }
 
@@ -237,6 +253,7 @@ document.querySelectorAll('.content-zone-edit').forEach(function(container) {
             const endpoints = {
                 'ContentBlock': '/admin/contentblocks/api/list',
                 'Article': '/admin/article/api/list',
+                'ArticleList': '/admin/article/api/articlelists',
                 'ContentZone': '/admin/contentzones/api/list'
             };
 

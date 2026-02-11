@@ -16,4 +16,7 @@ public sealed class ArticleUpsertViewModel : BaseContentViewModel
     [StringLength(200)]
     [FormProperty(Label = "Author", EditorType = EditorType.Text, Order = 5, GroupWithNext = true)]
     public string AuthorName { get; init; } = string.Empty;
+
+    [FormProperty(EditorType = EditorType.Hidden)]
+    public Guid ArticleListId { get; init; }
 }

@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Comjustinspicer.CMS.Migrations.Article
+namespace Comjustinspicer.CMS.Migrations.ContentZone
 {
-    [DbContext(typeof(ArticleContext))]
-    [Migration("20260209044356_InitialArticle")]
-    partial class InitialArticle
+    [DbContext(typeof(ContentZoneContext))]
+    [Migration("20260211011523_InitialContentZone")]
+    partial class InitialContentZone
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,7 +20,7 @@ namespace Comjustinspicer.CMS.Migrations.Article
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.0");
 
-            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ArticleListDTO", b =>
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ContentZoneDTO", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -30,6 +30,11 @@ namespace Comjustinspicer.CMS.Migrations.Article
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreationDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsArchived")
@@ -53,6 +58,11 @@ namespace Comjustinspicer.CMS.Migrations.Article
                     b.Property<DateTime>("ModificationDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("PublicationDate")
                         .HasColumnType("TEXT");
 
@@ -72,82 +82,55 @@ namespace Comjustinspicer.CMS.Migrations.Article
 
                     b.HasKey("Id");
 
-                    b.ToTable("ArticleLists");
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("ContentZones", (string)null);
                 });
 
-            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.PostDTO", b =>
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ContentZoneItemDTO", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("AuthorName")
+                    b.Property<string>("ComponentName")
                         .IsRequired()
+                        .HasMaxLength(256)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Body")
+                    b.Property<string>("ComponentPropertiesJson")
                         .IsRequired()
+                        .HasMaxLength(4000)
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("CreatedBy")
+                    b.Property<Guid>("ContentZoneId")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreationDate")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsArchived")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsHidden")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsPublished")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<Guid>("LastModifiedBy")
+                    b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("MasterId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("ModificationDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("PublicationDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("PublicationEndDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Summary")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(20000)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Version")
+                    b.Property<int>("Ordinal")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Posts", (string)null);
+                    b.HasIndex("ContentZoneId", "Ordinal");
+
+                    b.ToTable("ContentZoneItems", (string)null);
                 });
 
-            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ArticleListDTO", b =>
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ContentZoneDTO", b =>
                 {
                     b.OwnsMany("Comjustinspicer.CMS.Data.Models.CustomField", "CustomFields", b1 =>
                         {
-                            b1.Property<Guid>("ArticleListDTOId");
+                            b1.Property<Guid>("ContentZoneDTOId");
 
                             b1.Property<int>("__synthesizedOrdinal")
                                 .ValueGeneratedOnAddOrUpdate();
@@ -161,48 +144,33 @@ namespace Comjustinspicer.CMS.Migrations.Article
                             b1.Property<string>("Value")
                                 .IsRequired();
 
-                            b1.HasKey("ArticleListDTOId", "__synthesizedOrdinal");
+                            b1.HasKey("ContentZoneDTOId", "__synthesizedOrdinal");
 
-                            b1.ToTable("ArticleLists");
+                            b1.ToTable("ContentZones");
 
                             b1.ToJson("CustomFields");
 
                             b1.WithOwner()
-                                .HasForeignKey("ArticleListDTOId");
+                                .HasForeignKey("ContentZoneDTOId");
                         });
 
                     b.Navigation("CustomFields");
                 });
 
-            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.PostDTO", b =>
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ContentZoneItemDTO", b =>
                 {
-                    b.OwnsMany("Comjustinspicer.CMS.Data.Models.CustomField", "CustomFields", b1 =>
-                        {
-                            b1.Property<Guid>("PostDTOId");
+                    b.HasOne("Comjustinspicer.CMS.Data.Models.ContentZoneDTO", "ContentZone")
+                        .WithMany("Items")
+                        .HasForeignKey("ContentZoneId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                            b1.Property<int>("__synthesizedOrdinal")
-                                .ValueGeneratedOnAddOrUpdate();
+                    b.Navigation("ContentZone");
+                });
 
-                            b1.Property<string>("FieldName")
-                                .IsRequired();
-
-                            b1.Property<string>("TypeName")
-                                .IsRequired();
-
-                            b1.Property<string>("Value")
-                                .IsRequired();
-
-                            b1.HasKey("PostDTOId", "__synthesizedOrdinal");
-
-                            b1.ToTable("Posts");
-
-                            b1.ToJson("CustomFields");
-
-                            b1.WithOwner()
-                                .HasForeignKey("PostDTOId");
-                        });
-
-                    b.Navigation("CustomFields");
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ContentZoneDTO", b =>
+                {
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

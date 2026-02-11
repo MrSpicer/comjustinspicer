@@ -7,10 +7,6 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Comjustinspicer.CMS.Routing;
 
-/// <summary>
-/// Dynamic route value transformer that matches incoming request paths to
-/// stored page routes and redirects to the registered controller.
-/// </summary>
 public class PageRouteTransformer : DynamicRouteValueTransformer
 {
     private readonly IPageService _pageService;
@@ -32,7 +28,36 @@ public class PageRouteTransformer : DynamicRouteValueTransformer
         if (path.Length > 1 && path.EndsWith('/'))
             path = path.TrimEnd('/');
 
+        // Try exact match first
         var page = await _pageService.GetByRouteAsync(path);
+        string? subRoute = null;
+
+        // If no exact match, try progressively shorter paths for sub-route matching
+        if (page == null && path != "/")
+        {
+            var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            for (int i = segments.Length - 1; i >= 1; i--)
+            {
+                var parentPath = "/" + string.Join('/', segments[..i]);
+                page = await _pageService.GetByRouteAsync(parentPath);
+                if (page != null)
+                {
+                    subRoute = string.Join('/', segments[i..]);
+                    break;
+                }
+            }
+
+            // If still no match, try root page as parent
+            if (page == null)
+            {
+                page = await _pageService.GetByRouteAsync("/");
+                if (page != null)
+                {
+                    subRoute = string.Join('/', segments);
+                }
+            }
+        }
+
         if (page == null)
             return null!;
 
@@ -42,6 +67,9 @@ public class PageRouteTransformer : DynamicRouteValueTransformer
 
         // Store page data and deserialized config in HttpContext.Items
         httpContext.Items["CMS:PageData"] = page;
+
+        if (subRoute != null)
+            httpContext.Items["CMS:SubRoute"] = subRoute;
 
         if (controllerInfo.ConfigurationType != null && !string.IsNullOrWhiteSpace(page.ConfigurationJson))
         {

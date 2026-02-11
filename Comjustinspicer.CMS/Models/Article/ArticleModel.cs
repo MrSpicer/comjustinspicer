@@ -18,23 +18,39 @@ public sealed class ArticleModel : IArticleModel
     public async Task<ArticleViewModel?> GetPostViewModelAsync(Guid id, CancellationToken ct = default)
     {
         var dto = await _postService.GetByIdAsync(id, ct);
-    if (dto == null) return null;
-    return _mapper.Map<ArticleViewModel>(dto);
+        if (dto == null) return null;
+        return _mapper.Map<ArticleViewModel>(dto);
+    }
+
+    public async Task<ArticleViewModel?> GetBySlugAsync(string slug, CancellationToken ct = default)
+    {
+        var all = await _postService.GetAllAsync(ct);
+        var dto = all.FirstOrDefault(p => string.Equals(p.Slug, slug, StringComparison.OrdinalIgnoreCase));
+        if (dto == null) return null;
+        return _mapper.Map<ArticleViewModel>(dto);
     }
 
     public async Task<ArticleUpsertViewModel?> GetUpsertViewModelAsync(Guid? id, CancellationToken ct = default)
     {
         if (id == null) return new ArticleUpsertViewModel();
         var dto = await _postService.GetByIdAsync(id.Value, ct);
-    if (dto == null) return null;
-    return _mapper.Map<ArticleUpsertViewModel>(dto);
+        if (dto == null) return null;
+        return _mapper.Map<ArticleUpsertViewModel>(dto);
+    }
+
+    public async Task<ArticleUpsertViewModel?> GetUpsertViewModelAsync(Guid? id, Guid articleListId, CancellationToken ct = default)
+    {
+        if (id == null) return new ArticleUpsertViewModel { ArticleListId = articleListId };
+        var dto = await _postService.GetByIdAsync(id.Value, ct);
+        if (dto == null) return null;
+        return _mapper.Map<ArticleUpsertViewModel>(dto);
     }
 
     public async Task<(bool Success, string? ErrorMessage)> SaveUpsertAsync(ArticleUpsertViewModel model, CancellationToken ct = default)
     {
         if (model == null) throw new ArgumentNullException(nameof(model));
 
-    var dto = _mapper.Map<PostDTO>(model);
+        var dto = _mapper.Map<PostDTO>(model);
 
         if (model.Id == null || model.Id == Guid.Empty)
         {

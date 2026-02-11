@@ -1,10 +1,8 @@
-@model Comjustinspicer.CMS.Models.Article.ArticleUpsertViewModel
+@model Comjustinspicer.CMS.Models.Article.ArticleListUpsertViewModel
 
 @{
     var isEdit = Model?.Id != null && Model.Id != Guid.Empty;
-    ViewData["Title"] = isEdit ? "Edit Article" : "New Article";
-    var slug = ViewData["ArticleListSlug"] as string ?? "";
-    var listTitle = ViewData["ArticleListTitle"] as string ?? "Article List";
+    ViewData["Title"] = isEdit ? "Edit Article List" : "New Article List";
 }
 
 <section class="section">
@@ -12,14 +10,13 @@
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
                 <li><a asp-controller="AdminArticle" asp-action="Index">Article Lists</a></li>
-                <li><a asp-controller="AdminArticle" asp-action="Articles" asp-route-listSlug="@slug">@listTitle</a></li>
                 <li class="is-active"><a>@ViewData["Title"]</a></li>
             </ul>
         </nav>
 
         <h1 class="title">@ViewData["Title"]</h1>
 
-        <form asp-action="PostEdit" asp-controller="AdminArticle" asp-route-listSlug="@slug" method="post">
+        <form asp-action="ArticleListEdit" asp-controller="AdminArticle" method="post">
             @Html.ValidationSummary(false, "", new { @class = "notification is-danger" })
             <form-fields for="@Model" />
 
@@ -28,7 +25,7 @@
                     <button type="submit" class="button is-primary">Save</button>
                 </div>
                 <div class="control">
-                    <a asp-action="Articles" asp-controller="AdminArticle" asp-route-listSlug="@slug" class="button is-light">Cancel</a>
+                    <a asp-action="Index" asp-controller="AdminArticle" class="button is-light">Cancel</a>
                 </div>
             </div>
         </form>

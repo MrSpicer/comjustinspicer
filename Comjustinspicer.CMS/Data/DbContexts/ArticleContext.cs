@@ -19,7 +19,11 @@ public class ArticleContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Title).IsRequired().HasMaxLength(20000);
             entity.ToTable("Posts");
-            
+            entity.HasOne(e => e.ArticleList)
+                .WithMany(al => al.Articles)
+                .HasForeignKey(e => e.ArticleListId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             // Store CustomFields as JSON
             entity.OwnsMany(e => e.CustomFields, cf =>
             {

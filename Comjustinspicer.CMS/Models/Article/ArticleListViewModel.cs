@@ -1,9 +1,9 @@
-using System.Collections.Generic;
-
 namespace Comjustinspicer.CMS.Models.Article;
 
 public sealed class ArticleListViewModel
 {
-	public List<ArticleViewModel> Articles { get; set; } = new();
-
+    public Guid ArticleListId { get; set; }
+    public string ArticleListTitle { get; set; } = string.Empty;
+    public string ArticleListSlug { get; set; } = string.Empty;
+    public List<ArticleViewModel> Articles { get; set; } = new();
 }
