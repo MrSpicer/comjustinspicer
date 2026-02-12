@@ -6,7 +6,7 @@ This software is in pre-alpha development. do not use it
 CC BY-SA 4.0
 
 ## Built With
-* [dotnet 8.0](https://dotnet.microsoft.com)
+* [dotnet 10.0](https://dotnet.microsoft.com)
 * [ASP.Net Core MVC](https://dotnet.microsoft.com/en-us/apps/aspnet)
 * [SQLite](https://sqlite.org/)
 * [Serilog](https://serilog.net/)
@@ -14,7 +14,7 @@ CC BY-SA 4.0
 * [AutoMapper](https://automapper.io/)
 
 ### Dependencies
-* [dotnet sdk](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+* [dotnet sdk](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 * dotnet-ef (optional) - ```dotnet tool install --global dotnet-ef```
 
 ## Setup

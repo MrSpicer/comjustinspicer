@@ -1,7 +1,14 @@
 # syntax=docker/dockerfile:1
 
 # ---------------- Build Stage ----------------
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+
+# Install Node.js and npm (required for SCSS compilation via npx sass)
+RUN apt-get update && apt-get install -y curl \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /src
 
 # Copy solution and project files first for better layer caching
@@ -19,7 +26,7 @@ COPY . .
 RUN dotnet publish Comjustinspicer.Web/Comjustinspicer.Web.csproj -c Release -o /app/publish --no-restore
 
 # ---------------- Runtime Stage ----------------
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 
 # Create volume mount points (SQLite data & logs if needed)
@@ -35,12 +42,10 @@ EXPOSE 8080
 # Copy published output
 COPY --from=build /app/publish ./
 
-# Use non-root user (create if not existing in base image)
-# The aspnet image already has an app user (UID 64198 historically) but we'll create a generic one
-RUN adduser --disabled-password --gecos "app user" appuser || true \
-    && chown -R appuser:appuser /app \
-    && mkdir -p /data && chown -R appuser:appuser /data
+# Create data directory and set permissions
+# The aspnet image includes a pre-configured 'app' user for non-root execution
+RUN mkdir -p /data && chown -R app:app /app /data
 
-USER appuser
+USER app
 
 ENTRYPOINT ["dotnet", "Comjustinspicer.Web.dll"]
