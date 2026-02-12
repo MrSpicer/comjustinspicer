@@ -32,7 +32,12 @@ public class MappingProfile : Profile
         .ForMember(d => d.IsPublished, opt => opt.MapFrom(s => s.IsPublished))
         .ForMember(d => d.IsArchived, opt => opt.MapFrom(s => s.IsArchived))
         .ForMember(d => d.IsHidden, opt => opt.MapFrom(s => s.IsHidden))
-        .ForMember(d => d.IsDeleted, opt => opt.MapFrom(s => s.IsDeleted));
+        .ForMember(d => d.IsDeleted, opt => opt.MapFrom(s => s.IsDeleted))
+        .ForMember(d => d.CreatedBy, opt => opt.Ignore())
+        .ForMember(d => d.LastModifiedBy, opt => opt.Ignore())
+        .ForMember(d => d.MasterId, opt => opt.Ignore())
+        .ForMember(d => d.Version, opt => opt.Ignore())
+        .ForMember(d => d.CustomFields, opt => opt.Ignore());
 
     // Post mappings
     CreateMap<PostDTO, ArticleViewModel>()
@@ -58,7 +63,12 @@ public class MappingProfile : Profile
         .ForMember(d => d.IsPublished, opt => opt.MapFrom(s => s.IsPublished))
         .ForMember(d => d.IsArchived, opt => opt.MapFrom(s => s.IsArchived))
         .ForMember(d => d.IsHidden, opt => opt.MapFrom(s => s.IsHidden))
-        .ForMember(d => d.IsDeleted, opt => opt.MapFrom(s => s.IsDeleted));
+        .ForMember(d => d.IsDeleted, opt => opt.MapFrom(s => s.IsDeleted))
+        .ForMember(d => d.CreatedBy, opt => opt.Ignore())
+        .ForMember(d => d.LastModifiedBy, opt => opt.Ignore())
+        .ForMember(d => d.MasterId, opt => opt.Ignore())
+        .ForMember(d => d.Version, opt => opt.Ignore())
+        .ForMember(d => d.CustomFields, opt => opt.Ignore());
 
     // ArticleList mappings
     CreateMap<ArticleListDTO, ArticleListUpsertViewModel>()
@@ -77,11 +87,23 @@ public class MappingProfile : Profile
         .ForMember(d => d.IsPublished, opt => opt.MapFrom(s => s.IsPublished))
         .ForMember(d => d.IsArchived, opt => opt.MapFrom(s => s.IsArchived))
         .ForMember(d => d.IsHidden, opt => opt.MapFrom(s => s.IsHidden))
-        .ForMember(d => d.IsDeleted, opt => opt.MapFrom(s => s.IsDeleted));
+        .ForMember(d => d.IsDeleted, opt => opt.MapFrom(s => s.IsDeleted))
+        .ForMember(d => d.CreatedBy, opt => opt.Ignore())
+        .ForMember(d => d.LastModifiedBy, opt => opt.Ignore())
+        .ForMember(d => d.MasterId, opt => opt.Ignore())
+        .ForMember(d => d.Version, opt => opt.Ignore())
+        .ForMember(d => d.CustomFields, opt => opt.Ignore());
 
     CreateMap<ArticleListDTO, ArticleListItemViewModel>()
-        .ForMember(d => d.Slug, opt => opt.MapFrom(s => s.Slug ?? string.Empty))
-        .ForMember(d => d.ArticleCount, opt => opt.Ignore());
+        .ConstructUsing(s => new ArticleListItemViewModel
+        {
+            Id = s.Id,
+            Title = s.Title ?? string.Empty,
+            Slug = s.Slug ?? string.Empty,
+            CreationDate = s.CreationDate,
+            ModificationDate = s.ModificationDate
+        })
+        .ForAllMembers(opt => opt.Ignore());
 
     // Page mappings
     CreateMap<PageDTO, PageUpsertViewModel>()
@@ -106,11 +128,36 @@ public class MappingProfile : Profile
         .ForMember(d => d.IsPublished, opt => opt.MapFrom(s => s.IsPublished))
         .ForMember(d => d.IsArchived, opt => opt.MapFrom(s => s.IsArchived))
         .ForMember(d => d.IsHidden, opt => opt.MapFrom(s => s.IsHidden))
-        .ForMember(d => d.IsDeleted, opt => opt.MapFrom(s => s.IsDeleted));
+        .ForMember(d => d.IsDeleted, opt => opt.MapFrom(s => s.IsDeleted))
+        .ForMember(d => d.CreatedBy, opt => opt.Ignore())
+        .ForMember(d => d.LastModifiedBy, opt => opt.Ignore())
+        .ForMember(d => d.MasterId, opt => opt.Ignore())
+        .ForMember(d => d.Version, opt => opt.Ignore())
+        .ForMember(d => d.CustomFields, opt => opt.Ignore());
 
-    CreateMap<PageDTO, PageItemViewModel>();
+    CreateMap<PageDTO, PageItemViewModel>()
+        .ConstructUsing(s => new PageItemViewModel
+        {
+            Id = s.Id,
+            Title = s.Title ?? string.Empty,
+            Route = s.Route ?? string.Empty,
+            ControllerName = s.ControllerName ?? string.Empty,
+            IsPublished = s.IsPublished,
+            CreationDate = s.CreationDate,
+            ModificationDate = s.ModificationDate
+        })
+        .ForAllMembers(opt => opt.Ignore());
 
     // ContentBlock index item mapping
-    CreateMap<ContentBlockDTO, ContentBlockItemViewModel>();
+    CreateMap<ContentBlockDTO, ContentBlockItemViewModel>()
+        .ConstructUsing(s => new ContentBlockItemViewModel
+        {
+            Id = s.Id,
+            Title = s.Title ?? string.Empty,
+            Slug = s.Slug ?? string.Empty,
+            CreationDate = s.CreationDate,
+            ModificationDate = s.ModificationDate
+        })
+        .ForAllMembers(opt => opt.Ignore());
   }
 }

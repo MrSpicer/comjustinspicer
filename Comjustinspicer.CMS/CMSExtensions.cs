@@ -196,8 +196,27 @@ public static class CMSExtensions
 					LastModifiedBy = Guid.Empty
 				};
 
-				var created = pageService.CreateAsync(homePage).GetAwaiter().GetResult();
-				logger.Information("Created default Home page with ID {PageId}", created.Id);
+				var homePageResult = pageService.CreateAsync(homePage).GetAwaiter().GetResult();
+				logger.Information("Created default Home page with ID {PageId}", homePageResult.Id);
+
+				var adminPage = new PageDTO
+				{
+					Id = Guid.NewGuid(),
+					Route = "/admin",
+					ControllerName = "GenericAdminPage",
+					Title = "Admin",
+					Slug = "admin",
+					ConfigurationJson = "{}",
+					IsPublished = true,
+					PublicationDate = DateTime.UtcNow,
+					CreationDate = DateTime.UtcNow,
+					ModificationDate = DateTime.UtcNow,
+					CreatedBy = Guid.Empty,
+					LastModifiedBy = Guid.Empty
+				};
+
+				var adminPageResult = pageService.CreateAsync(adminPage).GetAwaiter().GetResult();
+				logger.Information("Created default Admin page with ID {PageId}", adminPageResult.Id);
 			}
 			else
 			{

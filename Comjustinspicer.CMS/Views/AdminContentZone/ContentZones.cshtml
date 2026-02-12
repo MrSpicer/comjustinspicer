@@ -10,8 +10,6 @@
     <div class="container">
         <h1 class="title">Content Zones</h1>
 
-        <a asp-controller="AdminContentZone" asp-action="Create" class="button is-primary">New +</a>
-
         @if (TempData["Error"] != null)
         {
             <div class="notification is-danger">
@@ -51,7 +49,7 @@
                         <td>
                             <div class="buttons are-small">
                                 <a asp-controller="AdminContentZone" asp-action="Items" asp-route-zoneId="@zone.Id" class="button is-info">Items (@zone.Items.Count)</a>
-                                <a asp-controller="AdminContentZone" asp-action="Edit" asp-route-id="@zone.Id" class="button">Edit</a>
+                                @* <a asp-controller="AdminContentZone" asp-action="Edit" asp-route-id="@zone.Id" class="button">Edit</a> *@
                                 <form asp-controller="AdminContentZone" asp-action="Delete" asp-route-id="@zone.Id" method="post" style="display:inline">
                                     @Html.AntiForgeryToken()
                                     <button type="submit" class="button is-danger" onclick="return confirm('Delete this content zone and all its items?');">Delete</button>
@@ -66,7 +64,7 @@
         @if (!Model.Any())
         {
             <div class="notification is-info">
-                No content zones defined yet. Click "New +" to create one.
+                No content zones defined yet. Go create one!
             </div>
         }
     </div>

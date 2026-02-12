@@ -17,8 +17,6 @@
         <h1 class="title">@ViewData["Title"]</h1>
         <p class="subtitle">@Model.Description</p>
 
-        <a asp-controller="AdminContentZone" asp-action="AddItem" asp-route-zoneId="@Model.Id" class="button is-primary">Add Item +</a>
-
         @if (TempData["Error"] != null)
         {
             <div class="notification is-danger mt-4">
@@ -59,7 +57,7 @@
                         </td>
                         <td>
                             <div class="buttons are-small">
-                                <a asp-controller="AdminContentZone" asp-action="EditItem" asp-route-itemId="@item.Id" class="button">Edit</a>
+                                @* <a asp-controller="AdminContentZone" asp-action="EditItem" asp-route-itemId="@item.Id" class="button">Edit</a> *@
                                 <form asp-controller="AdminContentZone" asp-action="DeleteItem" asp-route-itemId="@item.Id" method="post" style="display:inline">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="zoneId" value="@Model.Id" />

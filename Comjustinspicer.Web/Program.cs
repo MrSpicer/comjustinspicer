@@ -1,13 +1,9 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Comjustinspicer.CMS;
+using Comjustinspicer.Web;
 using Serilog;
-using Serilog.Events; // may still be used by other code; kept for now
 using Comjustinspicer.CMS.Logging;
-using Comjustinspicer.CMS.Data.DbContexts;
 using Comjustinspicer.CMS.Routing;
-using Comjustinspicer;
-using Microsoft.Extensions.Hosting;
+
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace Comjustinspicer;
+namespace Comjustinspicer.Web;
 
 public class MappingProfile : Profile
 {

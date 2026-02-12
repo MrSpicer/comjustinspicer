@@ -80,6 +80,32 @@ public sealed class PageModel : IPageModel
 
         foreach (var page in sortedPages)
         {
+            // Handle root "/" page directly — Trim('/').Split(...) produces no segments
+            if (page.Route == "/")
+            {
+                if (!nodeMap.TryGetValue("/", out var rootNode))
+                {
+                    rootNode = new PageTreeNode
+                    {
+                        Route = "/",
+                        Title = page.Title,
+                        PageId = page.Id,
+                        ControllerName = page.ControllerName,
+                        IsPublished = page.IsPublished
+                    };
+                    nodeMap["/"] = rootNode;
+                    roots.Insert(0, rootNode);
+                }
+                else
+                {
+                    rootNode.Title = page.Title;
+                    rootNode.PageId = page.Id;
+                    rootNode.ControllerName = page.ControllerName;
+                    rootNode.IsPublished = page.IsPublished;
+                }
+                continue;
+            }
+
             var segments = page.Route.Trim('/').Split('/', StringSplitOptions.RemoveEmptyEntries);
             var currentPath = "";
 
