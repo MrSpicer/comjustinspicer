@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Comjustinspicer.Web",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/Comjustinspicer.Web/bin/Debug/net10.0/Comjustinspicer.Web.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Comjustinspicer.Web",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        }
+    ]
+}

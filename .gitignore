@@ -1,17 +1,10 @@
 **/obj/
 **/bin/
 **/.vs/
-**/.vscode/
 **/*.user
 **/*.suo
-**/*.db-shm
-**/*.db-wal
 **/Logs/
-**/*.db
-Comjustinspicer.Web/app.db
 Comjustinspicer.Tests/TestResults/
-/Comjustinspicer.CMS/bin/
-/Comjustinspicer.CMS/obj/
 
 # Node.js / Playwright
 node_modules/

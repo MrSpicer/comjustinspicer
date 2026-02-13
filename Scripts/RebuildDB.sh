@@ -2,8 +2,7 @@
 
 ###THIS WILL DELETE YOUR DATA ###
 
-echo "Removing existing database and migrations..." &&
-rm -f Comjustinspicer.Web/app.db &&
+echo "Removing existing migrations..." &&
 rm -rf Comjustinspicer.CMS/Migrations/* &&
 echo "Creating new migrations.." &&
 echo "ApplicationDbContext" &&

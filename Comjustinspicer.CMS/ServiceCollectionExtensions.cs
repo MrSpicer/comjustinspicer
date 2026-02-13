@@ -62,23 +62,23 @@ public static class ServiceCollectionExtensions
 
 		// Main application DB (Identity + app data)
 		services.AddDbContext<ApplicationDbContext>(options =>
-			options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_Application")));
+			options.UseNpgsql(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_Application")));
 
 		// Article DB/context can share the same connection or be configured separately in appsettings
 		services.AddDbContext<ArticleContext>(options =>
-			options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_Article")));
+			options.UseNpgsql(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_Article")));
 
 		// ContentBlock DB/context
 		services.AddDbContext<ContentBlockContext>(options =>
-			options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_ContentBlock")));
+			options.UseNpgsql(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_ContentBlock")));
 
 		// ContentZone DB/context
 		services.AddDbContext<ContentZoneContext>(options =>
-			options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_ContentZone")));
+			options.UseNpgsql(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_ContentZone")));
 
 		// Page DB/context
 		services.AddDbContext<PageContext>(options =>
-			options.UseSqlite(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_Page")));
+			options.UseNpgsql(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_Page")));
 
 		services.AddDatabaseDeveloperPageExceptionFilter();
 	}

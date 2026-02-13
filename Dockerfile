@@ -29,9 +29,6 @@ RUN dotnet publish Comjustinspicer.Web/Comjustinspicer.Web.csproj -c Release -o 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 
-# Create volume mount points (SQLite data & logs if needed)
-VOLUME ["/data"]
-
 # Environment
 ENV ASPNETCORE_URLS=http://+:8080 \
     DOTNET_RUNNING_IN_CONTAINER=true
@@ -41,10 +38,6 @@ EXPOSE 8080
 
 # Copy published output
 COPY --from=build /app/publish ./
-
-# Create data directory and set permissions
-# The aspnet image includes a pre-configured 'app' user for non-root execution
-RUN mkdir -p /data && chown -R app:app /app /data
 
 USER app
 

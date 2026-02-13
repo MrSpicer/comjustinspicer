@@ -34,7 +34,7 @@ Page controllers extend `PageControllerBase<TConfig>` and are discovered at star
 
 ### Data Layer
 
-Uses multiple EF Core DbContexts sharing a single SQLite database, each with its own migrations history table:
+Uses multiple EF Core DbContexts sharing a single PostgreSQL database, each with its own migrations history table:
 - `ApplicationDbContext` (Identity), `ArticleContext`, `ContentBlockContext`, `ContentZoneContext`, `PageContext`
 
 Content access uses a generic `IContentService<T>` / `ContentService<T>` pattern. Business logic lives in Model classes (e.g., `PageModel`, `ContentBlockModel`, `ArticleModel`) that sit between controllers and services.
@@ -64,7 +64,7 @@ All CMS services are registered via `services.AddComjustinspicerCms(configuratio
 ## Secrets
 
 Managed via `dotnet user-secrets` (project: `Comjustinspicer.Web`):
-`AdminUser:Email`, `AdminUser:Password`, `ConnectionStrings:DefaultConnection`, `CKEditor:LicenseKey`, `AutoMapper:LicenseKey`
+`AdminUser:Email`, `AdminUser:Password`, `ConnectionStrings:DefaultConnection` (PostgreSQL format: `Host=...;Port=5432;Database=...;Username=...;Password=...`), `CKEditor:LicenseKey`, `AutoMapper:LicenseKey`
 
 ## Migrations
 
