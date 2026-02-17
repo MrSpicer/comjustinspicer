@@ -5,7 +5,7 @@ services:
     container_name: comjustinspicer-db
     environment:
       POSTGRES_USER: comjustinspicer
-      POSTGRES_PASSWORD: devpass
+      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: comjustinspicer
     ports:
       - "5432:5432"

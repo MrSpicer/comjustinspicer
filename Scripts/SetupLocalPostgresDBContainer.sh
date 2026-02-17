@@ -14,8 +14,8 @@ DB_NAME="${DB_NAME:-comjustinspicer}"
 read -p "Database user [comjustinspicer]: " DB_USER
 DB_USER="${DB_USER:-comjustinspicer}"
 
-read -p "Database password [devpass]: " DB_PASS
-DB_PASS="${DB_PASS:-devpass}"
+read -p "Database password [postgres]: " DB_PASS
+DB_PASS="${DB_PASS:-postgres}"
 
 read -p "Host port [5432]: " DB_PORT
 DB_PORT="${DB_PORT:-5432}"

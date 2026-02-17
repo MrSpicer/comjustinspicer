@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Comjustinspicer.CMS.ContentZones;
+using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Models.ContentZone;
 
 namespace Comjustinspicer.CMS.ViewComponents;
@@ -39,10 +40,11 @@ public class ContentZoneViewComponent : ViewComponent
 	public async Task<IViewComponentResult> InvokeAsync(
 		string? zonePath = null,
 		string? zoneName = null,
-		string? parentPath = null)
+		string? parentPath = null,
+		bool IsGlobal = false)
 	{
 		// Build the effective path
-		var effectivePath = BuildZonePath(zonePath, zoneName, parentPath);
+		var effectivePath = BuildZonePath(zonePath, zoneName, parentPath, IsGlobal);
 
 		if (string.IsNullOrWhiteSpace(effectivePath))
 			return Content(string.Empty);
@@ -94,11 +96,11 @@ public class ContentZoneViewComponent : ViewComponent
 	/// Uses render-position ordinals to ensure each zone instance is unique,
 	/// even when the same component is rendered multiple times on a page.
 	/// </summary>
-	private string BuildZonePath(string? zonePath, string? zoneName, string? parentPath)
+	private string BuildZonePath(string? zonePath, string? zoneName, string? parentPath, bool IsGlobal = false)
 	{
 		// Determine the parent context for this zone
 		var inheritedParentPath = parentPath ?? ViewData["ContentZone:ParentPath"] as string;
-		var parentContext = inheritedParentPath ?? GetRoutePath();
+		var parentContext = inheritedParentPath ?? GetRoutePath(IsGlobal);
 
 		// Get the next ordinal for zones under this parent
 		var ordinal = GetNextOrdinal(parentContext);
@@ -130,15 +132,19 @@ public class ContentZoneViewComponent : ViewComponent
 	/// <summary>
 	/// Gets the current route path for zone identification.
 	/// </summary>
-	private string GetRoutePath()
+	private string GetRoutePath(bool IsGlobal)
 	{
+		// If we're in a page context, use the page's unique ID for zone scoping
+		if (!IsGlobal && HttpContext.Items["CMS:PageData"] is PageDTO pageData)
+			return $"page:{pageData.Id}";
+
+		// Fallback for non-page contexts (layout zones, admin pages, etc.)
 		var routeData = HttpContext.GetRouteData();
 		var controller = routeData.Values["controller"]?.ToString() ?? string.Empty;
 		var action = routeData.Values["action"]?.ToString() ?? string.Empty;
 
 		if (string.IsNullOrEmpty(controller))
 		{
-			// Try to get from request path
 			var path = HttpContext.Request.Path.Value?.Trim('/') ?? string.Empty;
 			return string.IsNullOrEmpty(path) ? "Home" : path.Replace("/", "_");
 		}

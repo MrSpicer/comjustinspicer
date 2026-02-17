@@ -10,7 +10,7 @@
 <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <a class="navbar-item" href="/">
-            @await Component.InvokeAsync(name: "ContentZone", new { zoneName = "Logo" })
+            @await Component.InvokeAsync(name: "ContentZone", new { zoneName = "Logo", IsGlobal = true })
 
         </a>
 
@@ -24,7 +24,7 @@
 
     <div id="siteNav" class="navbar-menu">
         <div class="navbar-start">
-            @await Component.InvokeAsync(name: "ContentZone", new { zoneName = "NavBar" })
+            @await Component.InvokeAsync(name: "ContentZone", new { zoneName = "NavBar", IsGlobal = true })
             @* <a class="navbar-item" href="/">
                 Home
             </a> *@
@@ -58,7 +58,7 @@
         </div>
 
         <div class="navbar-end">
-            @await Component.InvokeAsync(name: "ContentZone", new { zoneName = "NavBar End" })
+            @await Component.InvokeAsync(name: "ContentZone", new { zoneName = "NavBar End", IsGlobal = true })
             <partial name="_LoginNavPartial" />
         </div>
     </div>
