@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 
 namespace Comjustinspicer.CMS.Services;
@@ -10,7 +8,7 @@ public class UserService
 
 	public UserService(IHttpContextAccessor httpContextAccessor)
 	{
-		_httpContextAccessor = httpContextAccessor;
+		_httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
 	}
 
 	public bool IsUserAuthor =>

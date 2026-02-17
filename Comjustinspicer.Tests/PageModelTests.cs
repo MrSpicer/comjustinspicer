@@ -1,11 +1,11 @@
-using NUnit.Framework;
-using Moq;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.Extensions.Logging;
+using AutoMapper;
+using Moq;
+using NUnit.Framework;
 using Comjustinspicer.CMS.Data;
 using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;

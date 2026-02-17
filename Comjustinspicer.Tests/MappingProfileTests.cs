@@ -1,8 +1,7 @@
+using Microsoft.Extensions.Logging;
 using AutoMapper;
 using NUnit.Framework;
 using Comjustinspicer.CMS.Data;
-using Serilog;
-using Microsoft.Extensions.Logging;
 
 namespace Comjustinspicer.Tests;
 

@@ -1,14 +1,13 @@
-using NUnit.Framework;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using AutoMapper;
+using Microsoft.Extensions.Logging;
+using NUnit.Framework;
 using Comjustinspicer.CMS.Data.DbContexts;
 using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
-using System.Threading;
-using System.Threading.Tasks;
-using System;
-using System.Linq;
-using Microsoft.Extensions.Logging;
 
 namespace Comjustinspicer.Tests;
 

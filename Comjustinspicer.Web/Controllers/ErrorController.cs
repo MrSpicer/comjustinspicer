@@ -20,8 +20,8 @@ public class ErrorController : Controller
         }
 
         var model = new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier };
-    // Use conventional view name so Razor finds /Views/Shared/Error.cshtml
-    return View("Error", model);
+        // Use conventional view name so Razor finds /Views/Shared/Error.cshtml
+        return View("Error", model);
     }
 
     [Route("Error/{statusCode}")]

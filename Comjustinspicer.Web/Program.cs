@@ -1,8 +1,8 @@
-using Comjustinspicer.CMS;
-using Comjustinspicer.Web;
 using Serilog;
+using Comjustinspicer.CMS;
 using Comjustinspicer.CMS.Logging;
 using Comjustinspicer.CMS.Routing;
+using Comjustinspicer.Web;
 
 
 var builder = WebApplication.CreateBuilder(args);
