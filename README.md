@@ -15,8 +15,9 @@ CC BY-SA 4.0
 
 ### Dependencies
 * [dotnet sdk](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
-* [PostgreSQL](https://www.postgresql.org/download/) (or use Docker Compose/Setup Script)
-* dotnet-ef (optional) - ```dotnet tool install --global dotnet-ef```
+* [PostgreSQL](https://www.postgresql.org/)
+* [dotnet-ef](https://learn.microsoft.com/en-us/ef/core/cli/dotnet) (optional) - ```dotnet tool install --global dotnet-ef```
+* [docker](https://docs.docker.com/desktop/setup/install/linux/) (optional)
 
 ## Setup
 
@@ -25,26 +26,19 @@ CC BY-SA 4.0
 chmod +x ./Scripts/*
 ```
 
-### Linux Development Setup
-
-#### Fix dotnet watch inotify Limits
-
-If you encounter "The configured user limit on the number of inotify instances has been reached" error when running hot reload:
-
-```bash
-echo "fs.inotify.max_user_instances=8192" | sudo tee /etc/sysctl.d/99-inotify.conf
-sudo sysctl -p /etc/sysctl.d/99-inotify.conf
+### Setup Local Database ###
+```
+./Scripts/SetupLocalPostgresDBContainer.sh
 ```
 
-This is a one-time setup per machine. The project includes `.dotnetwatch.json` which automatically excludes build artifacts and IDE files from file watching.
+this will create a postgres 8 docker container
 
 ### Development - Hot Reload
 ```
-./Scripts/SetupLocalPostgresDBContainer.sh [optional - run once]
 ./Scripts/HotReloadRun.sh
 ```
 
-The watch system monitors source files (`.cs`, `.cshtml`, `.csproj`, `.json`) and automatically rebuilds when you save changes.
+The watch system monitors source files and automatically rebuilds when you save changes.
 
 ### Run Tests
 ```
@@ -92,3 +86,15 @@ CONNECTION_STRING
 CKEDITOR_LICENSE_KEY
 AUTOMAPPER_LICENSE_KEY
 ```
+## Troubleshooting
+
+### Fix dotnet watch inotify Limits
+
+If you encounter "The configured user limit on the number of inotify instances has been reached" error when running hot reload:
+
+```bash
+echo "fs.inotify.max_user_instances=8192" | sudo tee /etc/sysctl.d/99-inotify.conf
+sudo sysctl -p /etc/sysctl.d/99-inotify.conf
+```
+
+This is a one-time setup per machine.
