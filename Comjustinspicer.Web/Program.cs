@@ -24,8 +24,6 @@ try
 {
     var app = builder.Build();
 
-    app.EnsureCMS();
-
     if (!app.Environment.IsDevelopment())
     {
         // Route exceptions to centralized ErrorController
@@ -34,6 +32,9 @@ try
         app.UseStatusCodePagesWithReExecute("/Error/{0}");
     }
 
+    app.EnsureCMS();
+
+    //todo: this needs to be moved to CMS
     app.MapDynamicControllerRoute<PageRouteTransformer>("{**slug}");
 
     app.MapControllerRoute(

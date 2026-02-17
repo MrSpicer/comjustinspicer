@@ -80,7 +80,9 @@ public static class ServiceCollectionExtensions
 		services.AddDbContext<PageContext>(options =>
 			options.UseNpgsql(connectionString, b => b.MigrationsHistoryTable("__EFMigrationsHistory_Page")));
 
+		#if DEBUG
 		services.AddDatabaseDeveloperPageExceptionFilter();
+		#endif
 	}
 
 	private static void MapTypes(IServiceCollection services)
@@ -171,7 +173,18 @@ public static class ServiceCollectionExtensions
 	static void ConfigureAuthorization(IServiceCollection services)
 	{
 		// Identity and authentication
-		services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+		services.AddDefaultIdentity<IdentityUser>(
+				identityOptions =>
+				{
+					//identityOptions.Stores.ProtectPersonalData = true; //todo
+					identityOptions.SignIn.RequireConfirmedEmail = true;
+					identityOptions.Password.RequireDigit = true;
+					identityOptions.Password.RequireLowercase = true;
+					identityOptions.Password.RequireNonAlphanumeric = true;
+					identityOptions.Password.RequireUppercase = true;
+					identityOptions.Password.RequiredLength = 12;
+				}
+				)
 			.AddRoles<IdentityRole>()
 			.AddEntityFrameworkStores<ApplicationDbContext>()
 			.AddDefaultUI();

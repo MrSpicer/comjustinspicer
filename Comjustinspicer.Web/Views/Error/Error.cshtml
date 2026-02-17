@@ -1,6 +1,11 @@
-﻿@model ErrorViewModel
+﻿@using Comjustinspicer.CMS.Services
+@model ErrorViewModel
+@inject UserService UserService
+
 @{
     ViewData["Title"] = "Error";
+    var isAuthor = UserService.IsUserAuthor;
+
 }
 
 <h1 class="text-danger">Error.</h1>
@@ -35,8 +40,11 @@ catch (Exception ex)
         <p>
             An error occurred while loading the error content zone.
         </p>
-        <p>
-            <strong>Error Details:</strong> @ex.Message
-        </p>
+        @if(isAuthor)
+        {
+            <p>
+                <strong>Error Details:</strong> @ex.Message
+            </p>
+        }
     </div>
 }

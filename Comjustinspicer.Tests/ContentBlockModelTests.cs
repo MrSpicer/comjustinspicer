@@ -26,7 +26,6 @@ public class ContentBlockModelTests
 	{
 		// Configure AutoMapper here. 
 		// You can add individual profiles or scan for profiles in an assembly.
-		//todo: maybe a better way to do the logfactory
 		_config = new MapperConfiguration(cfg =>
 		{
 			// Example: Adding a specific profile

@@ -20,6 +20,12 @@
     </span>
 </div>
 
+@if (!Context.Items.ContainsKey("ContentZoneEditAntiForgeryLoaded"))
+{
+    Context.Items["ContentZoneEditAntiForgeryLoaded"] = true;
+    @Html.AntiForgeryToken()
+}
+
 @if (!Context.Items.ContainsKey("ContentZoneEditCssLoaded"))
 {
     Context.Items["ContentZoneEditCssLoaded"] = true;

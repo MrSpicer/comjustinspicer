@@ -9,6 +9,7 @@ public class ErrorController : Controller
 {
     private readonly Serilog.ILogger _logger = Serilog.Log.ForContext<ErrorController>();
 
+    [Route("/Error")]
     public IActionResult Index()
     {
         // For exceptions handled by UseExceptionHandler

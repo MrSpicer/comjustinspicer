@@ -7,6 +7,11 @@ function czOwnElements(container, selector) {
     });
 }
 
+function getAntiForgeryToken() {
+    const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+    return tokenInput ? tokenInput.value : '';
+}
+
 function initContentZones() {
     document.querySelectorAll('.content-zone-edit').forEach(function (container) {
         if (container.dataset.czInitialized) return;
@@ -70,7 +75,10 @@ function initContentZones() {
 
                 try {
                     const response = await fetch('/api/contentzones/items/' + encodeURIComponent(itemId), {
-                        method: 'DELETE'
+                        method: 'DELETE',
+                        headers: {
+                            'RequestVerificationToken': getAntiForgeryToken()
+                        }
                     });
 
                     if (!response.ok) {
@@ -346,7 +354,10 @@ function initContentZones() {
             try {
                 const response = await fetch('/api/contentzones/items', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': getAntiForgeryToken()
+                    },
                     body: JSON.stringify({
                         zoneName: zoneName,
                         zoneId: zoneId && zoneId !== '00000000-0000-0000-0000-000000000000' ? zoneId : null,

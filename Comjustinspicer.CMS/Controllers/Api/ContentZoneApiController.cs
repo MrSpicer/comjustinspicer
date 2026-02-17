@@ -26,6 +26,7 @@ public class ContentZoneApiController : ControllerBase
     /// If the zone doesn't exist, it will be created automatically.
     /// </summary>
     [HttpPost("items")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> SaveItem([FromBody] SaveItemRequest request, CancellationToken ct)
     {
         if (request == null)
@@ -115,6 +116,7 @@ public class ContentZoneApiController : ControllerBase
     /// Delete a content zone item.
     /// </summary>
     [HttpDelete("items/{itemId:guid}")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteItem(Guid itemId, CancellationToken ct)
     {
         try
