@@ -15,7 +15,7 @@ CC BY-SA 4.0
 
 ### Dependencies
 * [dotnet sdk](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
-* [PostgreSQL](https://www.postgresql.org/download/) (or use Docker Compose)
+* [PostgreSQL](https://www.postgresql.org/download/) (or use Docker Compose/Setup Script)
 * dotnet-ef (optional) - ```dotnet tool install --global dotnet-ef```
 
 ## Setup
@@ -40,6 +40,7 @@ This is a one-time setup per machine. The project includes `.dotnetwatch.json` w
 
 ### Development - Hot Reload
 ```
+./Scripts/SetupLocalPostgresDBContainer.sh [optional - run once]
 ./Scripts/HotReloadRun.sh
 ```
 

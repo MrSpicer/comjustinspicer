@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-###THIS WILL DELETE YOUR DATA ###
-
 echo "Removing existing migrations..." &&
 rm -rf Comjustinspicer.CMS/Migrations/* &&
 echo "Creating new migrations.." &&
