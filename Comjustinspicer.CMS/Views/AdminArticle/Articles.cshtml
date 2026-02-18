@@ -9,7 +9,7 @@
     <div class="container">
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
-                <li><a asp-controller="AdminArticle" asp-action="Index">Article Lists</a></li>
+                <li><a asp-controller="AdminContent" asp-action="Index" asp-route-contentType="articles">Article Lists</a></li>
                 <li class="is-active"><a>@Model.ArticleListTitle</a></li>
             </ul>
         </nav>
@@ -17,7 +17,7 @@
         <h1 class="title">@Model.ArticleListTitle</h1>
         <h2 class="subtitle">Articles</h2>
 
-        <a asp-controller="AdminArticle" asp-action="PostEdit" asp-route-listSlug="@Model.ArticleListSlug" class="button is-primary">New +</a>
+        <a asp-controller="AdminContent" asp-action="ChildCreate" asp-route-contentType="articles" asp-route-parentKey="@Model.ArticleListSlug" asp-route-childType="articles" class="button is-primary">New +</a>
 
         <table class="table is-fullwidth is-striped">
             <thead>
@@ -38,8 +38,8 @@
                         <td>@post.CreationDate?.ToString("yyyy-MM-dd HH:mm")</td>
                         <td>@post.ModificationDate?.ToString("yyyy-MM-dd HH:mm")</td>
                         <td>
-                            <a asp-controller="AdminArticle" asp-action="PostEdit" asp-route-listSlug="@Model.ArticleListSlug" asp-route-id="@post.Id" class="button is-small">Edit</a>
-                            <form asp-controller="AdminArticle" asp-action="Delete" asp-route-listSlug="@Model.ArticleListSlug" asp-route-id="@post.Id" method="post" style="display:inline">
+                            <a asp-controller="AdminContent" asp-action="ChildEdit" asp-route-contentType="articles" asp-route-parentKey="@Model.ArticleListSlug" asp-route-childType="articles" asp-route-id="@post.Id" class="button is-small">Edit</a>
+                            <form asp-controller="AdminContent" asp-action="ChildDelete" asp-route-contentType="articles" asp-route-parentKey="@Model.ArticleListSlug" asp-route-childType="articles" asp-route-id="@post.Id" method="post" style="display:inline">
                                 @Html.AntiForgeryToken()
                                 <button type="submit" class="button is-small is-danger" onclick="return confirm('Delete this article?');">Delete</button>
                             </form>

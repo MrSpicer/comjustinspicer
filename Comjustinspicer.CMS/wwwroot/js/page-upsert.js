@@ -17,7 +17,7 @@
     } catch (e) { }
 
     // Load controllers list
-    fetch('/admin/pages/controllers')
+    fetch('/admin/pages/registry')
         .then(function(r) { return r.json(); })
         .then(function(controllers) {
             controllers.forEach(function(c) {
@@ -50,7 +50,7 @@
     });
 
     function loadControllerProperties(name) {
-        fetch('/admin/pages/controllers/' + encodeURIComponent(name) + '/properties')
+        fetch('/admin/pages/registry/' + encodeURIComponent(name) + '/properties')
             .then(function(r) { return r.json(); })
             .then(function(data) {
                 if (data.properties && data.properties.length > 0) {

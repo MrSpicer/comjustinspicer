@@ -48,9 +48,9 @@
                         <td>@zone.ModificationDate.ToString("yyyy-MM-dd HH:mm")</td>
                         <td>
                             <div class="buttons are-small">
-                                <a asp-controller="AdminContentZone" asp-action="Items" asp-route-zoneId="@zone.Id" class="button is-info">Items (@zone.Items.Count)</a>
-                                @* <a asp-controller="AdminContentZone" asp-action="Edit" asp-route-id="@zone.Id" class="button">Edit</a> *@
-                                <form asp-controller="AdminContentZone" asp-action="Delete" asp-route-id="@zone.Id" method="post" style="display:inline">
+                                <a asp-controller="AdminContent" asp-action="ChildIndex" asp-route-contentType="contentzones" asp-route-parentKey="@zone.Id" asp-route-childType="items" class="button is-info">Items (@zone.Items.Count)</a>
+                                @* <a asp-controller="AdminContent" asp-action="Edit" asp-route-contentType="contentzones" asp-route-id="@zone.Id" class="button">Edit</a> *@
+                                <form asp-controller="AdminContent" asp-action="Delete" asp-route-contentType="contentzones" asp-route-id="@zone.Id" method="post" style="display:inline">
                                     @Html.AntiForgeryToken()
                                     <button type="submit" class="button is-danger" onclick="return confirm('Delete this content zone and all its items?');">Delete</button>
                                 </form>

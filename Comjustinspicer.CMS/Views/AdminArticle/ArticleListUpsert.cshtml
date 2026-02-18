@@ -9,14 +9,14 @@
     <div class="container">
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
-                <li><a asp-controller="AdminArticle" asp-action="Index">Article Lists</a></li>
+                <li><a asp-controller="AdminContent" asp-action="Index" asp-route-contentType="articles">Article Lists</a></li>
                 <li class="is-active"><a>@ViewData["Title"]</a></li>
             </ul>
         </nav>
 
         <h1 class="title">@ViewData["Title"]</h1>
 
-        <form asp-action="ArticleListEdit" asp-controller="AdminArticle" method="post">
+        <form asp-action="Edit" asp-controller="AdminContent" asp-route-contentType="articles" method="post">
             @Html.ValidationSummary(false, "", new { @class = "notification is-danger" })
             <form-fields for="@Model" />
 
@@ -25,7 +25,7 @@
                     <button type="submit" class="button is-primary">Save</button>
                 </div>
                 <div class="control">
-                    <a asp-action="Index" asp-controller="AdminArticle" class="button is-light">Cancel</a>
+                    <a asp-action="Index" asp-controller="AdminContent" asp-route-contentType="articles" class="button is-light">Cancel</a>
                 </div>
             </div>
         </form>

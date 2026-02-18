@@ -13,7 +13,7 @@
 		{
 			<h2 class="subtitle">@Model?.Id</h2>
 		}
-		<form asp-action="Edit" method="post">
+		<form asp-action="Edit" asp-controller="AdminContent" asp-route-contentType="contentblocks" method="post">
 			@Html.AntiForgeryToken()
 			@{
 				var returnUrl = ViewData["ReturnUrl"] as string ?? Context.Request.Query["returnUrl"].FirstOrDefault();
@@ -36,7 +36,7 @@
 					}
 					else
 					{
-						<a asp-action="Index" class="button">Cancel</a>
+						<a asp-action="Index" asp-controller="AdminContent" asp-route-contentType="contentblocks" class="button">Cancel</a>
 					}
 				</div>
 			</div>

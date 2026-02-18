@@ -9,7 +9,7 @@
     <div class="container">
         <h1 class="title">Article Lists</h1>
 
-        <a asp-controller="AdminArticle" asp-action="ArticleListEdit" class="button is-primary">New +</a>
+        <a asp-controller="AdminContent" asp-action="Create" asp-route-contentType="articles" class="button is-primary">New +</a>
 
         <table class="table is-fullwidth is-striped">
             <thead>
@@ -32,9 +32,9 @@
                         <td>@list.CreationDate.ToString("yyyy-MM-dd HH:mm")</td>
                         <td>@list.ModificationDate.ToString("yyyy-MM-dd HH:mm")</td>
                         <td>
-                            <a asp-controller="AdminArticle" asp-action="Articles" asp-route-listSlug="@list.Slug" class="button is-small is-info">Articles</a>
-                            <a asp-controller="AdminArticle" asp-action="ArticleListEdit" asp-route-id="@list.Id" class="button is-small">Edit</a>
-                            <form asp-controller="AdminArticle" asp-action="ArticleListDelete" asp-route-id="@list.Id" method="post" style="display:inline">
+                            <a asp-controller="AdminContent" asp-action="ChildIndex" asp-route-contentType="articles" asp-route-parentKey="@list.Slug" asp-route-childType="articles" class="button is-small is-info">Articles</a>
+                            <a asp-controller="AdminContent" asp-action="Edit" asp-route-contentType="articles" asp-route-id="@list.Id" class="button is-small">Edit</a>
+                            <form asp-controller="AdminContent" asp-action="Delete" asp-route-contentType="articles" asp-route-id="@list.Id" method="post" style="display:inline">
                                 @Html.AntiForgeryToken()
                                 <button type="submit" class="button is-small is-danger" onclick="return confirm('Delete this article list and all its articles?');">Delete</button>
                             </form>

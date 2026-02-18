@@ -10,7 +10,7 @@
     <div class="container">
         <h1 class="title">Pages</h1>
 
-        <a asp-controller="AdminPage" asp-action="CreatePage" class="button is-primary">New +</a>
+        <a asp-controller="AdminContent" asp-action="Create" asp-route-contentType="pages" class="button is-primary">New +</a>
 
         @if (TempData["Error"] != null)
         {
@@ -56,8 +56,9 @@
                             <span class="has-text-grey-light">└─ </span>
                         }
                         @node.Route
-                        <a asp-controller="AdminPage"
-                           asp-action="CreatePage"
+                        <a asp-controller="AdminContent"
+                           asp-action="Create"
+                           asp-route-contentType="pages"
                            asp-route-parentRoute="@node.Route"
                            class="has-text-grey-light ml-2"
                            title="Create child page under @node.Route">
@@ -99,8 +100,8 @@
                     {
                         <div class="buttons are-small">
                             <a href="@node.Route" target="_blank" class="button is-info">View</a>
-                            <a asp-controller="AdminPage" asp-action="EditPage" asp-route-id="@node.PageId" class="button">Edit</a>
-                            <form asp-controller="AdminPage" asp-action="DeletePage" asp-route-id="@node.PageId" method="post" style="display:inline">
+                            <a asp-controller="AdminContent" asp-action="Edit" asp-route-contentType="pages" asp-route-id="@node.PageId" class="button">Edit</a>
+                            <form asp-controller="AdminContent" asp-action="Delete" asp-route-contentType="pages" asp-route-id="@node.PageId" method="post" style="display:inline">
                                 @Html.AntiForgeryToken()
                                 <button type="submit" class="button is-danger" onclick="return confirm('Delete this page?');">Delete</button>
                             </form>

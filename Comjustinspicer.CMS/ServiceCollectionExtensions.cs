@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using AutoMapper;
 using Comjustinspicer.CMS.ContentZones;
+using Comjustinspicer.CMS.Controllers.Admin.Handlers;
 using Comjustinspicer.CMS.Data;
 using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
@@ -10,6 +11,7 @@ using Comjustinspicer.CMS.Models.ContentBlock;
 using Comjustinspicer.CMS.Models.ContentZone;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using System.Reflection;
 using Microsoft.AspNetCore.Identity;
 using Comjustinspicer.CMS.Data.DbContexts;
@@ -154,6 +156,14 @@ public static class ServiceCollectionExtensions
 		services.AddScoped<IContentZoneModel, ContentZoneModel>();
 		services.AddScoped<IArticleListModel, ArticleListModel>();
 		services.AddScoped<IArticleModel, ArticleModel>();
+
+		// Admin CRUD handlers
+		services.Configure<RouteOptions>(o => o.ConstraintMap["notreserved"] = typeof(NotReservedConstraint));
+		services.AddScoped<IAdminCrudHandler, ContentBlockCrudHandler>();
+		services.AddScoped<IAdminCrudHandler, ArticleCrudHandler>();
+		services.AddScoped<IAdminCrudHandler, PageCrudHandler>();
+		services.AddScoped<IAdminCrudHandler, ContentZoneCrudHandler>();
+		services.AddScoped<IAdminHandlerRegistry, AdminHandlerRegistry>();
 
 		// AutoMapper profile from this assembly
 		services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>(), typeof(ServiceCollectionExtensions).Assembly);

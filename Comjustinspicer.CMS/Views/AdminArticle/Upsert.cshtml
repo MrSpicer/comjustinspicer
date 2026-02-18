@@ -11,15 +11,15 @@
     <div class="container">
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
-                <li><a asp-controller="AdminArticle" asp-action="Index">Article Lists</a></li>
-                <li><a asp-controller="AdminArticle" asp-action="Articles" asp-route-listSlug="@slug">@listTitle</a></li>
+                <li><a asp-controller="AdminContent" asp-action="Index" asp-route-contentType="articles">Article Lists</a></li>
+                <li><a asp-controller="AdminContent" asp-action="ChildIndex" asp-route-contentType="articles" asp-route-parentKey="@slug" asp-route-childType="articles">@listTitle</a></li>
                 <li class="is-active"><a>@ViewData["Title"]</a></li>
             </ul>
         </nav>
 
         <h1 class="title">@ViewData["Title"]</h1>
 
-        <form asp-action="PostEdit" asp-controller="AdminArticle" asp-route-listSlug="@slug" method="post">
+        <form asp-action="ChildEdit" asp-controller="AdminContent" asp-route-contentType="articles" asp-route-parentKey="@slug" asp-route-childType="articles" method="post">
             @Html.ValidationSummary(false, "", new { @class = "notification is-danger" })
             <form-fields for="@Model" />
 
@@ -28,7 +28,7 @@
                     <button type="submit" class="button is-primary">Save</button>
                 </div>
                 <div class="control">
-                    <a asp-action="Articles" asp-controller="AdminArticle" asp-route-listSlug="@slug" class="button is-light">Cancel</a>
+                    <a asp-action="ChildIndex" asp-controller="AdminContent" asp-route-contentType="articles" asp-route-parentKey="@slug" asp-route-childType="articles" class="button is-light">Cancel</a>
                 </div>
             </div>
         </form>

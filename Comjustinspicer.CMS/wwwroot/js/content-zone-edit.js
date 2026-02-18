@@ -142,7 +142,7 @@ function initContentZones() {
             }
 
             try {
-                const response = await fetch('/admin/contentzones/components/' + encodeURIComponent(componentName) + '/properties');
+                const response = await fetch('/admin/contentzones/registry/' + encodeURIComponent(componentName) + '/properties');
                 if (!response.ok) throw new Error('Failed to load properties');
 
                 const data = await response.json();
@@ -277,8 +277,8 @@ function initContentZones() {
             try {
                 const endpoints = {
                     'ContentBlock': '/admin/contentblocks/api/list',
-                    'Article': '/admin/article/api/list',
-                    'ArticleList': '/admin/article/api/articlelists',
+                    'Article': '/admin/articles/api/list',
+                    'ArticleList': '/admin/articles/api/articlelists',
                     'ContentZone': '/admin/contentzones/api/list'
                 };
 
