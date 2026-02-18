@@ -42,14 +42,14 @@ public class MappingProfile : Profile
         .ForMember(d => d.CustomFields, opt => opt.Ignore());
 
     // Post mappings
-    CreateMap<PostDTO, ArticleViewModel>()
+    CreateMap<ArticleDTO, ArticleViewModel>()
         .ForMember(d => d.ArticleListId, opt => opt.MapFrom(s => s.ArticleListId));
-    CreateMap<PostDTO, ArticleUpsertViewModel>()
+    CreateMap<ArticleDTO, ArticleUpsertViewModel>()
         .ForMember(d => d.Slug, opt => opt.MapFrom(s => s.Slug ?? string.Empty))
         .ForMember(d => d.ArticleListId, opt => opt.MapFrom(s => s.ArticleListId))
         .ForMember(d => d.PublicationDate, opt => opt.MapFrom(s => s.PublicationDate == default ? (DateTime?)null : s.PublicationDate));
 
-    CreateMap<ArticleUpsertViewModel, PostDTO>()
+    CreateMap<ArticleUpsertViewModel, ArticleDTO>()
         .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id.HasValue && s.Id != Guid.Empty ? s.Id!.Value : Guid.NewGuid()))
         .ForMember(d => d.Title, opt => opt.MapFrom(s => s.Title ?? string.Empty))
         .ForMember(d => d.Slug, opt => opt.MapFrom(s => Uri.EscapeDataString(s.Slug ?? string.Empty)))

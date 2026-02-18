@@ -140,9 +140,10 @@ public class ContentZoneViewComponent : ViewComponent
 
 		// Fallback for non-page contexts (layout zones, admin pages, etc.)
 		var routeData = HttpContext.GetRouteData();
-		var controller = routeData.Values["controller"]?.ToString() ?? string.Empty;
+		var controller = IsGlobal ? "Global" : routeData.Values["controller"]?.ToString() ?? string.Empty;
 		var action = routeData.Values["action"]?.ToString() ?? string.Empty;
 
+		//todo: this seems wrong
 		if (string.IsNullOrEmpty(controller))
 		{
 			var path = HttpContext.Request.Path.Value?.Trim('/') ?? string.Empty;

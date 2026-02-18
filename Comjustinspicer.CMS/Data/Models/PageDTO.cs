@@ -3,7 +3,7 @@ namespace Comjustinspicer.CMS.Data.Models;
 /// <summary>
 /// Database entity representing a dynamic page with a custom route and controller configuration.
 /// </summary>
-public class PageDTO : BaseContentDTO
+public record PageDTO : BaseContentDTO
 {
     /// <summary>
     /// The URL route for this page (e.g., "/about", "/services/consulting").

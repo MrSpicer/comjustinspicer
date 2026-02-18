@@ -1,6 +1,6 @@
 namespace Comjustinspicer.CMS.Data.Models;
 
-public class CustomField
+public record CustomField : BaseContentDTO
 {
     public string FieldName { get; set; } = string.Empty;
     public string TypeName { get; set; } = string.Empty;

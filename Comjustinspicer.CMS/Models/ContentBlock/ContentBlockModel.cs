@@ -57,6 +57,6 @@ public sealed class ContentBlockModel : IContentBlockModel
     
     public async Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
     {
-        return await _service.DeleteAsync(id, ct);
+        return await _service.DeleteAsync(id, false, false, ct);
     }
 }

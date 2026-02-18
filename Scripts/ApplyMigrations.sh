@@ -12,5 +12,4 @@ dotnet ef database update -c ContentBlockContext &&
 echo "All migrations applied successfully."
 dotnet ef database update -c ContentZoneContext &&
 dotnet ef database update -c PageContext &&
-dotnet ef database update -c ArticleListContext &&
 cd ../

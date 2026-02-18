@@ -6,11 +6,11 @@ namespace Comjustinspicer.CMS.Models.Article;
 
 public sealed class ArticleListModel : IArticleListModel
 {
-    private readonly IContentService<PostDTO> _postService;
+    private readonly IContentService<ArticleDTO> _postService;
     private readonly IContentService<ArticleListDTO> _articleListService;
     private readonly IMapper _mapper;
 
-    public ArticleListModel(IContentService<ArticleListDTO> articleListService, IContentService<PostDTO> postService, IMapper mapper)
+    public ArticleListModel(IContentService<ArticleListDTO> articleListService, IContentService<ArticleDTO> postService, IMapper mapper)
     {
         _postService = postService ?? throw new ArgumentNullException(nameof(postService));
         _articleListService = articleListService ?? throw new ArgumentNullException(nameof(articleListService));
@@ -72,7 +72,7 @@ public sealed class ArticleListModel : IArticleListModel
 
     public async Task<bool> DeleteArticleListAsync(Guid id, CancellationToken ct = default)
     {
-        return await _articleListService.DeleteAsync(id, ct);
+        return await _articleListService.DeleteAsync(id, false, false, ct);
     }
 
     public async Task<ArticleListViewModel?> GetArticlesForListAsync(Guid articleListId, CancellationToken ct = default)

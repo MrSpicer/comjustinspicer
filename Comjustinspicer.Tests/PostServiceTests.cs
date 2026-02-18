@@ -25,11 +25,11 @@ public class PostServiceTests
         var options = CreateNewContextOptions();
 
         // Create
-        PostDTO created;
+        ArticleDTO created;
         using (var ctx = new ArticleContext(options))
         {
-            IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
-            var post = new PostDTO
+            IContentService<ArticleDTO> svc = new ContentService<ArticleDTO>(ctx);
+            var post = new ArticleDTO
             {
                 Title = "Test Title",
                 Body = "Test Body",
@@ -45,7 +45,7 @@ public class PostServiceTests
         // Read All / ById
         using (var ctx = new ArticleContext(options))
         {
-            IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
+            IContentService<ArticleDTO> svc = new ContentService<ArticleDTO>(ctx);
             var all = await svc.GetAllAsync();
             Assert.That(all.Count, Is.EqualTo(1));
 
@@ -57,7 +57,7 @@ public class PostServiceTests
         // Update
         using (var ctx = new ArticleContext(options))
         {
-            IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
+            IContentService<ArticleDTO> svc = new ContentService<ArticleDTO>(ctx);
             created.Title = "Updated Title";
             var ok = await svc.UpdateAsync(created);
             Assert.That(ok, Is.True);
@@ -65,7 +65,7 @@ public class PostServiceTests
 
         using (var ctx = new ArticleContext(options))
         {
-            IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
+            IContentService<ArticleDTO> svc = new ContentService<ArticleDTO>(ctx);
             var byId = await svc.GetByIdAsync(created.Id);
             Assert.That(byId, Is.Not.Null);
             Assert.That(byId!.Title, Is.EqualTo("Updated Title"));
@@ -74,14 +74,14 @@ public class PostServiceTests
         // Delete
         using (var ctx = new ArticleContext(options))
         {
-            IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
+            IContentService<ArticleDTO> svc = new ContentService<ArticleDTO>(ctx);
             var ok = await svc.DeleteAsync(created.Id);
             Assert.That(ok, Is.True);
         }
 
         using (var ctx = new ArticleContext(options))
         {
-            IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
+            IContentService<ArticleDTO> svc = new ContentService<ArticleDTO>(ctx);
             var all = await svc.GetAllAsync();
             Assert.That(all.Count, Is.EqualTo(0));
 
@@ -97,8 +97,8 @@ public class PostServiceTests
 
         using (var ctx = new ArticleContext(options))
         {
-            IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
-            var post = new PostDTO { Id = Guid.NewGuid(), Title = "x" };
+            IContentService<ArticleDTO> svc = new ContentService<ArticleDTO>(ctx);
+            var post = new ArticleDTO { Id = Guid.NewGuid(), Title = "x" };
             var ok = await svc.UpdateAsync(post);
             Assert.That(ok, Is.False);
         }
@@ -111,7 +111,7 @@ public class PostServiceTests
 
         using (var ctx = new ArticleContext(options))
         {
-            IContentService<PostDTO> svc = new ContentService<PostDTO>(ctx);
+            IContentService<ArticleDTO> svc = new ContentService<ArticleDTO>(ctx);
             var ok = await svc.DeleteAsync(Guid.NewGuid());
             Assert.That(ok, Is.False);
         }

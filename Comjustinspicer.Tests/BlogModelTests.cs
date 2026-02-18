@@ -32,7 +32,7 @@ public class ArticleModelTests
 
     private static readonly Guid DefaultListId = Guid.NewGuid();
 
-    private static PostDTO CreatePost(Guid? id = null, DateTime? pubDate = null) => new PostDTO
+    private static ArticleDTO CreatePost(Guid? id = null, DateTime? pubDate = null) => new ArticleDTO
     {
         Id = id ?? Guid.NewGuid(),
         Title = "T",
@@ -48,7 +48,7 @@ public class ArticleModelTests
     [Test]
     public async Task GetUpsertViewModelAsync_NullId_ReturnsEmptyModel()
     {
-        var svc = new Mock<IContentService<PostDTO>>();
+        var svc = new Mock<IContentService<ArticleDTO>>();
         var model = new ArticleModel(svc.Object, _mapper);
         var upsert = await model.GetUpsertViewModelAsync(null);
         Assert.That(upsert, Is.Not.Null);
@@ -58,8 +58,8 @@ public class ArticleModelTests
     [Test]
     public async Task GetUpsertViewModelAsync_PostNotFound_ReturnsNull()
     {
-        var svc = new Mock<IContentService<PostDTO>>();
-        svc.Setup(s => s.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(null as PostDTO);
+        var svc = new Mock<IContentService<ArticleDTO>>();
+        svc.Setup(s => s.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(null as ArticleDTO);
         var model = new ArticleModel(svc.Object, _mapper);
         var result = await model.GetUpsertViewModelAsync(Guid.NewGuid());
         Assert.That(result, Is.Null);
@@ -69,7 +69,7 @@ public class ArticleModelTests
     public async Task GetUpsertViewModelAsync_Found_ReturnsMappedModel()
     {
         var post = CreatePost();
-        var svc = new Mock<IContentService<PostDTO>>();
+        var svc = new Mock<IContentService<ArticleDTO>>();
         svc.Setup(s => s.GetByIdAsync(post.Id, It.IsAny<CancellationToken>())).ReturnsAsync(post);
         var model = new ArticleModel(svc.Object, _mapper);
         var result = await model.GetUpsertViewModelAsync(post.Id);
@@ -81,7 +81,7 @@ public class ArticleModelTests
     public async Task GetUpsertViewModelAsync_WithArticleListId_SetsArticleListId()
     {
         var listId = Guid.NewGuid();
-        var svc = new Mock<IContentService<PostDTO>>();
+        var svc = new Mock<IContentService<ArticleDTO>>();
         var model = new ArticleModel(svc.Object, _mapper);
         var result = await model.GetUpsertViewModelAsync(null, listId);
         Assert.That(result, Is.Not.Null);
@@ -92,8 +92,8 @@ public class ArticleModelTests
     public async Task GetBySlugAsync_Found_ReturnsViewModel()
     {
         var post = CreatePost();
-        var svc = new Mock<IContentService<PostDTO>>();
-        svc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<PostDTO> { post });
+        var svc = new Mock<IContentService<ArticleDTO>>();
+        svc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<ArticleDTO> { post });
         var model = new ArticleModel(svc.Object, _mapper);
         var result = await model.GetBySlugAsync("test-slug");
         Assert.That(result, Is.Not.Null);
@@ -103,8 +103,8 @@ public class ArticleModelTests
     [Test]
     public async Task GetBySlugAsync_NotFound_ReturnsNull()
     {
-        var svc = new Mock<IContentService<PostDTO>>();
-        svc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<PostDTO>());
+        var svc = new Mock<IContentService<ArticleDTO>>();
+        svc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<ArticleDTO>());
         var model = new ArticleModel(svc.Object, _mapper);
         var result = await model.GetBySlugAsync("nonexistent");
         Assert.That(result, Is.Null);
@@ -113,36 +113,36 @@ public class ArticleModelTests
     [Test]
     public async Task SaveUpsertAsync_Create_Path()
     {
-        var svc = new Mock<IContentService<PostDTO>>();
-        svc.Setup(s => s.CreateAsync(It.IsAny<PostDTO>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((PostDTO p, CancellationToken _) => p);
+        var svc = new Mock<IContentService<ArticleDTO>>();
+        svc.Setup(s => s.CreateAsync(It.IsAny<ArticleDTO>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((ArticleDTO p, CancellationToken _) => p);
         var model = new ArticleModel(svc.Object, _mapper);
 
         var vm = new ArticleUpsertViewModel { Title = "T", Body = "B", AuthorName = "A", ArticleListId = DefaultListId, PublicationDate = DateTime.UtcNow };
         var (success, err) = await model.SaveUpsertAsync(vm);
         Assert.That(success, Is.True);
         Assert.That(err, Is.Null);
-        svc.Verify(s => s.CreateAsync(It.IsAny<PostDTO>(), It.IsAny<CancellationToken>()), Times.Once);
+        svc.Verify(s => s.CreateAsync(It.IsAny<ArticleDTO>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Test]
     public async Task SaveUpsertAsync_Update_Path_Success()
     {
-        var svc = new Mock<IContentService<PostDTO>>();
-        svc.Setup(s => s.UpdateAsync(It.IsAny<PostDTO>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+        var svc = new Mock<IContentService<ArticleDTO>>();
+        svc.Setup(s => s.UpdateAsync(It.IsAny<ArticleDTO>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
         var model = new ArticleModel(svc.Object, _mapper);
         var vm = new ArticleUpsertViewModel { Id = Guid.NewGuid(), Title = "T", Body = "B", AuthorName = "A", ArticleListId = DefaultListId, PublicationDate = DateTime.UtcNow };
         var (success, err) = await model.SaveUpsertAsync(vm);
         Assert.That(success, Is.True);
         Assert.That(err, Is.Null);
-        svc.Verify(s => s.UpdateAsync(It.IsAny<PostDTO>(), It.IsAny<CancellationToken>()), Times.Once);
+        svc.Verify(s => s.UpdateAsync(It.IsAny<ArticleDTO>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Test]
     public async Task SaveUpsertAsync_Update_Path_Failure_ReturnsError()
     {
-        var svc = new Mock<IContentService<PostDTO>>();
-        svc.Setup(s => s.UpdateAsync(It.IsAny<PostDTO>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
+        var svc = new Mock<IContentService<ArticleDTO>>();
+        svc.Setup(s => s.UpdateAsync(It.IsAny<ArticleDTO>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
         var model = new ArticleModel(svc.Object, _mapper);
         var vm = new ArticleUpsertViewModel { Id = Guid.NewGuid(), Title = "T", Body = "B", AuthorName = "A", ArticleListId = DefaultListId, PublicationDate = DateTime.UtcNow };
         var (success, err) = await model.SaveUpsertAsync(vm);
@@ -153,7 +153,7 @@ public class ArticleModelTests
     [Test]
     public void SaveUpsertAsync_NullModel_Throws()
     {
-        var svc = new Mock<IContentService<PostDTO>>();
+        var svc = new Mock<IContentService<ArticleDTO>>();
         var model = new ArticleModel(svc.Object, _mapper);
         Assert.ThrowsAsync<ArgumentNullException>(async () => await model.SaveUpsertAsync(null!));
     }

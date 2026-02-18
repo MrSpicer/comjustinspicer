@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Comjustinspicer.CMS.Migrations.Identity
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260213202235_InitialIdentity")]
+    [Migration("20260218195123_InitialIdentity")]
     partial class InitialIdentity
     {
         /// <inheritdoc />

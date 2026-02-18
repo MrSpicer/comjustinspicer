@@ -6,10 +6,8 @@ namespace Comjustinspicer.CMS.Data.Models;
 /// Database entity representing an item within a content zone.
 /// Each item references a view component to render with specific properties.
 /// </summary>
-public class ContentZoneItemDTO
+public record ContentZoneItemDTO : BaseContentDTO
 {
-    public Guid Id { get; set; }
-
     /// <summary>
     /// Foreign key to the parent ContentZone.
     /// </summary>

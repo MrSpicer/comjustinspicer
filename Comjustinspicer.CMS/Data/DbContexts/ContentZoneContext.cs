@@ -42,6 +42,12 @@ public class ContentZoneContext : DbContext
             entity.ToTable("ContentZoneItems");
 
             entity.HasIndex(e => new { e.ContentZoneId, e.Ordinal });
+
+            // Store CustomFields as JSON
+            entity.OwnsMany(e => e.CustomFields, cf =>
+            {
+                cf.ToJson();
+            });
         });
     }
 }

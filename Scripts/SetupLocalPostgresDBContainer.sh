@@ -29,10 +29,12 @@ fi
 # Check for existing container
 if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
     echo "Container '${CONTAINER_NAME}' already exists."
-    read -p "Remove and recreate it? [y/N]: " RECREATE
+    echo "WARNING: Removing the container will also delete the database volume. ALL DATA WILL BE LOST."
+    read -p "Remove container and all data? [y/N]: " RECREATE
     if [[ "${RECREATE:-N}" =~ ^[Yy]$ ]]; then
-        echo "Removing existing container..."
+        echo "Removing existing container and volume..."
         docker rm -f "${CONTAINER_NAME}"
+        docker volume rm "${VOLUME_NAME}" --force
     else
         echo "Aborting."
         exit 0

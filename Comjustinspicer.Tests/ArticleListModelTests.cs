@@ -40,7 +40,7 @@ public class ArticleListModelTests
         ModificationDate = DateTime.UtcNow.AddMinutes(-5)
     };
 
-    private static PostDTO CreatePost(Guid articleListId, Guid? id = null) => new PostDTO
+    private static ArticleDTO CreatePost(Guid articleListId, Guid? id = null) => new ArticleDTO
     {
         Id = id ?? Guid.NewGuid(),
         Title = "T",
@@ -64,8 +64,8 @@ public class ArticleListModelTests
         var listSvc = new Mock<IContentService<ArticleListDTO>>();
         listSvc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<ArticleListDTO> { list1, list2 });
 
-        var postSvc = new Mock<IContentService<PostDTO>>();
-        postSvc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<PostDTO> { post1, post2, post3 });
+        var postSvc = new Mock<IContentService<ArticleDTO>>();
+        postSvc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<ArticleDTO> { post1, post2, post3 });
 
         var model = new ArticleListModel(listSvc.Object, postSvc.Object, _mapper);
         var vm = await model.GetArticleListIndexAsync();
@@ -86,8 +86,8 @@ public class ArticleListModelTests
         var listSvc = new Mock<IContentService<ArticleListDTO>>();
         listSvc.Setup(s => s.GetByIdAsync(list.Id, It.IsAny<CancellationToken>())).ReturnsAsync(list);
 
-        var postSvc = new Mock<IContentService<PostDTO>>();
-        postSvc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<PostDTO> { post1, post2 });
+        var postSvc = new Mock<IContentService<ArticleDTO>>();
+        postSvc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<ArticleDTO> { post1, post2 });
 
         var model = new ArticleListModel(listSvc.Object, postSvc.Object, _mapper);
         var vm = await model.GetArticlesForListAsync(list.Id);
@@ -103,7 +103,7 @@ public class ArticleListModelTests
         var listSvc = new Mock<IContentService<ArticleListDTO>>();
         listSvc.Setup(s => s.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(null as ArticleListDTO);
 
-        var postSvc = new Mock<IContentService<PostDTO>>();
+        var postSvc = new Mock<IContentService<ArticleDTO>>();
         var model = new ArticleListModel(listSvc.Object, postSvc.Object, _mapper);
         var vm = await model.GetArticlesForListAsync(Guid.NewGuid());
 
@@ -120,8 +120,8 @@ public class ArticleListModelTests
         listSvc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<ArticleListDTO> { list });
         listSvc.Setup(s => s.GetByIdAsync(list.Id, It.IsAny<CancellationToken>())).ReturnsAsync(list);
 
-        var postSvc = new Mock<IContentService<PostDTO>>();
-        postSvc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<PostDTO> { post });
+        var postSvc = new Mock<IContentService<ArticleDTO>>();
+        postSvc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<ArticleDTO> { post });
 
         var model = new ArticleListModel(listSvc.Object, postSvc.Object, _mapper);
         var vm = await model.GetArticlesForListBySlugAsync("my-list");
@@ -136,7 +136,7 @@ public class ArticleListModelTests
         var listSvc = new Mock<IContentService<ArticleListDTO>>();
         listSvc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<ArticleListDTO>());
 
-        var postSvc = new Mock<IContentService<PostDTO>>();
+        var postSvc = new Mock<IContentService<ArticleDTO>>();
         var model = new ArticleListModel(listSvc.Object, postSvc.Object, _mapper);
         var vm = await model.GetArticlesForListBySlugAsync("nonexistent");
 
@@ -150,7 +150,7 @@ public class ArticleListModelTests
         listSvc.Setup(s => s.CreateAsync(It.IsAny<ArticleListDTO>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((ArticleListDTO l, CancellationToken _) => l);
 
-        var postSvc = new Mock<IContentService<PostDTO>>();
+        var postSvc = new Mock<IContentService<ArticleDTO>>();
         var model = new ArticleListModel(listSvc.Object, postSvc.Object, _mapper);
 
         var vm = new ArticleListUpsertViewModel { Title = "New List", PublicationDate = DateTime.UtcNow };
@@ -165,9 +165,9 @@ public class ArticleListModelTests
     public async Task DeleteArticleListAsync_CallsService()
     {
         var listSvc = new Mock<IContentService<ArticleListDTO>>();
-        listSvc.Setup(s => s.DeleteAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+        listSvc.Setup(s => s.DeleteAsync(It.IsAny<Guid>(), false, true, It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
-        var postSvc = new Mock<IContentService<PostDTO>>();
+        var postSvc = new Mock<IContentService<ArticleDTO>>();
         var model = new ArticleListModel(listSvc.Object, postSvc.Object, _mapper);
 
         var result = await model.DeleteArticleListAsync(Guid.NewGuid());
@@ -178,7 +178,7 @@ public class ArticleListModelTests
     public async Task GetArticleListUpsertAsync_NullId_ReturnsNewModel()
     {
         var listSvc = new Mock<IContentService<ArticleListDTO>>();
-        var postSvc = new Mock<IContentService<PostDTO>>();
+        var postSvc = new Mock<IContentService<ArticleDTO>>();
         var model = new ArticleListModel(listSvc.Object, postSvc.Object, _mapper);
 
         var vm = await model.GetArticleListUpsertAsync(null);
@@ -192,7 +192,7 @@ public class ArticleListModelTests
         var listSvc = new Mock<IContentService<ArticleListDTO>>();
         listSvc.Setup(s => s.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(null as ArticleListDTO);
 
-        var postSvc = new Mock<IContentService<PostDTO>>();
+        var postSvc = new Mock<IContentService<ArticleDTO>>();
         var model = new ArticleListModel(listSvc.Object, postSvc.Object, _mapper);
 
         var vm = await model.GetArticleListUpsertAsync(Guid.NewGuid());

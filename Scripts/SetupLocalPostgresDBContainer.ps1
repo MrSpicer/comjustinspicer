@@ -28,10 +28,12 @@ if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
 $existing = docker ps -a --format '{{.Names}}' | Where-Object { $_ -eq $ContainerName }
 if ($existing) {
     Write-Host "Container '$ContainerName' already exists."
-    $recreate = Read-Host "Remove and recreate it? [y/N]"
+    Write-Warning "Removing the container will also delete the database volume. ALL DATA WILL BE LOST."
+    $recreate = Read-Host "Remove container and all data? [y/N]"
     if ($recreate -match '^[Yy]$') {
-        Write-Host "Removing existing container..."
+        Write-Host "Removing existing container and volume..."
         docker rm -f $ContainerName
+        docker volume rm $VolumeName --force
     } else {
         Write-Host "Aborting."
         exit 0

@@ -6,10 +6,10 @@ namespace Comjustinspicer.CMS.Models.Article;
 
 public sealed class ArticleModel : IArticleModel
 {
-    private readonly IContentService<PostDTO> _postService;
+    private readonly IContentService<ArticleDTO> _postService;
     private readonly IMapper _mapper;
 
-    public ArticleModel(IContentService<PostDTO> postService, IMapper mapper)
+    public ArticleModel(IContentService<ArticleDTO> postService, IMapper mapper)
     {
         _postService = postService ?? throw new ArgumentNullException(nameof(postService));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -50,7 +50,7 @@ public sealed class ArticleModel : IArticleModel
     {
         if (model == null) throw new ArgumentNullException(nameof(model));
 
-        var dto = _mapper.Map<PostDTO>(model);
+        var dto = _mapper.Map<ArticleDTO>(model);
 
         if (model.Id == null || model.Id == Guid.Empty)
         {
@@ -65,6 +65,6 @@ public sealed class ArticleModel : IArticleModel
 
     public async Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
     {
-        return await _postService.DeleteAsync(id, ct);
+        return await _postService.DeleteAsync(id, false, false, ct);
     }
 }

@@ -13,7 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Run tests:** `./Scripts/TestsRun.sh` (loads AutoMapper license from user-secrets)
 - **Run single test:** `dotnet test --filter "Name~MethodName"`
 - **Apply migrations:** `./Scripts/ApplyMigrations.sh`
-- **Rebuild DB (destructive):** `./Scripts/RebuildDB.sh`
+- **Rebuild Ef Migrations (destructive):** `./Scripts/RebuildEFMigrations.sh`
 - **Docker build:** `./Scripts/DockerBuild.sh`
 
 ## Architecture

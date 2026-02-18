@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Comjustinspicer.CMS.Migrations.ContentBlock
 {
     [DbContext(typeof(ContentBlockContext))]
-    [Migration("20260213202309_InitialContentBlock")]
+    [Migration("20260218195148_InitialContentBlock")]
     partial class InitialContentBlock
     {
         /// <inheritdoc />
@@ -94,7 +94,37 @@ namespace Comjustinspicer.CMS.Migrations.ContentBlock
                             b1.Property<int>("__synthesizedOrdinal")
                                 .ValueGeneratedOnAdd();
 
+                            b1.Property<Guid>("CreatedBy");
+
+                            b1.Property<DateTime>("CreationDate");
+
                             b1.Property<string>("FieldName")
+                                .IsRequired();
+
+                            b1.Property<Guid>("Id");
+
+                            b1.Property<bool>("IsArchived");
+
+                            b1.Property<bool>("IsDeleted");
+
+                            b1.Property<bool>("IsHidden");
+
+                            b1.Property<bool>("IsPublished");
+
+                            b1.Property<Guid>("LastModifiedBy");
+
+                            b1.Property<Guid>("MasterId");
+
+                            b1.Property<DateTime>("ModificationDate");
+
+                            b1.Property<DateTime>("PublicationDate");
+
+                            b1.Property<DateTime?>("PublicationEndDate");
+
+                            b1.Property<string>("Slug")
+                                .IsRequired();
+
+                            b1.Property<string>("Title")
                                 .IsRequired();
 
                             b1.Property<string>("TypeName")
@@ -102,6 +132,8 @@ namespace Comjustinspicer.CMS.Migrations.ContentBlock
 
                             b1.Property<string>("Value")
                                 .IsRequired();
+
+                            b1.Property<int>("Version");
 
                             b1.HasKey("ContentBlockDTOId", "__synthesizedOrdinal");
 

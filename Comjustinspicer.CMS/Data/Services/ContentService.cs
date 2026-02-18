@@ -36,6 +36,8 @@ public sealed class ContentService<T> : IContentService<T> where T : BaseContent
         if (entity.Id == Guid.Empty)
             entity.Id = Guid.NewGuid();
 
+        entity.MasterId = entity.Id; // set masterId to own id for initial version
+
         // Auto-generate slug from title if slug is empty
         if (string.IsNullOrWhiteSpace(entity.Slug) && !string.IsNullOrWhiteSpace(entity.Title))
             entity.Slug = Uri.EscapeDataString(entity.Title);
@@ -43,7 +45,7 @@ public sealed class ContentService<T> : IContentService<T> where T : BaseContent
         var now = DateTime.UtcNow;
         entity.CreationDate = now;
         entity.ModificationDate = now;
-        if (entity.PublicationDate == default)
+        if (entity.IsPublished && entity.PublicationDate == default)
             entity.PublicationDate = now;
 
         _set.Add(entity);
@@ -55,15 +57,21 @@ public sealed class ContentService<T> : IContentService<T> where T : BaseContent
     {
         if (entity == null) throw new ArgumentNullException(nameof(entity));
 
-        var existing = await _set.FirstOrDefaultAsync(e => e.Id == entity.Id, ct);
-        if (existing == null) return false;
-
+        entity.Version = entity.Version++;
+        entity.Id = Guid.NewGuid(); // reset id for new version
+        var now = DateTime.UtcNow;
         // Ensure modification timestamp reflects this update
-        entity.ModificationDate = DateTime.UtcNow;
-        // Copy all values from incoming entity onto the tracked entity
-        _dbContext.Entry(existing).CurrentValues.SetValues(entity);
+        entity.ModificationDate = now;
 
-        _set.Update(existing);
+        // Auto-generate slug from title if slug is empty
+        if (string.IsNullOrWhiteSpace(entity.Slug) && !string.IsNullOrWhiteSpace(entity.Title))
+            entity.Slug = Uri.EscapeDataString(entity.Title);
+
+        if (entity.IsPublished && entity.PublicationDate == default)
+            entity.PublicationDate = now;
+
+        _dbContext.Add(entity);
+
         await _dbContext.SaveChangesAsync(ct);
         return true;
     }
@@ -78,39 +86,46 @@ public sealed class ContentService<T> : IContentService<T> where T : BaseContent
             return true;
         }
 
-        var existing = await _set.FirstOrDefaultAsync(e => e.Id == entity.Id, ct);
-        if (existing == null)
-        {
-            // treat as create
-            // Auto-generate slug from title if slug is empty
-            if (string.IsNullOrWhiteSpace(entity.Slug) && !string.IsNullOrWhiteSpace(entity.Title))
-                entity.Slug = Uri.EscapeDataString(entity.Title);
-
-            var now = DateTime.UtcNow;
-            entity.CreationDate = now;
-            entity.ModificationDate = now;
-            if (entity.PublicationDate == default)
-                entity.PublicationDate = now;
-
-            _set.Add(entity);
-        }
-        else
-        {
-            entity.ModificationDate = DateTime.UtcNow;
-            _dbContext.Entry(existing).CurrentValues.SetValues(entity);
-            _set.Update(existing);
-        }
-
-        await _dbContext.SaveChangesAsync(ct);
-        return true;
+       return await UpdateAsync(entity, ct);
     }
 
-    public async Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
+    public async Task<bool> DeleteAsync(Guid id, bool softDelete = false, bool deleteHistory = false, CancellationToken ct = default)
     {
-        var existing = await _set.FirstOrDefaultAsync(e => e.Id == id, ct);
-        if (existing == null) return false;
+        var entity = await _set.FirstOrDefaultAsync(e => e.Id == id, ct);
+        if (entity == null) return false;
 
-        _set.Remove(existing);
+        if (softDelete && !deleteHistory)
+        {
+            entity.IsDeleted = true;
+            entity.IsPublished = false;
+            return await UpdateAsync(entity, ct);
+        }
+
+        if(deleteHistory)
+        {
+            var historyItems = await _set
+                .Where(e => e.MasterId == entity.MasterId)
+                .ToListAsync(ct);
+
+            if(softDelete)
+            {
+                foreach (var item in historyItems)
+                {
+                    item.IsDeleted = true;
+                    item.IsPublished = false;
+                }
+
+                _dbContext.UpdateRange(historyItems);
+                await _dbContext.SaveChangesAsync(ct);
+                return true;
+            }
+
+            _set.RemoveRange(historyItems);
+            await _dbContext.SaveChangesAsync(ct);
+            return true;
+        }
+        
+        _set.Remove(entity);
         await _dbContext.SaveChangesAsync(ct);
         return true;
     }

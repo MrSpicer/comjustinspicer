@@ -4,6 +4,9 @@
 **/*.user
 **/*.suo
 **/Logs/
+*.dll
+*.exe
+*.log
 Comjustinspicer.Tests/TestResults/
 
 # Node.js / Playwright

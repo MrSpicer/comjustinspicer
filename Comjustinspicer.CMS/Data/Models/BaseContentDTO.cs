@@ -2,10 +2,9 @@ using Comjustinspicer.CMS.Attributes;
 
 namespace Comjustinspicer.CMS.Data.Models;
 
-public abstract class BaseContentDTO
+public abstract record BaseContentDTO
 {
     public Guid Id { get; set; }
-
     public string Slug { get; set; } = string.Empty;
 
     public string Title { get; set; } = string.Empty;

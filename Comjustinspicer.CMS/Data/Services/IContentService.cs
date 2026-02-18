@@ -9,5 +9,5 @@ public interface IContentService<T> where T : BaseContentDTO
     Task<T> CreateAsync(T entity, CancellationToken ct = default);
     Task<bool> UpdateAsync(T entity, CancellationToken ct = default);
     Task<bool> UpsertAsync(T entity, CancellationToken ct = default);
-    Task<bool> DeleteAsync(Guid id, CancellationToken ct = default);
+    Task<bool> DeleteAsync(Guid id, bool softDelete = false, bool deleteHistory = false, CancellationToken ct = default);
 }

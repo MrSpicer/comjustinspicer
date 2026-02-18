@@ -9,12 +9,12 @@ public class ArticleContext : DbContext
 
     public DbSet<ArticleListDTO> ArticleLists { get; set; } = null!;
 
-    public DbSet<PostDTO> Articles { get; set; } = null!;
+    public DbSet<ArticleDTO> Articles { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<PostDTO>(entity =>
+        modelBuilder.Entity<ArticleDTO>(entity =>
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Title).IsRequired().HasMaxLength(20000);

@@ -112,13 +112,57 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsHidden")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("LastModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MasterId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ModificationDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Ordinal")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("PublicationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("PublicationEndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Version")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -137,7 +181,37 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                             b1.Property<int>("__synthesizedOrdinal")
                                 .ValueGeneratedOnAdd();
 
+                            b1.Property<Guid>("CreatedBy");
+
+                            b1.Property<DateTime>("CreationDate");
+
                             b1.Property<string>("FieldName")
+                                .IsRequired();
+
+                            b1.Property<Guid>("Id");
+
+                            b1.Property<bool>("IsArchived");
+
+                            b1.Property<bool>("IsDeleted");
+
+                            b1.Property<bool>("IsHidden");
+
+                            b1.Property<bool>("IsPublished");
+
+                            b1.Property<Guid>("LastModifiedBy");
+
+                            b1.Property<Guid>("MasterId");
+
+                            b1.Property<DateTime>("ModificationDate");
+
+                            b1.Property<DateTime>("PublicationDate");
+
+                            b1.Property<DateTime?>("PublicationEndDate");
+
+                            b1.Property<string>("Slug")
+                                .IsRequired();
+
+                            b1.Property<string>("Title")
                                 .IsRequired();
 
                             b1.Property<string>("TypeName")
@@ -145,6 +219,8 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
 
                             b1.Property<string>("Value")
                                 .IsRequired();
+
+                            b1.Property<int>("Version");
 
                             b1.HasKey("ContentZoneDTOId", "__synthesizedOrdinal");
 
@@ -167,7 +243,67 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsMany("Comjustinspicer.CMS.Data.Models.CustomField", "CustomFields", b1 =>
+                        {
+                            b1.Property<Guid>("ContentZoneItemDTOId");
+
+                            b1.Property<int>("__synthesizedOrdinal")
+                                .ValueGeneratedOnAdd();
+
+                            b1.Property<Guid>("CreatedBy");
+
+                            b1.Property<DateTime>("CreationDate");
+
+                            b1.Property<string>("FieldName")
+                                .IsRequired();
+
+                            b1.Property<Guid>("Id");
+
+                            b1.Property<bool>("IsArchived");
+
+                            b1.Property<bool>("IsDeleted");
+
+                            b1.Property<bool>("IsHidden");
+
+                            b1.Property<bool>("IsPublished");
+
+                            b1.Property<Guid>("LastModifiedBy");
+
+                            b1.Property<Guid>("MasterId");
+
+                            b1.Property<DateTime>("ModificationDate");
+
+                            b1.Property<DateTime>("PublicationDate");
+
+                            b1.Property<DateTime?>("PublicationEndDate");
+
+                            b1.Property<string>("Slug")
+                                .IsRequired();
+
+                            b1.Property<string>("Title")
+                                .IsRequired();
+
+                            b1.Property<string>("TypeName")
+                                .IsRequired();
+
+                            b1.Property<string>("Value")
+                                .IsRequired();
+
+                            b1.Property<int>("Version");
+
+                            b1.HasKey("ContentZoneItemDTOId", "__synthesizedOrdinal");
+
+                            b1.ToTable("ContentZoneItems");
+
+                            b1.ToJson("CustomFields");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ContentZoneItemDTOId");
+                        });
+
                     b.Navigation("ContentZone");
+
+                    b.Navigation("CustomFields");
                 });
 
             modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ContentZoneDTO", b =>

@@ -112,10 +112,10 @@ public static class ServiceCollectionExtensions
 
 		// Generic content service registrations to enable consumers to request IContentService<T>
 		// Note: Each T must be bound to the correct DbContext through constructor injection of DbContext.
-		services.AddScoped<IContentService<PostDTO>>(sp =>
+		services.AddScoped<IContentService<ArticleDTO>>(sp =>
 		{
 			var ctx = sp.GetRequiredService<ArticleContext>();
-			return new ContentService<PostDTO>(ctx);
+			return new ContentService<ArticleDTO>(ctx);
 		});
 
 		services.AddScoped<IContentService<ArticleListDTO>>(sp =>
@@ -186,7 +186,6 @@ public static class ServiceCollectionExtensions
 		services.AddDefaultIdentity<IdentityUser>(
 				identityOptions =>
 				{
-					//identityOptions.Stores.ProtectPersonalData = true; //todo
 					identityOptions.SignIn.RequireConfirmedEmail = true;
 					identityOptions.Password.RequireDigit = true;
 					identityOptions.Password.RequireLowercase = true;

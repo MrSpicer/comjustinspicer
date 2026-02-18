@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Comjustinspicer.CMS.Migrations.Article
 {
     [DbContext(typeof(ArticleContext))]
-    [Migration("20260213202256_InitialArticle")]
+    [Migration("20260218195135_InitialArticle")]
     partial class InitialArticle
     {
         /// <inheritdoc />
@@ -25,62 +25,7 @@ namespace Comjustinspicer.CMS.Migrations.Article
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ArticleListDTO", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsHidden")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsPublished")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid>("LastModifiedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("MasterId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ModificationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("PublicationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("PublicationEndDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Version")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ArticleLists");
-                });
-
-            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.PostDTO", b =>
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ArticleDTO", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -155,14 +100,105 @@ namespace Comjustinspicer.CMS.Migrations.Article
 
             modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ArticleListDTO", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsHidden")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("LastModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MasterId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ModificationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("PublicationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("PublicationEndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ArticleLists");
+                });
+
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ArticleDTO", b =>
+                {
+                    b.HasOne("Comjustinspicer.CMS.Data.Models.ArticleListDTO", "ArticleList")
+                        .WithMany("Articles")
+                        .HasForeignKey("ArticleListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.OwnsMany("Comjustinspicer.CMS.Data.Models.CustomField", "CustomFields", b1 =>
                         {
-                            b1.Property<Guid>("ArticleListDTOId");
+                            b1.Property<Guid>("ArticleDTOId");
 
                             b1.Property<int>("__synthesizedOrdinal")
                                 .ValueGeneratedOnAdd();
 
+                            b1.Property<Guid>("CreatedBy");
+
+                            b1.Property<DateTime>("CreationDate");
+
                             b1.Property<string>("FieldName")
+                                .IsRequired();
+
+                            b1.Property<Guid>("Id");
+
+                            b1.Property<bool>("IsArchived");
+
+                            b1.Property<bool>("IsDeleted");
+
+                            b1.Property<bool>("IsHidden");
+
+                            b1.Property<bool>("IsPublished");
+
+                            b1.Property<Guid>("LastModifiedBy");
+
+                            b1.Property<Guid>("MasterId");
+
+                            b1.Property<DateTime>("ModificationDate");
+
+                            b1.Property<DateTime>("PublicationDate");
+
+                            b1.Property<DateTime?>("PublicationEndDate");
+
+                            b1.Property<string>("Slug")
+                                .IsRequired();
+
+                            b1.Property<string>("Title")
                                 .IsRequired();
 
                             b1.Property<string>("TypeName")
@@ -170,6 +206,73 @@ namespace Comjustinspicer.CMS.Migrations.Article
 
                             b1.Property<string>("Value")
                                 .IsRequired();
+
+                            b1.Property<int>("Version");
+
+                            b1.HasKey("ArticleDTOId", "__synthesizedOrdinal");
+
+                            b1.ToTable("Posts");
+
+                            b1.ToJson("CustomFields");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ArticleDTOId");
+                        });
+
+                    b.Navigation("ArticleList");
+
+                    b.Navigation("CustomFields");
+                });
+
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ArticleListDTO", b =>
+                {
+                    b.OwnsMany("Comjustinspicer.CMS.Data.Models.CustomField", "CustomFields", b1 =>
+                        {
+                            b1.Property<Guid>("ArticleListDTOId");
+
+                            b1.Property<int>("__synthesizedOrdinal")
+                                .ValueGeneratedOnAdd();
+
+                            b1.Property<Guid>("CreatedBy");
+
+                            b1.Property<DateTime>("CreationDate");
+
+                            b1.Property<string>("FieldName")
+                                .IsRequired();
+
+                            b1.Property<Guid>("Id");
+
+                            b1.Property<bool>("IsArchived");
+
+                            b1.Property<bool>("IsDeleted");
+
+                            b1.Property<bool>("IsHidden");
+
+                            b1.Property<bool>("IsPublished");
+
+                            b1.Property<Guid>("LastModifiedBy");
+
+                            b1.Property<Guid>("MasterId");
+
+                            b1.Property<DateTime>("ModificationDate");
+
+                            b1.Property<DateTime>("PublicationDate");
+
+                            b1.Property<DateTime?>("PublicationEndDate");
+
+                            b1.Property<string>("Slug")
+                                .IsRequired();
+
+                            b1.Property<string>("Title")
+                                .IsRequired();
+
+                            b1.Property<string>("TypeName")
+                                .IsRequired();
+
+                            b1.Property<string>("Value")
+                                .IsRequired();
+
+                            b1.Property<int>("Version");
 
                             b1.HasKey("ArticleListDTOId", "__synthesizedOrdinal");
 
@@ -180,45 +283,6 @@ namespace Comjustinspicer.CMS.Migrations.Article
                             b1.WithOwner()
                                 .HasForeignKey("ArticleListDTOId");
                         });
-
-                    b.Navigation("CustomFields");
-                });
-
-            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.PostDTO", b =>
-                {
-                    b.HasOne("Comjustinspicer.CMS.Data.Models.ArticleListDTO", "ArticleList")
-                        .WithMany("Articles")
-                        .HasForeignKey("ArticleListId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.OwnsMany("Comjustinspicer.CMS.Data.Models.CustomField", "CustomFields", b1 =>
-                        {
-                            b1.Property<Guid>("PostDTOId");
-
-                            b1.Property<int>("__synthesizedOrdinal")
-                                .ValueGeneratedOnAdd();
-
-                            b1.Property<string>("FieldName")
-                                .IsRequired();
-
-                            b1.Property<string>("TypeName")
-                                .IsRequired();
-
-                            b1.Property<string>("Value")
-                                .IsRequired();
-
-                            b1.HasKey("PostDTOId", "__synthesizedOrdinal");
-
-                            b1.ToTable("Posts");
-
-                            b1.ToJson("CustomFields");
-
-                            b1.WithOwner()
-                                .HasForeignKey("PostDTOId");
-                        });
-
-                    b.Navigation("ArticleList");
 
                     b.Navigation("CustomFields");
                 });

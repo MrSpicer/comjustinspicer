@@ -16,7 +16,7 @@ CC BY-SA 4.0
 ### Dependencies
 * [dotnet sdk](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 * [PostgreSQL](https://www.postgresql.org/)
-* [dotnet-ef](https://learn.microsoft.com/en-us/ef/core/cli/dotnet) (optional) - ```dotnet tool install --global dotnet-ef```
+* [dotnet-ef](https://learn.microsoft.com/en-us/ef/core/cli/dotnet) (optional) - ```dotnet tool install --global dotnet-ef --version 10.0.0```
 * [docker](https://docs.docker.com/desktop/setup/install/linux/) (optional)
 
 ## Setup

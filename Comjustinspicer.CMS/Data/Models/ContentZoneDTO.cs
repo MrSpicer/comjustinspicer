@@ -5,18 +5,11 @@ namespace Comjustinspicer.CMS.Data.Models;
 /// <summary>
 /// Database entity representing a named content zone that can contain multiple zone items.
 /// </summary>
-public class ContentZoneDTO : BaseContentDTO
+public record ContentZoneDTO : BaseContentDTO
 {
-    /// <summary>
-    /// Unique name/identifier for this content zone, used to reference it in views.
-    /// </summary>
     public string Name { get; set; } = string.Empty;
 
-    //todo: remove this
     public string Description { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Navigation property for zone items.
-    /// </summary>
     public List<ContentZoneItemDTO> Items { get; set; } = new();
 }

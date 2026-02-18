@@ -157,7 +157,7 @@ public class ContentBlockModelTests
     public async Task DeleteAsync_Delegates()
     {
     var svc = new Mock<IContentService<ContentBlockDTO>>();
-        svc.Setup(s => s.DeleteAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+        svc.Setup(s => s.DeleteAsync(It.IsAny<Guid>(), false, true, It.IsAny<CancellationToken>())).ReturnsAsync(true);
         var model = new ContentBlockModel(svc.Object, _mapper);
         var ok = await model.DeleteAsync(Guid.NewGuid());
         Assert.That(ok, Is.True);

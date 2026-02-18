@@ -114,7 +114,7 @@ public string RequiredField { get; set; } = string.Empty;
 |------|------------|---------|
 | Files (classes) | PascalCase, matches class | `ArticleModel.cs` |
 | Files (interfaces) | `I` prefix | `IContentService.cs` |
-| Files (DTOs) | `{Name}DTO.cs` | `PostDTO.cs` |
+| Files (DTOs) | `{Name}DTO.cs` | `ArticleDTO.cs` |
 | Files (ViewModels) | `{Name}ViewModel.cs` | `ArticleViewModel.cs` |
 | Files (Controllers) | `{Name}Controller.cs` | `BlogController.cs` |
 | Files (Tests) | `{Name}Tests.cs` | `ContentZoneTests.cs` |
