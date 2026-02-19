@@ -51,7 +51,7 @@ docker run -d \
     -e POSTGRES_PASSWORD="${DB_PASS}" \
     -p "${DB_PORT}:5432" \
     -v "${VOLUME_NAME}:/var/lib/postgresql" \
-    postgres:18
+    postgres:18-alpine
 
 # Verify the container is running
 sleep 2

@@ -1,12 +1,42 @@
-**/bin
-**/obj
-**/Logs
-.git
+# Build artifacts
+**/bin/
+**/obj/
+
+# Logs
+**/Logs/
+
+# Git
+.git/
 .gitignore
-.vscode
+
+# IDE and editor
+.vscode/
 *.user
 *.suo
 *.swp
 *.sln.docstates
+comjustinspicer.code-workspace
+
+# Docker files
 Dockerfile*
 .dockerignore
+docker-compose*.yml
+
+# Root-level node_modules (Playwright — dev only, not needed in container)
+node_modules/
+package.json
+package-lock.json
+
+# Documentation
+docs/
+README.md
+CLAUDE.md
+
+# Tests project — not needed for production build
+Comjustinspicer.Tests/
+
+# Scripts — not copied into container
+Scripts/
+
+# GitHub CI
+.github/

@@ -31,7 +31,7 @@ chmod +x ./Scripts/*
 ./Scripts/SetupLocalPostgresDBContainer.sh
 ```
 
-this will create a postgres 8 docker container
+this will create a postgres 18-alpine docker container
 
 ### Development - Hot Reload
 ```
@@ -49,7 +49,7 @@ The watch system monitors source files and automatically rebuilds when you save 
 
 ### Build Image
 ```
-/Scripts/DockerBuild.sh
+./Scripts/DockerBuild.sh
 ```
 ### Run with Docker Compose
 ```
