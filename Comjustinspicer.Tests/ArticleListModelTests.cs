@@ -30,23 +30,29 @@ public class ArticleListModelTests
         _mapper = config.CreateMapper();
     }
 
-    private static ArticleListDTO CreateArticleList(Guid? id = null, string slug = "test-list") => new ArticleListDTO
+    private static ArticleListDTO CreateArticleList(Guid? id = null, string slug = "test-list")
     {
-        Id = id ?? Guid.NewGuid(),
-        Title = "Test List",
-        Slug = slug,
-        PublicationDate = DateTime.UtcNow,
-        CreationDate = DateTime.UtcNow.AddMinutes(-10),
-        ModificationDate = DateTime.UtcNow.AddMinutes(-5)
-    };
+        var resolvedId = id ?? Guid.NewGuid();
+        return new ArticleListDTO
+        {
+            Id = resolvedId,
+            MasterId = resolvedId,
+            Title = "Test List",
+            Slug = slug,
+            PublicationDate = DateTime.UtcNow,
+            CreationDate = DateTime.UtcNow.AddMinutes(-10),
+            ModificationDate = DateTime.UtcNow.AddMinutes(-5)
+        };
+    }
 
-    private static ArticleDTO CreatePost(Guid articleListId, Guid? id = null) => new ArticleDTO
+    private static ArticleDTO CreatePost(Guid articleListMasterId, Guid? id = null, bool isPublished = true) => new ArticleDTO
     {
         Id = id ?? Guid.NewGuid(),
         Title = "T",
         Body = "B",
         AuthorName = "A",
-        ArticleListId = articleListId,
+        ArticleListMasterId = articleListMasterId,
+        IsPublished = isPublished,
         PublicationDate = DateTime.UtcNow.AddMinutes(-1),
         CreationDate = DateTime.UtcNow.AddMinutes(-10),
         ModificationDate = DateTime.UtcNow.AddMinutes(-5)
@@ -57,9 +63,9 @@ public class ArticleListModelTests
     {
         var list1 = CreateArticleList();
         var list2 = CreateArticleList(slug: "list-2");
-        var post1 = CreatePost(list1.Id);
-        var post2 = CreatePost(list1.Id);
-        var post3 = CreatePost(list2.Id);
+        var post1 = CreatePost(list1.MasterId);
+        var post2 = CreatePost(list1.MasterId);
+        var post3 = CreatePost(list2.MasterId);
 
         var listSvc = new Mock<IContentService<ArticleListDTO>>();
         listSvc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<ArticleListDTO> { list1, list2 });
@@ -76,32 +82,32 @@ public class ArticleListModelTests
     }
 
     [Test]
-    public async Task GetArticlesForListAsync_FiltersPostsByArticleListId()
+    public async Task GetArticlesForListAsync_FiltersPostsByArticleListMasterId()
     {
         var list = CreateArticleList();
-        var otherListId = Guid.NewGuid();
-        var post1 = CreatePost(list.Id);
-        var post2 = CreatePost(otherListId);
+        var otherListMasterId = Guid.NewGuid();
+        var post1 = CreatePost(list.MasterId);
+        var post2 = CreatePost(otherListMasterId);
 
         var listSvc = new Mock<IContentService<ArticleListDTO>>();
-        listSvc.Setup(s => s.GetByIdAsync(list.Id, It.IsAny<CancellationToken>())).ReturnsAsync(list);
+        listSvc.Setup(s => s.GetByMasterIdAsync(list.MasterId, It.IsAny<CancellationToken>())).ReturnsAsync(list);
 
         var postSvc = new Mock<IContentService<ArticleDTO>>();
         postSvc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<ArticleDTO> { post1, post2 });
 
         var model = new ArticleListModel(listSvc.Object, postSvc.Object, _mapper);
-        var vm = await model.GetArticlesForListAsync(list.Id);
+        var vm = await model.GetArticlesForListAsync(list.MasterId);
 
         Assert.That(vm, Is.Not.Null);
         Assert.That(vm!.Articles, Has.Count.EqualTo(1));
-        Assert.That(vm.ArticleListId, Is.EqualTo(list.Id));
+        Assert.That(vm.ArticleListId, Is.EqualTo(list.MasterId));
     }
 
     [Test]
     public async Task GetArticlesForListAsync_ListNotFound_ReturnsNull()
     {
         var listSvc = new Mock<IContentService<ArticleListDTO>>();
-        listSvc.Setup(s => s.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(null as ArticleListDTO);
+        listSvc.Setup(s => s.GetByMasterIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(null as ArticleListDTO);
 
         var postSvc = new Mock<IContentService<ArticleDTO>>();
         var model = new ArticleListModel(listSvc.Object, postSvc.Object, _mapper);
@@ -111,14 +117,35 @@ public class ArticleListModelTests
     }
 
     [Test]
+    public async Task GetArticlesForListAsync_ExcludesUnpublishedArticles()
+    {
+        var list = CreateArticleList();
+        var published = CreatePost(list.MasterId, isPublished: true);
+        var unpublished = CreatePost(list.MasterId, isPublished: false);
+
+        var listSvc = new Mock<IContentService<ArticleListDTO>>();
+        listSvc.Setup(s => s.GetByMasterIdAsync(list.MasterId, It.IsAny<CancellationToken>())).ReturnsAsync(list);
+
+        var postSvc = new Mock<IContentService<ArticleDTO>>();
+        postSvc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<ArticleDTO> { published, unpublished });
+
+        var model = new ArticleListModel(listSvc.Object, postSvc.Object, _mapper);
+        var vm = await model.GetArticlesForListAsync(list.MasterId);
+
+        Assert.That(vm, Is.Not.Null);
+        Assert.That(vm!.Articles, Has.Count.EqualTo(1));
+        Assert.That(vm.Articles[0].Id, Is.EqualTo(published.Id));
+    }
+
+    [Test]
     public async Task GetArticlesForListBySlugAsync_Found_ReturnsArticles()
     {
         var list = CreateArticleList(slug: "my-list");
-        var post = CreatePost(list.Id);
+        var post = CreatePost(list.MasterId);
 
         var listSvc = new Mock<IContentService<ArticleListDTO>>();
-        listSvc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<ArticleListDTO> { list });
-        listSvc.Setup(s => s.GetByIdAsync(list.Id, It.IsAny<CancellationToken>())).ReturnsAsync(list);
+        listSvc.Setup(s => s.GetBySlugAsync("my-list", It.IsAny<CancellationToken>())).ReturnsAsync(list);
+        listSvc.Setup(s => s.GetByMasterIdAsync(list.MasterId, It.IsAny<CancellationToken>())).ReturnsAsync(list);
 
         var postSvc = new Mock<IContentService<ArticleDTO>>();
         postSvc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<ArticleDTO> { post });
@@ -134,7 +161,7 @@ public class ArticleListModelTests
     public async Task GetArticlesForListBySlugAsync_NotFound_ReturnsNull()
     {
         var listSvc = new Mock<IContentService<ArticleListDTO>>();
-        listSvc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<ArticleListDTO>());
+        listSvc.Setup(s => s.GetBySlugAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(null as ArticleListDTO);
 
         var postSvc = new Mock<IContentService<ArticleDTO>>();
         var model = new ArticleListModel(listSvc.Object, postSvc.Object, _mapper);
@@ -164,13 +191,18 @@ public class ArticleListModelTests
     [Test]
     public async Task DeleteArticleListAsync_CallsService()
     {
+        var list = CreateArticleList();
+
         var listSvc = new Mock<IContentService<ArticleListDTO>>();
-        listSvc.Setup(s => s.DeleteAsync(It.IsAny<Guid>(), false, true, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+        listSvc.Setup(s => s.GetByIdAsync(list.Id, It.IsAny<CancellationToken>())).ReturnsAsync(list);
+        listSvc.Setup(s => s.DeleteAsync(list.Id, false, true, It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
         var postSvc = new Mock<IContentService<ArticleDTO>>();
+        postSvc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<ArticleDTO>());
+
         var model = new ArticleListModel(listSvc.Object, postSvc.Object, _mapper);
 
-        var result = await model.DeleteArticleListAsync(Guid.NewGuid());
+        var result = await model.DeleteArticleListAsync(list.Id);
         Assert.That(result, Is.True);
     }
 

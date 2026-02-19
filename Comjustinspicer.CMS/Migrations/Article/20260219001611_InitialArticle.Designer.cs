@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Comjustinspicer.CMS.Migrations.Article
 {
     [DbContext(typeof(ArticleContext))]
-    [Migration("20260218195135_InitialArticle")]
+    [Migration("20260219001611_InitialArticle")]
     partial class InitialArticle
     {
         /// <inheritdoc />
@@ -31,8 +31,9 @@ namespace Comjustinspicer.CMS.Migrations.Article
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ArticleListId")
-                        .HasColumnType("uuid");
+                    b.Property<Guid>("ArticleListMasterId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("ArticleListMasterId");
 
                     b.Property<string>("AuthorName")
                         .IsRequired()
@@ -93,7 +94,7 @@ namespace Comjustinspicer.CMS.Migrations.Article
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ArticleListId");
+                    b.HasIndex("ArticleListMasterId");
 
                     b.ToTable("Posts", (string)null);
                 });
@@ -155,12 +156,6 @@ namespace Comjustinspicer.CMS.Migrations.Article
 
             modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ArticleDTO", b =>
                 {
-                    b.HasOne("Comjustinspicer.CMS.Data.Models.ArticleListDTO", "ArticleList")
-                        .WithMany("Articles")
-                        .HasForeignKey("ArticleListId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.OwnsMany("Comjustinspicer.CMS.Data.Models.CustomField", "CustomFields", b1 =>
                         {
                             b1.Property<Guid>("ArticleDTOId");
@@ -218,8 +213,6 @@ namespace Comjustinspicer.CMS.Migrations.Article
                             b1.WithOwner()
                                 .HasForeignKey("ArticleDTOId");
                         });
-
-                    b.Navigation("ArticleList");
 
                     b.Navigation("CustomFields");
                 });
@@ -285,11 +278,6 @@ namespace Comjustinspicer.CMS.Migrations.Article
                         });
 
                     b.Navigation("CustomFields");
-                });
-
-            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ArticleListDTO", b =>
-                {
-                    b.Navigation("Articles");
                 });
 #pragma warning restore 612, 618
         }

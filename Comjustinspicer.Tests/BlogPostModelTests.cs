@@ -37,7 +37,7 @@ public class ArticlePostModelTests
         Title = "T",
         Body = "B",
         AuthorName = "A",
-        ArticleListId = DefaultListId,
+        ArticleListMasterId = DefaultListId,
         PublicationDate = DateTime.UtcNow.AddMinutes(-1),
         CreationDate = DateTime.UtcNow.AddMinutes(-10),
         ModificationDate = DateTime.UtcNow.AddMinutes(-5)

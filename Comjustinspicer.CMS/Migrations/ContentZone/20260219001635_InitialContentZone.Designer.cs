@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Comjustinspicer.CMS.Migrations.ContentZone
 {
     [DbContext(typeof(ContentZoneContext))]
-    [Migration("20260218195201_InitialContentZone")]
+    [Migration("20260219001635_InitialContentZone")]
     partial class InitialContentZone
     {
         /// <inheritdoc />

@@ -16,6 +16,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Rebuild Ef Migrations (destructive):** `./Scripts/RebuildEFMigrations.sh`
 - **Docker build:** `./Scripts/DockerBuild.sh`
 
+## rules
+ - if you start the web project turn it off when you are done
+ - when possible always use an mcp server to check all affected UI/UX
+
 ## Architecture
 
 This is an ASP.NET Core MVC CMS with two main projects:
@@ -77,3 +81,8 @@ Migrations live in `Comjustinspicer.CMS/Migrations/` organized by context (Ident
 ```
 dotnet ef migrations add <Name> -s Comjustinspicer.Web/Comjustinspicer.Web.csproj -p Comjustinspicer.CMS/Comjustinspicer.CMS.csproj -c <ContextName> -o Migrations/<Folder>
 ```
+
+
+## notes
+ - chromium is installed through the Fedora package manager. It does not need to be installed ever for any reason.
+ 

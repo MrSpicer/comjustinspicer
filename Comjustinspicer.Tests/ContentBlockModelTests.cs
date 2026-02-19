@@ -75,6 +75,26 @@ public class ContentBlockModelTests
     }
 
     [Test]
+    public void FromMasterIdAsync_Empty_Throws()
+    {
+        var svc = new Mock<IContentService<ContentBlockDTO>>();
+        var model = new ContentBlockModel(svc.Object, _mapper);
+        Assert.ThrowsAsync<ArgumentException>(async () => await model.FromMasterIdAsync(Guid.Empty));
+    }
+
+    [Test]
+    public async Task FromMasterIdAsync_Found_ReturnsDto()
+    {
+        var dto = CreateDto();
+        var svc = new Mock<IContentService<ContentBlockDTO>>();
+        svc.Setup(s => s.GetByMasterIdAsync(dto.Id, It.IsAny<CancellationToken>())).ReturnsAsync(dto);
+        var model = new ContentBlockModel(svc.Object, _mapper);
+        var result = await model.FromMasterIdAsync(dto.Id);
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result!.Id, Is.EqualTo(dto.Id));
+    }
+
+    [Test]
     public async Task GetContentBlockIndexAsync_ReturnsIndex()
     {
         var list = new List<ContentBlockDTO> { CreateDto() };

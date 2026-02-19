@@ -31,19 +31,6 @@
 			<p class="subtitle">@Model.PublicationDate?.ToString("MMMM dd, yyyy")</p>
 			<hr />
 			@Html.Raw(Model.Body)
-
-			<div class="mt-4">
-				@if (isAuthor && !string.IsNullOrEmpty(listSlug))
-				{
-					<a asp-action="PostEdit" asp-controller="AdminArticle" asp-route-listSlug="@listSlug" asp-route-id="@Model.Id"
-						class="button is-primary">Edit</a>
-				}
-				else if (isAuthor)
-				{
-					<a asp-action="PostEdit" asp-controller="AdminArticle" asp-route-id="@Model.Id"
-						class="button is-primary">Edit</a>
-				}
-			</div>
 		</div>
 	</div>
 </div>

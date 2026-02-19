@@ -37,16 +37,16 @@ public class MappingProfile : Profile
         .ForMember(d => d.IsDeleted, opt => opt.MapFrom(s => s.IsDeleted))
         .ForMember(d => d.CreatedBy, opt => opt.Ignore())
         .ForMember(d => d.LastModifiedBy, opt => opt.Ignore())
-        .ForMember(d => d.MasterId, opt => opt.Ignore())
-        .ForMember(d => d.Version, opt => opt.Ignore())
+        .ForMember(d => d.MasterId, opt => opt.MapFrom(s => s.MasterId ?? Guid.Empty))
+        .ForMember(d => d.Version, opt => opt.MapFrom(s => s.Version ?? 0))
         .ForMember(d => d.CustomFields, opt => opt.Ignore());
 
     // Post mappings
     CreateMap<ArticleDTO, ArticleViewModel>()
-        .ForMember(d => d.ArticleListId, opt => opt.MapFrom(s => s.ArticleListId));
+        .ForMember(d => d.ArticleListId, opt => opt.MapFrom(s => s.ArticleListMasterId));
     CreateMap<ArticleDTO, ArticleUpsertViewModel>()
         .ForMember(d => d.Slug, opt => opt.MapFrom(s => s.Slug ?? string.Empty))
-        .ForMember(d => d.ArticleListId, opt => opt.MapFrom(s => s.ArticleListId))
+        .ForMember(d => d.ArticleListId, opt => opt.MapFrom(s => s.ArticleListMasterId))
         .ForMember(d => d.PublicationDate, opt => opt.MapFrom(s => s.PublicationDate == default ? (DateTime?)null : s.PublicationDate));
 
     CreateMap<ArticleUpsertViewModel, ArticleDTO>()
@@ -56,8 +56,7 @@ public class MappingProfile : Profile
         .ForMember(d => d.Body, opt => opt.MapFrom(s => s.Body ?? string.Empty))
         .ForMember(d => d.AuthorName, opt => opt.MapFrom(s => s.AuthorName ?? string.Empty))
         .ForMember(d => d.Summary, opt => opt.MapFrom(s => s.Summary ?? string.Empty))
-        .ForMember(d => d.ArticleListId, opt => opt.MapFrom(s => s.ArticleListId))
-        .ForMember(d => d.ArticleList, opt => opt.Ignore())
+        .ForMember(d => d.ArticleListMasterId, opt => opt.MapFrom(s => s.ArticleListId))
         .ForMember(d => d.PublicationDate, opt => opt.MapFrom(s => DateTime.SpecifyKind(s.PublicationDate ?? DateTime.UtcNow, DateTimeKind.Utc)))
         .ForMember(d => d.PublicationEndDate, opt => opt.MapFrom(s => s.PublicationEndDate.HasValue
             ? DateTime.SpecifyKind(s.PublicationEndDate.Value, DateTimeKind.Utc)
@@ -70,8 +69,8 @@ public class MappingProfile : Profile
         .ForMember(d => d.IsDeleted, opt => opt.MapFrom(s => s.IsDeleted))
         .ForMember(d => d.CreatedBy, opt => opt.Ignore())
         .ForMember(d => d.LastModifiedBy, opt => opt.Ignore())
-        .ForMember(d => d.MasterId, opt => opt.Ignore())
-        .ForMember(d => d.Version, opt => opt.Ignore())
+        .ForMember(d => d.MasterId, opt => opt.MapFrom(s => s.MasterId ?? Guid.Empty))
+        .ForMember(d => d.Version, opt => opt.MapFrom(s => s.Version ?? 0))
         .ForMember(d => d.CustomFields, opt => opt.Ignore());
 
     // ArticleList mappings
@@ -83,7 +82,6 @@ public class MappingProfile : Profile
         .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id.HasValue && s.Id != Guid.Empty ? s.Id!.Value : Guid.NewGuid()))
         .ForMember(d => d.Title, opt => opt.MapFrom(s => s.Title ?? string.Empty))
         .ForMember(d => d.Slug, opt => opt.MapFrom(s => Uri.EscapeDataString(s.Slug ?? string.Empty)))
-        .ForMember(d => d.Articles, opt => opt.Ignore())
         .ForMember(d => d.CreationDate, opt => opt.MapFrom(_ => DateTime.UtcNow))
         .ForMember(d => d.ModificationDate, opt => opt.MapFrom(_ => DateTime.UtcNow))
         .ForMember(d => d.PublicationDate, opt => opt.MapFrom(s => DateTime.SpecifyKind(s.PublicationDate ?? DateTime.UtcNow, DateTimeKind.Utc)))
@@ -96,8 +94,8 @@ public class MappingProfile : Profile
         .ForMember(d => d.IsDeleted, opt => opt.MapFrom(s => s.IsDeleted))
         .ForMember(d => d.CreatedBy, opt => opt.Ignore())
         .ForMember(d => d.LastModifiedBy, opt => opt.Ignore())
-        .ForMember(d => d.MasterId, opt => opt.Ignore())
-        .ForMember(d => d.Version, opt => opt.Ignore())
+        .ForMember(d => d.MasterId, opt => opt.MapFrom(s => s.MasterId ?? Guid.Empty))
+        .ForMember(d => d.Version, opt => opt.MapFrom(s => s.Version ?? 0))
         .ForMember(d => d.CustomFields, opt => opt.Ignore());
 
     CreateMap<ArticleListDTO, ArticleListItemViewModel>()
@@ -139,8 +137,8 @@ public class MappingProfile : Profile
         .ForMember(d => d.IsDeleted, opt => opt.MapFrom(s => s.IsDeleted))
         .ForMember(d => d.CreatedBy, opt => opt.Ignore())
         .ForMember(d => d.LastModifiedBy, opt => opt.Ignore())
-        .ForMember(d => d.MasterId, opt => opt.Ignore())
-        .ForMember(d => d.Version, opt => opt.Ignore())
+        .ForMember(d => d.MasterId, opt => opt.MapFrom(s => s.MasterId ?? Guid.Empty))
+        .ForMember(d => d.Version, opt => opt.MapFrom(s => s.Version ?? 0))
         .ForMember(d => d.CustomFields, opt => opt.Ignore());
 
     CreateMap<PageDTO, PageItemViewModel>()

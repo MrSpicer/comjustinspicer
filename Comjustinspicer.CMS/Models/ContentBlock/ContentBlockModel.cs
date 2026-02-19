@@ -21,6 +21,12 @@ public sealed class ContentBlockModel : IContentBlockModel
 
         return await _service.GetByIdAsync(id);
     }
+
+    public async Task<ContentBlockDTO?> FromMasterIdAsync(Guid masterId, CancellationToken ct = default)
+    {
+        if (masterId == Guid.Empty) throw new ArgumentException("ID cannot be empty.", nameof(masterId));
+        return await _service.GetByMasterIdAsync(masterId, ct);
+    }
     
     public async Task<ContentBlockIndexViewModel> GetContentBlockIndexAsync(CancellationToken ct = default)
     {
@@ -57,6 +63,6 @@ public sealed class ContentBlockModel : IContentBlockModel
     
     public async Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
     {
-        return await _service.DeleteAsync(id, false, false, ct);
+        return await _service.DeleteAsync(id, false, true, ct);
     }
 }

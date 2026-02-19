@@ -24,8 +24,7 @@ public sealed class ArticleModel : IArticleModel
 
     public async Task<ArticleViewModel?> GetBySlugAsync(string slug, CancellationToken ct = default)
     {
-        var all = await _postService.GetAllAsync(ct);
-        var dto = all.FirstOrDefault(p => string.Equals(p.Slug, slug, StringComparison.OrdinalIgnoreCase));
+        var dto = await _postService.GetBySlugAsync(slug, ct);
         if (dto == null) return null;
         return _mapper.Map<ArticleViewModel>(dto);
     }
@@ -65,6 +64,6 @@ public sealed class ArticleModel : IArticleModel
 
     public async Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
     {
-        return await _postService.DeleteAsync(id, false, false, ct);
+        return await _postService.DeleteAsync(id, false, true, ct);
     }
 }

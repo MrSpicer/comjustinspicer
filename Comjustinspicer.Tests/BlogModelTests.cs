@@ -39,7 +39,7 @@ public class ArticleModelTests
         Body = "B",
         AuthorName = "A",
         Slug = "test-slug",
-        ArticleListId = DefaultListId,
+        ArticleListMasterId = DefaultListId,
         PublicationDate = pubDate ?? DateTime.UtcNow,
         CreationDate = DateTime.UtcNow.AddMinutes(-10),
         ModificationDate = DateTime.UtcNow.AddMinutes(-5)
@@ -93,7 +93,7 @@ public class ArticleModelTests
     {
         var post = CreatePost();
         var svc = new Mock<IContentService<ArticleDTO>>();
-        svc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<ArticleDTO> { post });
+        svc.Setup(s => s.GetBySlugAsync("test-slug", It.IsAny<CancellationToken>())).ReturnsAsync(post);
         var model = new ArticleModel(svc.Object, _mapper);
         var result = await model.GetBySlugAsync("test-slug");
         Assert.That(result, Is.Not.Null);
@@ -104,7 +104,7 @@ public class ArticleModelTests
     public async Task GetBySlugAsync_NotFound_ReturnsNull()
     {
         var svc = new Mock<IContentService<ArticleDTO>>();
-        svc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<ArticleDTO>());
+        svc.Setup(s => s.GetBySlugAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(null as ArticleDTO);
         var model = new ArticleModel(svc.Object, _mapper);
         var result = await model.GetBySlugAsync("nonexistent");
         Assert.That(result, Is.Null);

@@ -31,7 +31,7 @@ public class ContentBlockViewComponent : ViewComponent
         if (config == null || config.ContentBlockID == Guid.Empty) 
             return Content(string.Empty);
         
-        var dto = await _model.FromIdAsync(config.ContentBlockID, CancellationToken.None);
+        var dto = await _model.FromMasterIdAsync(config.ContentBlockID, CancellationToken.None);
         if (dto == null) 
             return View(new ContentBlockViewModel { Id = config.ContentBlockID });
         

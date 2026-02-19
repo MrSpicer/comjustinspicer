@@ -18,7 +18,8 @@ public sealed class ContentService<T> : IContentService<T> where T : BaseContent
     {
         return await _set
             .AsNoTracking()
-            .OrderByDescending(e => e.Id)
+            .Where(e => !_set.Any(e2 => e2.MasterId == e.MasterId && e2.Version > e.Version))
+            .OrderByDescending(e => e.ModificationDate)
             .ToListAsync(ct);
     }
 
@@ -27,6 +28,15 @@ public sealed class ContentService<T> : IContentService<T> where T : BaseContent
         return await _set
             .AsNoTracking()
             .FirstOrDefaultAsync(e => e.Id == id, ct);
+    }
+
+    public async Task<T?> GetByMasterIdAsync(Guid masterId, CancellationToken ct = default)
+    {
+        return await _set
+            .AsNoTracking()
+            .Where(e => e.MasterId == masterId)
+            .OrderByDescending(e => e.Version)
+            .FirstOrDefaultAsync(ct);
     }
 
     public async Task<T> CreateAsync(T entity, CancellationToken ct = default)
@@ -57,7 +67,11 @@ public sealed class ContentService<T> : IContentService<T> where T : BaseContent
     {
         if (entity == null) throw new ArgumentNullException(nameof(entity));
 
-        entity.Version = entity.Version++;
+        var originalId = entity.Id;
+        if (!await _set.AnyAsync(e => e.Id == originalId, ct))
+            return false;
+
+        entity.Version++;
         entity.Id = Guid.NewGuid(); // reset id for new version
         var now = DateTime.UtcNow;
         // Ensure modification timestamp reflects this update
@@ -80,13 +94,23 @@ public sealed class ContentService<T> : IContentService<T> where T : BaseContent
     {
         if (entity == null) throw new ArgumentNullException(nameof(entity));
 
-        if (entity.Id == Guid.Empty)
+        if (entity.Id == Guid.Empty || entity.MasterId == Guid.Empty)
         {
             await CreateAsync(entity, ct);
             return true;
         }
 
        return await UpdateAsync(entity, ct);
+    }
+
+    public async Task<T?> GetBySlugAsync(string slug, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(slug)) return null;
+        return await _set
+            .AsNoTracking()
+            .Where(e => e.Slug == slug
+                     && !_set.Any(e2 => e2.MasterId == e.MasterId && e2.Version > e.Version))
+            .FirstOrDefaultAsync(ct);
     }
 
     public async Task<bool> DeleteAsync(Guid id, bool softDelete = false, bool deleteHistory = false, CancellationToken ct = default)

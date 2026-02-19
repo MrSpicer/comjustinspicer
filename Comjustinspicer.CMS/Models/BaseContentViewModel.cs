@@ -12,6 +12,12 @@ public abstract class BaseContentViewModel
     [FormProperty(EditorType = EditorType.Hidden, Order = 0)]
     public Guid? Id { get; init; }
 
+    [FormProperty(EditorType = EditorType.Hidden, Order = 0)]
+    public Guid? MasterId { get; init; }
+
+    [FormProperty(EditorType = EditorType.Hidden, Order = 0)]
+    public int? Version { get; init; }
+
     [Required]
     [StringLength(500, ErrorMessage = "Title cannot be longer than 500 characters.")]
     [FormProperty(Label = "Title", EditorType = EditorType.Text, IsRequired = true, Order = 1)]

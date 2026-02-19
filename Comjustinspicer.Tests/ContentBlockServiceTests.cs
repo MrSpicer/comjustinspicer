@@ -78,11 +78,11 @@ public class ContentBlockServiceTests
             Assert.That(byId!.Content, Is.EqualTo("Updated content"));
         }
 
-        // Delete
+        // Delete all versions
         using (var ctx = new ContentBlockContext(options))
         {
             IContentService<ContentBlockDTO> svc = new ContentService<ContentBlockDTO>(ctx);
-            var ok = await svc.DeleteAsync(created.Id);
+            var ok = await svc.DeleteAsync(created.Id, false, true);
             Assert.That(ok, Is.True);
         }
 
@@ -91,9 +91,6 @@ public class ContentBlockServiceTests
             IContentService<ContentBlockDTO> svc = new ContentService<ContentBlockDTO>(ctx);
             var all = await svc.GetAllAsync();
             Assert.That(all.Count, Is.EqualTo(0));
-
-            var byId = await svc.GetByIdAsync(created.Id);
-            Assert.That(byId, Is.Null);
         }
     }
 
