@@ -5,10 +5,15 @@ using Comjustinspicer.CMS.Models.Shared;
 
 namespace Comjustinspicer.CMS.Models.Page;
 
-public sealed class PageModel : IPageModel
+public sealed class PageModel : VersionedModel<PageDTO>, IPageModel
 {
     private readonly IPageService _service;
     private readonly IMapper _mapper;
+
+    protected override string VersionHistoryContentType => "pages";
+    protected override string GetVersionHistoryBackUrl(string? parentKey = null) => "/admin/pages";
+    protected override Task<List<PageDTO>> GetAllVersionsAsync(Guid masterId, CancellationToken ct) => _service.GetAllVersionsAsync(masterId, ct);
+    protected override Task<bool> DeleteVersionCoreAsync(Guid id, CancellationToken ct) => _service.DeleteVersionAsync(id, ct);
 
     public PageModel(IPageService service, IMapper mapper)
     {
@@ -72,30 +77,8 @@ public sealed class PageModel : IPageModel
         return await _service.IsRouteAvailableAsync(route, excludeMasterId, ct);
     }
 
-    public async Task<VersionHistoryViewModel?> GetVersionHistoryAsync(Guid masterId, CancellationToken ct = default)
-    {
-        var versions = await _service.GetAllVersionsAsync(masterId, ct);
-        if (!versions.Any()) return null;
-        var maxVersion = versions.Max(v => v.Version);
-        return new VersionHistoryViewModel
-        {
-            ContentType = "pages",
-            MasterId = masterId,
-            ItemTitle = versions.First().Title ?? string.Empty,
-            BackUrl = "/admin/pages",
-            Versions = versions.Select(v => new VersionItemViewModel
-            {
-                Id = v.Id,
-                Version = v.Version,
-                Title = v.Title ?? string.Empty,
-                CreationDate = v.CreationDate,
-                ModificationDate = v.ModificationDate,
-                IsPublished = v.IsPublished,
-                IsDeleted = v.IsDeleted,
-                IsLatest = v.Version == maxVersion
-            }).ToList()
-        };
-    }
+    public Task<VersionHistoryViewModel?> GetVersionHistoryAsync(Guid masterId, CancellationToken ct = default)
+        => BuildVersionHistoryAsync(masterId, ct: ct);
 
     public async Task<PageUpsertViewModel?> GetPageUpsertForRestoreAsync(Guid historicalId, CancellationToken ct = default)
     {
@@ -111,7 +94,7 @@ public sealed class PageModel : IPageModel
     }
 
     public Task<bool> DeletePageVersionAsync(Guid id, CancellationToken ct = default)
-        => _service.DeleteVersionAsync(id, ct);
+        => DeleteVersionCoreAsync(id, ct);
 
     private static List<PageTreeNode> BuildTree(List<PageDTO> pages)
     {

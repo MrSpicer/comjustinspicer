@@ -90,6 +90,16 @@ public sealed class ContentService<T> : IContentService<T> where T : BaseContent
         if (entity.IsPublished && entity.PublicationDate == default)
             entity.PublicationDate = now;
 
+        if (entity.IsPublished)
+        {
+            var previousPublished = await _set
+                .Where(e => e.MasterId == entity.MasterId && e.IsPublished)
+                .ToListAsync(ct);
+            foreach (var prev in previousPublished)
+                prev.IsPublished = false;
+            _dbContext.UpdateRange(previousPublished);
+        }
+
         _dbContext.Add(entity);
 
         await _dbContext.SaveChangesAsync(ct);

@@ -5,10 +5,15 @@ using AutoMapper;
 
 namespace Comjustinspicer.CMS.Models.Article;
 
-public sealed class ArticleModel : IArticleModel
+public sealed class ArticleModel : VersionedModel<ArticleDTO>, IArticleModel
 {
     private readonly IContentService<ArticleDTO> _postService;
     private readonly IMapper _mapper;
+
+    protected override string VersionHistoryContentType => "articles";
+    protected override string GetVersionHistoryBackUrl(string? parentKey = null) => $"/admin/articles/{parentKey}/articles";
+    protected override Task<List<ArticleDTO>> GetAllVersionsAsync(Guid masterId, CancellationToken ct) => _postService.GetAllVersionsAsync(masterId, ct);
+    protected override Task<bool> DeleteVersionCoreAsync(Guid id, CancellationToken ct) => _postService.DeleteAsync(id, softDelete: false, deleteHistory: false, ct: ct);
 
     public ArticleModel(IContentService<ArticleDTO> postService, IMapper mapper)
     {
@@ -68,32 +73,8 @@ public sealed class ArticleModel : IArticleModel
         return await _postService.DeleteAsync(id, false, true, ct);
     }
 
-    public async Task<VersionHistoryViewModel?> GetVersionHistoryAsync(Guid masterId, string parentKey, CancellationToken ct = default)
-    {
-        var versions = await _postService.GetAllVersionsAsync(masterId, ct);
-        if (!versions.Any()) return null;
-        var maxVersion = versions.Max(v => v.Version);
-        return new VersionHistoryViewModel
-        {
-            ContentType = "articles",
-            MasterId = masterId,
-            ItemTitle = versions.First().Title ?? string.Empty,
-            BackUrl = $"/admin/articles/{parentKey}/articles",
-            ParentKey = parentKey,
-            ChildType = "articles",
-            Versions = versions.Select(v => new VersionItemViewModel
-            {
-                Id = v.Id,
-                Version = v.Version,
-                Title = v.Title ?? string.Empty,
-                CreationDate = v.CreationDate,
-                ModificationDate = v.ModificationDate,
-                IsPublished = v.IsPublished,
-                IsDeleted = v.IsDeleted,
-                IsLatest = v.Version == maxVersion
-            }).ToList()
-        };
-    }
+    public Task<VersionHistoryViewModel?> GetVersionHistoryAsync(Guid masterId, string parentKey, CancellationToken ct = default)
+        => BuildVersionHistoryAsync(masterId, parentKey, "articles", ct);
 
     public async Task<ArticleUpsertViewModel?> GetUpsertModelForRestoreAsync(Guid historicalId, CancellationToken ct = default)
     {
@@ -108,5 +89,5 @@ public sealed class ArticleModel : IArticleModel
     }
 
     public Task<bool> DeleteVersionAsync(Guid id, CancellationToken ct = default)
-        => _postService.DeleteAsync(id, softDelete: false, deleteHistory: false, ct: ct);
+        => DeleteVersionCoreAsync(id, ct);
 }

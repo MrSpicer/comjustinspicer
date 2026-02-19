@@ -1,12 +1,10 @@
-using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Models.Shared;
 
 namespace Comjustinspicer.CMS.Models.ContentBlock;
 
 public interface IContentBlockModel
 {
-    Task<ContentBlockDTO?> FromIdAsync(Guid id, CancellationToken ct = default);
-    Task<ContentBlockDTO?> FromMasterIdAsync(Guid masterId, CancellationToken ct = default);
+    Task<ContentBlockViewModel?> GetViewModelByMasterIdAsync(Guid masterId, CancellationToken ct = default);
     Task<ContentBlockIndexViewModel> GetContentBlockIndexAsync(CancellationToken ct = default);
     Task<ContentBlockUpsertViewModel?> GetUpsertModelAsync(Guid? id, CancellationToken ct = default);
     Task<(bool Success, string? ErrorMessage)> SaveUpsertAsync(ContentBlockUpsertViewModel model, CancellationToken ct = default);

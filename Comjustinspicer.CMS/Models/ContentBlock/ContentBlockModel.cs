@@ -5,10 +5,15 @@ using AutoMapper;
 
 namespace Comjustinspicer.CMS.Models.ContentBlock;
 
-public sealed class ContentBlockModel : IContentBlockModel
+public sealed class ContentBlockModel : VersionedModel<ContentBlockDTO>, IContentBlockModel
 {
     private readonly IContentService<ContentBlockDTO> _service;
     private readonly IMapper _mapper;
+
+    protected override string VersionHistoryContentType => "contentblocks";
+    protected override string GetVersionHistoryBackUrl(string? parentKey = null) => "/admin/contentblocks";
+    protected override Task<List<ContentBlockDTO>> GetAllVersionsAsync(Guid masterId, CancellationToken ct) => _service.GetAllVersionsAsync(masterId, ct);
+    protected override Task<bool> DeleteVersionCoreAsync(Guid id, CancellationToken ct) => _service.DeleteAsync(id, softDelete: false, deleteHistory: false, ct: ct);
 
     public ContentBlockModel(IContentService<ContentBlockDTO> service, IMapper mapper)
     {
@@ -16,19 +21,13 @@ public sealed class ContentBlockModel : IContentBlockModel
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<ContentBlockDTO?> FromIdAsync(Guid id, CancellationToken ct = default)
+    public async Task<ContentBlockViewModel?> GetViewModelByMasterIdAsync(Guid masterId, CancellationToken ct = default)
     {
-        if (id == Guid.Empty) throw new ArgumentException("ID cannot be empty.", nameof(id));
-
-        return await _service.GetByIdAsync(id);
+        var dto = await _service.GetByMasterIdAsync(masterId, ct);
+        if (dto == null) return null;
+        return _mapper.Map<ContentBlockViewModel>(dto);
     }
 
-    public async Task<ContentBlockDTO?> FromMasterIdAsync(Guid masterId, CancellationToken ct = default)
-    {
-        if (masterId == Guid.Empty) throw new ArgumentException("ID cannot be empty.", nameof(masterId));
-        return await _service.GetByMasterIdAsync(masterId, ct);
-    }
-    
     public async Task<ContentBlockIndexViewModel> GetContentBlockIndexAsync(CancellationToken ct = default)
     {
         var dtos = await _service.GetAllAsync(ct);
@@ -67,30 +66,8 @@ public sealed class ContentBlockModel : IContentBlockModel
         return await _service.DeleteAsync(id, false, true, ct);
     }
 
-    public async Task<VersionHistoryViewModel?> GetVersionHistoryAsync(Guid masterId, CancellationToken ct = default)
-    {
-        var versions = await _service.GetAllVersionsAsync(masterId, ct);
-        if (!versions.Any()) return null;
-        var maxVersion = versions.Max(v => v.Version);
-        return new VersionHistoryViewModel
-        {
-            ContentType = "contentblocks",
-            MasterId = masterId,
-            ItemTitle = versions.First().Title ?? string.Empty,
-            BackUrl = "/admin/contentblocks",
-            Versions = versions.Select(v => new VersionItemViewModel
-            {
-                Id = v.Id,
-                Version = v.Version,
-                Title = v.Title ?? string.Empty,
-                CreationDate = v.CreationDate,
-                ModificationDate = v.ModificationDate,
-                IsPublished = v.IsPublished,
-                IsDeleted = v.IsDeleted,
-                IsLatest = v.Version == maxVersion
-            }).ToList()
-        };
-    }
+    public Task<VersionHistoryViewModel?> GetVersionHistoryAsync(Guid masterId, CancellationToken ct = default)
+        => BuildVersionHistoryAsync(masterId, ct: ct);
 
     public async Task<ContentBlockUpsertViewModel?> GetUpsertModelForRestoreAsync(Guid historicalId, CancellationToken ct = default)
     {
@@ -105,5 +82,5 @@ public sealed class ContentBlockModel : IContentBlockModel
     }
 
     public Task<bool> DeleteVersionAsync(Guid id, CancellationToken ct = default)
-        => _service.DeleteAsync(id, softDelete: false, deleteHistory: false, ct: ct);
+        => DeleteVersionCoreAsync(id, ct);
 }

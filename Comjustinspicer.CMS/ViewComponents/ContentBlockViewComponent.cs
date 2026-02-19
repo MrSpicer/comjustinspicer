@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Comjustinspicer.CMS.Attributes;
 using Comjustinspicer.CMS.Models.ContentBlock;
-using AutoMapper;
 
 namespace Comjustinspicer.CMS.ViewComponents;
 
@@ -19,23 +18,18 @@ namespace Comjustinspicer.CMS.ViewComponents;
 public class ContentBlockViewComponent : ViewComponent
 {
     private readonly IContentBlockModel _model;
-    private readonly IMapper _mapper;
-    public ContentBlockViewComponent(IContentBlockModel model, IMapper mapper)
+
+    public ContentBlockViewComponent(IContentBlockModel model)
     {
         _model = model;
-        _mapper = mapper;
     }
 
     public async Task<IViewComponentResult> InvokeAsync(ContentBlockContentZoneConfiguration config)
     {
-        if (config == null || config.ContentBlockID == Guid.Empty) 
+        if (config == null || config.ContentBlockID == Guid.Empty)
             return Content(string.Empty);
-        
-        var dto = await _model.FromMasterIdAsync(config.ContentBlockID, CancellationToken.None);
-        if (dto == null) 
-            return View(new ContentBlockViewModel { Id = config.ContentBlockID });
-        
-        var vm = _mapper.Map<ContentBlockViewModel>(dto);
-        return View(vm);
+
+        var vm = await _model.GetViewModelByMasterIdAsync(config.ContentBlockID, CancellationToken.None);
+        return View(vm ?? new ContentBlockViewModel { Id = config.ContentBlockID });
     }
 }

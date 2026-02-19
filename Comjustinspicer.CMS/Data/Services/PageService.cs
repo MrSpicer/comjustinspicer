@@ -87,6 +87,16 @@ public sealed class PageService : IPageService
         if (page.IsPublished && page.PublicationDate == default)
             page.PublicationDate = DateTime.UtcNow;
 
+        if (page.IsPublished)
+        {
+            var previousPublished = await _context.Pages
+                .Where(p => p.MasterId == page.MasterId && p.IsPublished)
+                .ToListAsync(ct);
+            foreach (var prev in previousPublished)
+                prev.IsPublished = false;
+            _context.Pages.UpdateRange(previousPublished);
+        }
+
         _context.Pages.Add(page);
         await _context.SaveChangesAsync(ct);
         return true;

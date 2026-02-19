@@ -55,43 +55,26 @@ public class ContentBlockModelTests
 	};
 
     [Test]
-    public void FromIdAsync_Empty_Throws()
-    {
-    var svc = new Mock<IContentService<ContentBlockDTO>>();
-        var model = new ContentBlockModel(svc.Object, _mapper);
-        Assert.ThrowsAsync<ArgumentException>(async () => await model.FromIdAsync(Guid.Empty));
-    }
-
-    [Test]
-    public async Task FromIdAsync_Found_ReturnsDto()
-    {
-        var dto = CreateDto();
-    var svc = new Mock<IContentService<ContentBlockDTO>>();
-        svc.Setup(s => s.GetByIdAsync(dto.Id, It.IsAny<CancellationToken>())).ReturnsAsync(dto);
-        var model = new ContentBlockModel(svc.Object, _mapper);
-        var result = await model.FromIdAsync(dto.Id);
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result!.Id, Is.EqualTo(dto.Id));
-    }
-
-    [Test]
-    public void FromMasterIdAsync_Empty_Throws()
-    {
-        var svc = new Mock<IContentService<ContentBlockDTO>>();
-        var model = new ContentBlockModel(svc.Object, _mapper);
-        Assert.ThrowsAsync<ArgumentException>(async () => await model.FromMasterIdAsync(Guid.Empty));
-    }
-
-    [Test]
-    public async Task FromMasterIdAsync_Found_ReturnsDto()
+    public async Task GetViewModelByMasterIdAsync_Found_ReturnsMappedViewModel()
     {
         var dto = CreateDto();
         var svc = new Mock<IContentService<ContentBlockDTO>>();
         svc.Setup(s => s.GetByMasterIdAsync(dto.Id, It.IsAny<CancellationToken>())).ReturnsAsync(dto);
         var model = new ContentBlockModel(svc.Object, _mapper);
-        var result = await model.FromMasterIdAsync(dto.Id);
+        var result = await model.GetViewModelByMasterIdAsync(dto.Id);
         Assert.That(result, Is.Not.Null);
         Assert.That(result!.Id, Is.EqualTo(dto.Id));
+    }
+
+    [Test]
+    public async Task GetViewModelByMasterIdAsync_NotFound_ReturnsNull()
+    {
+        var svc = new Mock<IContentService<ContentBlockDTO>>();
+        svc.Setup(s => s.GetByMasterIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(null as ContentBlockDTO);
+        var model = new ContentBlockModel(svc.Object, _mapper);
+        var result = await model.GetViewModelByMasterIdAsync(Guid.NewGuid());
+        Assert.That(result, Is.Null);
     }
 
     [Test]
