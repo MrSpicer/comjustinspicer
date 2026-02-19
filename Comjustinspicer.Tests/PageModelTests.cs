@@ -10,6 +10,7 @@ using Comjustinspicer.CMS.Data;
 using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
 using Comjustinspicer.CMS.Models.Page;
+using Comjustinspicer.CMS.Pages;
 
 namespace Comjustinspicer.Tests;
 
@@ -60,7 +61,7 @@ public class PageModelTests
         };
         var svc = new Mock<IPageService>();
         svc.Setup(s => s.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(pages);
-        var model = new PageModel(svc.Object, _mapper);
+        var model = new PageModel(svc.Object, _mapper, new Mock<IPageControllerRegistry>().Object);
 
         var result = await model.GetPageIndexAsync();
 
@@ -73,7 +74,7 @@ public class PageModelTests
     public async Task GetPageUpsertAsync_NullId_ReturnsNewViewModel()
     {
         var svc = new Mock<IPageService>();
-        var model = new PageModel(svc.Object, _mapper);
+        var model = new PageModel(svc.Object, _mapper, new Mock<IPageControllerRegistry>().Object);
 
         var result = await model.GetPageUpsertAsync(null);
 
@@ -87,7 +88,7 @@ public class PageModelTests
         var dto = CreateDto();
         var svc = new Mock<IPageService>();
         svc.Setup(s => s.GetByIdAsync(dto.Id, It.IsAny<CancellationToken>())).ReturnsAsync(dto);
-        var model = new PageModel(svc.Object, _mapper);
+        var model = new PageModel(svc.Object, _mapper, new Mock<IPageControllerRegistry>().Object);
 
         var result = await model.GetPageUpsertAsync(dto.Id);
 
@@ -103,7 +104,7 @@ public class PageModelTests
         var svc = new Mock<IPageService>();
         svc.Setup(s => s.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(null as PageDTO);
-        var model = new PageModel(svc.Object, _mapper);
+        var model = new PageModel(svc.Object, _mapper, new Mock<IPageControllerRegistry>().Object);
 
         var result = await model.GetPageUpsertAsync(Guid.NewGuid());
 
@@ -116,7 +117,7 @@ public class PageModelTests
         var svc = new Mock<IPageService>();
         svc.Setup(s => s.CreateAsync(It.IsAny<PageDTO>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new PageDTO());
-        var model = new PageModel(svc.Object, _mapper);
+        var model = new PageModel(svc.Object, _mapper, new Mock<IPageControllerRegistry>().Object);
         var vm = CreateViewModel();
 
         var (success, err) = await model.SavePageUpsertAsync(vm);
@@ -132,7 +133,7 @@ public class PageModelTests
         var svc = new Mock<IPageService>();
         svc.Setup(s => s.UpdateAsync(It.IsAny<PageDTO>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
-        var model = new PageModel(svc.Object, _mapper);
+        var model = new PageModel(svc.Object, _mapper, new Mock<IPageControllerRegistry>().Object);
         var vm = CreateViewModel(Guid.NewGuid());
 
         var (success, err) = await model.SavePageUpsertAsync(vm);
@@ -148,7 +149,7 @@ public class PageModelTests
         var svc = new Mock<IPageService>();
         svc.Setup(s => s.UpdateAsync(It.IsAny<PageDTO>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
-        var model = new PageModel(svc.Object, _mapper);
+        var model = new PageModel(svc.Object, _mapper, new Mock<IPageControllerRegistry>().Object);
         var vm = CreateViewModel(Guid.NewGuid());
 
         var (success, err) = await model.SavePageUpsertAsync(vm);
@@ -161,7 +162,7 @@ public class PageModelTests
     public void SavePageUpsertAsync_Null_Throws()
     {
         var svc = new Mock<IPageService>();
-        var model = new PageModel(svc.Object, _mapper);
+        var model = new PageModel(svc.Object, _mapper, new Mock<IPageControllerRegistry>().Object);
 
         Assert.ThrowsAsync<ArgumentNullException>(async () => await model.SavePageUpsertAsync(null!));
     }
@@ -171,7 +172,7 @@ public class PageModelTests
     {
         var svc = new Mock<IPageService>();
         svc.Setup(s => s.DeleteAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
-        var model = new PageModel(svc.Object, _mapper);
+        var model = new PageModel(svc.Object, _mapper, new Mock<IPageControllerRegistry>().Object);
 
         var ok = await model.DeletePageAsync(Guid.NewGuid());
 
@@ -183,7 +184,7 @@ public class PageModelTests
     {
         var svc = new Mock<IPageService>();
         svc.Setup(s => s.IsRouteAvailableAsync("/test", null, It.IsAny<CancellationToken>())).ReturnsAsync(true);
-        var model = new PageModel(svc.Object, _mapper);
+        var model = new PageModel(svc.Object, _mapper, new Mock<IPageControllerRegistry>().Object);
 
         var available = await model.IsRouteAvailableAsync("/test");
 

@@ -150,7 +150,6 @@ public static class ServiceCollectionExtensions
 
 		// Page service and model registrations
 		services.AddScoped<IPageService, PageService>();
-		services.AddScoped<IPageModel, PageModel>();
 
 		// Page Controller Registry - scans assemblies for registered page controllers
 		services.AddSingleton<IPageControllerRegistry>(sp =>
@@ -166,17 +165,28 @@ public static class ServiceCollectionExtensions
 		// PageRouteTransformer for dynamic page routing
 		services.AddScoped<PageRouteTransformer>();
 
-		services.AddScoped<IContentBlockModel, ContentBlockModel>();
-		services.AddScoped<IContentZoneModel, ContentZoneModel>();
-		services.AddScoped<IArticleListModel, ArticleListModel>();
+		// Register concrete model types once; expose via both their domain interface and IAdminCrudHandler
+		// so all consumers share the same scoped instance.
+		services.AddScoped<ContentBlockModel>();
+		services.AddScoped<IContentBlockModel>(sp => sp.GetRequiredService<ContentBlockModel>());
+		services.AddScoped<IAdminCrudHandler>(sp => sp.GetRequiredService<ContentBlockModel>());
+
+		services.AddScoped<PageModel>();
+		services.AddScoped<IPageModel>(sp => sp.GetRequiredService<PageModel>());
+		services.AddScoped<IAdminCrudHandler>(sp => sp.GetRequiredService<PageModel>());
+
+		services.AddScoped<ArticleListModel>();
+		services.AddScoped<IArticleListModel>(sp => sp.GetRequiredService<ArticleListModel>());
+		services.AddScoped<IAdminCrudHandler>(sp => sp.GetRequiredService<ArticleListModel>());
+
+		services.AddScoped<ContentZoneModel>();
+		services.AddScoped<IContentZoneModel>(sp => sp.GetRequiredService<ContentZoneModel>());
+		services.AddScoped<IAdminCrudHandler>(sp => sp.GetRequiredService<ContentZoneModel>());
+
 		services.AddScoped<IArticleModel, ArticleModel>();
 
-		// Admin CRUD handlers
+		// Admin CRUD handler registry
 		services.Configure<RouteOptions>(o => o.ConstraintMap["notreserved"] = typeof(NotReservedConstraint));
-		services.AddScoped<IAdminCrudHandler, ContentBlockCrudHandler>();
-		services.AddScoped<IAdminCrudHandler, ArticleCrudHandler>();
-		services.AddScoped<IAdminCrudHandler, PageCrudHandler>();
-		services.AddScoped<IAdminCrudHandler, ContentZoneCrudHandler>();
 		services.AddScoped<IAdminHandlerRegistry, AdminHandlerRegistry>();
 
 		// AutoMapper profile from this assembly

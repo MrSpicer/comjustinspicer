@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Comjustinspicer.CMS.Controllers.Admin.Handlers;
 using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
 using Comjustinspicer.CMS.Models.Shared;
@@ -5,25 +8,39 @@ using AutoMapper;
 
 namespace Comjustinspicer.CMS.Models.Article;
 
-public sealed class ArticleListModel : VersionedModel<ArticleListDTO>, IArticleListModel
+public sealed class ArticleListModel : AdminCrudModel<ArticleListDTO>, IArticleListModel
 {
     private readonly IContentService<ArticleDTO> _articleService;
     private readonly IContentService<ArticleListDTO> _articleListService;
     private readonly IMapper _mapper;
+    private readonly ArticleChildHandler _childHandler;
 
     protected override string VersionHistoryContentType => "articles";
     protected override string GetVersionHistoryBackUrl(string? parentKey = null) => "/admin/articles";
     protected override Task<List<ArticleListDTO>> GetAllVersionsAsync(Guid masterId, CancellationToken ct) => _articleListService.GetAllVersionsAsync(masterId, ct);
     protected override Task<bool> DeleteVersionCoreAsync(Guid id, CancellationToken ct) => _articleListService.DeleteAsync(id, softDelete: false, deleteHistory: false, ct: ct);
 
-    public ArticleListModel(IContentService<ArticleListDTO> articleListService, IContentService<ArticleDTO> articleService, IMapper mapper)
+    public override string ContentType => "articles";
+    public override string DisplayName => "Article List";
+    public override string IndexViewPath => "~/Views/AdminArticle/Index.cshtml";
+    public override string UpsertViewPath => "~/Views/AdminArticle/ArticleListUpsert.cshtml";
+    public override bool HasSecondaryApiList => true;
+    public override IAdminCrudChildHandler? ChildHandler => _childHandler;
+
+    public ArticleListModel(
+        IContentService<ArticleListDTO> articleListService,
+        IContentService<ArticleDTO> articleService,
+        IMapper mapper,
+        IArticleModel articleModel)
     {
         _articleService = articleService ?? throw new ArgumentNullException(nameof(articleService));
         _articleListService = articleListService ?? throw new ArgumentNullException(nameof(articleListService));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        _childHandler = new ArticleChildHandler(this, articleModel ?? throw new ArgumentNullException(nameof(articleModel)));
     }
 
-    public async Task<ArticleListViewModel> GetIndexViewModelAsync(CancellationToken ct = default)
+    // IArticleListModel.GetIndexViewModelAsync — explicit to avoid clash with IAdminCrudHandler.GetIndexViewModelAsync
+    async Task<ArticleListViewModel> IArticleListModel.GetIndexViewModelAsync(CancellationToken ct)
     {
         var vm = new ArticleListViewModel();
         var articles = await _articleService.GetAllAsync(ct);
@@ -127,6 +144,118 @@ public sealed class ArticleListModel : VersionedModel<ArticleListDTO>, IArticleL
         return vm;
     }
 
-    public Task<bool> DeleteVersionAsync(Guid id, CancellationToken ct = default)
+    public override Task<bool> DeleteVersionAsync(Guid id, CancellationToken ct = default)
         => DeleteVersionCoreAsync(id, ct);
+
+    // IAdminCrudHandler members (override AdminCrudModel<T> abstract members)
+    public override async Task<object> GetIndexViewModelAsync(CancellationToken ct = default)
+        => await GetArticleListIndexAsync(ct);
+
+    public override async Task<object?> GetUpsertViewModelAsync(Guid? id, IQueryCollection query, CancellationToken ct = default)
+    {
+        var vm = await GetArticleListUpsertAsync(id, ct);
+        if (vm == null && id != null) return null;
+        return vm ?? new ArticleListUpsertViewModel();
+    }
+
+    public override object CreateEmptyUpsertViewModel() => new ArticleListUpsertViewModel();
+
+    public override async Task<AdminSaveResult> SaveUpsertAsync(object model, CancellationToken ct = default)
+    {
+        var vm = (ArticleListUpsertViewModel)model;
+        var result = await SaveArticleListUpsertAsync(vm, ct);
+        return result.Success
+            ? new AdminSaveResult(true)
+            : new AdminSaveResult(false, result.ErrorMessage);
+    }
+
+    public override Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
+        => DeleteArticleListAsync(id, ct);
+
+    public override async Task<IEnumerable<object>> GetApiListAsync(CancellationToken ct = default)
+    {
+        var vm = await ((IArticleListModel)this).GetIndexViewModelAsync(ct);
+        return vm.Articles.Select(p => (object)new { id = p.Id, title = p.Title });
+    }
+
+    public override async Task<IEnumerable<object>> GetSecondaryApiListAsync(string key, CancellationToken ct = default)
+    {
+        if (!string.Equals(key, "articlelists", StringComparison.OrdinalIgnoreCase))
+            return Enumerable.Empty<object>();
+
+        var vm = await GetArticleListIndexAsync(ct);
+        return vm.ArticleLists.Select(l => (object)new { id = l.Id, title = l.Title });
+    }
+
+    public override async Task<object?> GetRestoreVersionViewModelAsync(Guid historicalId, CancellationToken ct = default)
+        => await GetUpsertModelForRestoreAsync(historicalId, ct);
+}
+
+/// <summary>Manages articles within an article list (child entities).</summary>
+internal sealed class ArticleChildHandler : IAdminCrudChildHandler
+{
+    private readonly IArticleListModel _listModel;
+    private readonly IArticleModel _articleModel;
+
+    public ArticleChildHandler(IArticleListModel listModel, IArticleModel articleModel)
+    {
+        _listModel = listModel;
+        _articleModel = articleModel;
+    }
+
+    public string ChildType => "articles";
+    public string ChildDisplayName => "Article";
+    public string[]? WriteRoles => ["Admin", "Editor"];
+
+    public string ChildIndexViewPath => "~/Views/AdminArticle/Articles.cshtml";
+    public string ChildUpsertViewPath => "~/Views/AdminArticle/Upsert.cshtml";
+
+    public async Task<object?> GetChildIndexViewModelAsync(string parentKey, CancellationToken ct = default)
+        => await _listModel.GetArticlesForListBySlugAsync(parentKey, ct);
+
+    public async Task<object?> GetChildUpsertViewModelAsync(string parentKey, Guid? id, CancellationToken ct = default)
+    {
+        var list = await _listModel.GetArticlesForListBySlugAsync(parentKey, ct);
+        if (list == null) return null;
+        var vm = await _articleModel.GetUpsertViewModelAsync(id, list.ArticleListId, ct);
+        if (vm == null && id != null) return null;
+        return vm;
+    }
+
+    public async Task SetChildUpsertViewDataAsync(ViewDataDictionary viewData, string parentKey, CancellationToken ct = default)
+    {
+        viewData["ArticleListSlug"] = parentKey;
+        var list = await _listModel.GetArticlesForListBySlugAsync(parentKey, ct);
+        viewData["ArticleListTitle"] = list?.ArticleListTitle;
+    }
+
+    public object CreateEmptyChildUpsertViewModel() => new ArticleUpsertViewModel();
+
+    public async Task<AdminSaveResult> SaveChildUpsertAsync(string parentKey, object model, CancellationToken ct = default)
+    {
+        var vm = (ArticleUpsertViewModel)model;
+        var result = await _articleModel.SaveUpsertAsync(vm, ct);
+        return result.Success
+            ? new AdminSaveResult(true)
+            : new AdminSaveResult(false, result.ErrorMessage);
+    }
+
+    public Task<bool> DeleteChildAsync(Guid id, CancellationToken ct = default)
+        => _articleModel.DeleteAsync(id, ct);
+
+    public bool SupportsReorder => false;
+
+    public Task<bool> ReorderAsync(string parentKey, List<Guid> orderedIds, CancellationToken ct = default)
+        => Task.FromResult(false);
+
+    public bool SupportsVersionHistory => true;
+
+    public Task<VersionHistoryViewModel?> GetChildVersionHistoryViewModelAsync(string parentKey, Guid masterId, CancellationToken ct = default)
+        => _articleModel.GetVersionHistoryAsync(masterId, parentKey, ct);
+
+    public async Task<object?> GetChildRestoreVersionViewModelAsync(string parentKey, Guid historicalId, CancellationToken ct = default)
+        => await _articleModel.GetUpsertModelForRestoreAsync(historicalId, ct);
+
+    public Task<bool> DeleteChildVersionAsync(Guid id, CancellationToken ct = default)
+        => _articleModel.DeleteVersionAsync(id, ct);
 }
