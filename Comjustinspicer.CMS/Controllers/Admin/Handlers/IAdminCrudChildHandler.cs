@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Comjustinspicer.CMS.Models.Shared;
 
 namespace Comjustinspicer.CMS.Controllers.Admin.Handlers;
 
@@ -47,4 +48,15 @@ public interface IAdminCrudChildHandler
     bool SupportsReorder { get; }
 
     Task<bool> ReorderAsync(string parentKey, List<Guid> orderedIds, CancellationToken ct = default);
+
+    bool SupportsVersionHistory => false;
+
+    Task<VersionHistoryViewModel?> GetChildVersionHistoryViewModelAsync(string parentKey, Guid masterId, CancellationToken ct = default)
+        => Task.FromResult<VersionHistoryViewModel?>(null);
+
+    Task<object?> GetChildRestoreVersionViewModelAsync(string parentKey, Guid historicalId, CancellationToken ct = default)
+        => Task.FromResult<object?>(null);
+
+    Task<bool> DeleteChildVersionAsync(Guid id, CancellationToken ct = default)
+        => Task.FromResult(false);
 }

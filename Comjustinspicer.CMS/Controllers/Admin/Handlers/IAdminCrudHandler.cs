@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Comjustinspicer.CMS.Models.Shared;
 
 namespace Comjustinspicer.CMS.Controllers.Admin.Handlers;
 
@@ -53,4 +54,15 @@ public interface IAdminCrudHandler
 
     /// <summary>Optional: manages child entities (articles, zone items).</summary>
     IAdminCrudChildHandler? ChildHandler { get; }
+
+    bool SupportsVersionHistory => false;
+
+    Task<VersionHistoryViewModel?> GetVersionHistoryViewModelAsync(Guid masterId, CancellationToken ct = default)
+        => Task.FromResult<VersionHistoryViewModel?>(null);
+
+    Task<object?> GetRestoreVersionViewModelAsync(Guid historicalId, CancellationToken ct = default)
+        => Task.FromResult<object?>(null);
+
+    Task<bool> DeleteVersionAsync(Guid id, CancellationToken ct = default)
+        => Task.FromResult(false);
 }

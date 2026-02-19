@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Comjustinspicer.CMS.Models.Page;
+using Comjustinspicer.CMS.Models.Shared;
 using Comjustinspicer.CMS.Pages;
 
 namespace Comjustinspicer.CMS.Controllers.Admin.Handlers;
@@ -78,6 +79,17 @@ public class PageCrudHandler : IAdminCrudHandler
 
     public IAdminRegistryHandler? RegistryHandler { get; }
     public IAdminCrudChildHandler? ChildHandler => null;
+
+    public bool SupportsVersionHistory => true;
+
+    public Task<VersionHistoryViewModel?> GetVersionHistoryViewModelAsync(Guid masterId, CancellationToken ct = default)
+        => _model.GetVersionHistoryAsync(masterId, ct);
+
+    public async Task<object?> GetRestoreVersionViewModelAsync(Guid historicalId, CancellationToken ct = default)
+        => await _model.GetPageUpsertForRestoreAsync(historicalId, ct);
+
+    public Task<bool> DeleteVersionAsync(Guid id, CancellationToken ct = default)
+        => _model.DeletePageVersionAsync(id, ct);
 }
 
 internal sealed class PageRegistryHandler : IAdminRegistryHandler

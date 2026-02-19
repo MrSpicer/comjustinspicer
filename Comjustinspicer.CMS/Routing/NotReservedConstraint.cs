@@ -11,7 +11,7 @@ public class NotReservedConstraint : IRouteConstraint
 {
     private static readonly HashSet<string> Reserved = new(StringComparer.OrdinalIgnoreCase)
     {
-        "edit", "delete", "create", "registry", "api", "reorder"
+        "edit", "delete", "create", "registry", "api", "reorder", "versions"
     };
 
     public bool Match(HttpContext? httpContext, IRouter? route, string routeKey,

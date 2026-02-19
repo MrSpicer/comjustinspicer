@@ -102,6 +102,8 @@ public class MappingProfile : Profile
         .ConstructUsing(s => new ArticleListItemViewModel
         {
             Id = s.Id,
+            MasterId = s.MasterId,
+            Version = s.Version,
             Title = s.Title ?? string.Empty,
             Slug = s.Slug ?? string.Empty,
             CreationDate = s.CreationDate,
@@ -145,6 +147,8 @@ public class MappingProfile : Profile
         .ConstructUsing(s => new PageItemViewModel
         {
             Id = s.Id,
+            MasterId = s.MasterId,
+            Version = s.Version,
             Title = s.Title ?? string.Empty,
             Route = s.Route ?? string.Empty,
             ControllerName = s.ControllerName ?? string.Empty,
@@ -159,6 +163,8 @@ public class MappingProfile : Profile
         .ConstructUsing(s => new ContentBlockItemViewModel
         {
             Id = s.Id,
+            MasterId = s.MasterId,
+            Version = s.Version,
             Title = s.Title ?? string.Empty,
             Slug = s.Slug ?? string.Empty,
             CreationDate = s.CreationDate,

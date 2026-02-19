@@ -17,6 +17,7 @@
 				<tr>
 					<th>Title</th>
 					<th>Slug</th>
+					<th>Version</th>
 					<th>Id</th>
 					<th>Created</th>
 					<th>Modified</th>
@@ -29,10 +30,12 @@
 					<tr>
 						<td>@cb.Title</td>
 						<td>@cb.Slug</td>
+						<td><span class="tag is-light">v@(cb.Version)</span></td>
 						<td>@cb.Id</td>
 						<td>@cb.CreationDate.ToString("yyyy-MM-dd hh:mm")</td>
 						<td>@cb.ModificationDate.ToString("yyyy-MM-dd hh:mm")</td>
 						<td>
+							<a asp-controller="AdminContent" asp-action="VersionHistory" asp-route-contentType="contentblocks" asp-route-masterId="@cb.MasterId" class="button is-small is-info">Versions</a>
 							<a asp-controller="AdminContent" asp-action="Edit" asp-route-contentType="contentblocks" asp-route-id="@cb.Id" class="button is-small">Edit</a>
 							<form asp-controller="AdminContent" asp-action="Delete" asp-route-contentType="contentblocks" asp-route-id="@cb.Id" method="post" style="display:inline">
 								@Html.AntiForgeryToken()

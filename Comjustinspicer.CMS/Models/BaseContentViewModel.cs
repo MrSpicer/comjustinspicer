@@ -10,13 +10,13 @@ namespace Comjustinspicer.CMS.Models;
 public abstract class BaseContentViewModel
 {
     [FormProperty(EditorType = EditorType.Hidden, Order = 0)]
-    public Guid? Id { get; init; }
+    public Guid? Id { get; set; }
 
     [FormProperty(EditorType = EditorType.Hidden, Order = 0)]
-    public Guid? MasterId { get; init; }
+    public Guid? MasterId { get; set; }
 
     [FormProperty(EditorType = EditorType.Hidden, Order = 0)]
-    public int? Version { get; init; }
+    public int? Version { get; set; }
 
     [Required]
     [StringLength(500, ErrorMessage = "Title cannot be longer than 500 characters.")]

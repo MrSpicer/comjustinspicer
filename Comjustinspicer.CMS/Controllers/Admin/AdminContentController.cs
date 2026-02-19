@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Comjustinspicer.CMS.Controllers.Admin.Handlers;
+using Comjustinspicer.CMS.Models.Shared;
 
 namespace Comjustinspicer.CMS.Controllers.Admin;
 
@@ -146,6 +147,48 @@ public class AdminContentController : Controller
         return handler.RegistryHandler.GetProperties(name);
     }
 
+    // ─── Version History (top-level) ──────────────────────────────────────────
+
+    [HttpGet("{contentType}/versions/{masterId:guid}")]
+    [ActionName("VersionHistory")]
+    public async Task<IActionResult> VersionHistory(string contentType, Guid masterId, CancellationToken ct)
+    {
+        var handler = _registry.GetHandler(contentType);
+        if (handler == null) return HandlerNotFound(contentType);
+        if (!handler.SupportsVersionHistory) return NotFound();
+
+        var vm = await handler.GetVersionHistoryViewModelAsync(masterId, ct);
+        if (vm == null) return NotFound();
+        return View("~/Views/AdminShared/VersionHistory.cshtml", vm);
+    }
+
+    [HttpGet("{contentType}/versions/{masterId:guid}/edit/{id:guid}")]
+    [ActionName("VersionRestoreEdit")]
+    public async Task<IActionResult> VersionRestoreEdit(string contentType, Guid masterId, Guid id, CancellationToken ct)
+    {
+        var handler = _registry.GetHandler(contentType);
+        if (handler == null) return HandlerNotFound(contentType);
+        if (!handler.SupportsVersionHistory) return NotFound();
+
+        var vm = await handler.GetRestoreVersionViewModelAsync(id, ct);
+        if (vm == null) return NotFound();
+        return View(handler.UpsertViewPath, vm);
+    }
+
+    [HttpPost("{contentType}/versions/{masterId:guid}/delete/{id:guid}")]
+    [ActionName("VersionDelete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> VersionDelete(string contentType, Guid masterId, Guid id, CancellationToken ct)
+    {
+        var handler = _registry.GetHandler(contentType);
+        if (handler == null) return HandlerNotFound(contentType);
+        if (!handler.SupportsVersionHistory) return NotFound();
+        if (!HasWriteAccess(handler.WriteRoles)) return Forbid();
+
+        await handler.DeleteVersionAsync(id, ct);
+        return RedirectToAction(nameof(VersionHistory), new { contentType, masterId });
+    }
+
     // ─── Child CRUD ────────────────────────────────────────────────────────────
 
     [HttpGet("{contentType}/{parentKey:notreserved}/{childType}")]
@@ -272,5 +315,63 @@ public class AdminContentController : Controller
 
         var success = await child.ReorderAsync(parentKey, orderedIds, ct);
         return success ? Ok() : StatusCode(500);
+    }
+
+    // ─── Child Version History ─────────────────────────────────────────────────
+
+    [HttpGet("{contentType}/{parentKey:notreserved}/{childType}/versions/{masterId:guid}")]
+    [ActionName("ChildVersionHistory")]
+    public async Task<IActionResult> ChildVersionHistory(
+        string contentType, string parentKey, string childType, Guid masterId, CancellationToken ct)
+    {
+        var handler = _registry.GetHandler(contentType);
+        if (handler == null) return HandlerNotFound(contentType);
+
+        var child = handler.ChildHandler;
+        if (child == null || !string.Equals(child.ChildType, childType, StringComparison.OrdinalIgnoreCase))
+            return NotFound();
+        if (!child.SupportsVersionHistory) return NotFound();
+
+        var vm = await child.GetChildVersionHistoryViewModelAsync(parentKey, masterId, ct);
+        if (vm == null) return NotFound();
+        return View("~/Views/AdminShared/VersionHistory.cshtml", vm);
+    }
+
+    [HttpGet("{contentType}/{parentKey:notreserved}/{childType}/versions/{masterId:guid}/edit/{id:guid}")]
+    [ActionName("ChildVersionRestoreEdit")]
+    public async Task<IActionResult> ChildVersionRestoreEdit(
+        string contentType, string parentKey, string childType, Guid masterId, Guid id, CancellationToken ct)
+    {
+        var handler = _registry.GetHandler(contentType);
+        if (handler == null) return HandlerNotFound(contentType);
+
+        var child = handler.ChildHandler;
+        if (child == null || !string.Equals(child.ChildType, childType, StringComparison.OrdinalIgnoreCase))
+            return NotFound();
+        if (!child.SupportsVersionHistory) return NotFound();
+
+        var vm = await child.GetChildRestoreVersionViewModelAsync(parentKey, id, ct);
+        if (vm == null) return NotFound();
+        await child.SetChildUpsertViewDataAsync(ViewData, parentKey, ct);
+        return View(child.ChildUpsertViewPath, vm);
+    }
+
+    [HttpPost("{contentType}/{parentKey:notreserved}/{childType}/versions/{masterId:guid}/delete/{id:guid}")]
+    [ActionName("ChildVersionDelete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ChildVersionDelete(
+        string contentType, string parentKey, string childType, Guid masterId, Guid id, CancellationToken ct)
+    {
+        var handler = _registry.GetHandler(contentType);
+        if (handler == null) return HandlerNotFound(contentType);
+
+        var child = handler.ChildHandler;
+        if (child == null || !string.Equals(child.ChildType, childType, StringComparison.OrdinalIgnoreCase))
+            return NotFound();
+        if (!child.SupportsVersionHistory) return NotFound();
+        if (!HasWriteAccess(child.WriteRoles)) return Forbid();
+
+        await child.DeleteChildVersionAsync(id, ct);
+        return RedirectToAction(nameof(ChildVersionHistory), new { contentType, parentKey, childType, masterId });
     }
 }

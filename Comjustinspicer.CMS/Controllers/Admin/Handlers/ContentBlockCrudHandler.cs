@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Comjustinspicer.CMS.Models.ContentBlock;
+using Comjustinspicer.CMS.Models.Shared;
 
 namespace Comjustinspicer.CMS.Controllers.Admin.Handlers;
 
@@ -52,4 +53,15 @@ public class ContentBlockCrudHandler : IAdminCrudHandler
 
     public IAdminRegistryHandler? RegistryHandler => null;
     public IAdminCrudChildHandler? ChildHandler => null;
+
+    public bool SupportsVersionHistory => true;
+
+    public Task<VersionHistoryViewModel?> GetVersionHistoryViewModelAsync(Guid masterId, CancellationToken ct = default)
+        => _model.GetVersionHistoryAsync(masterId, ct);
+
+    public async Task<object?> GetRestoreVersionViewModelAsync(Guid historicalId, CancellationToken ct = default)
+        => await _model.GetUpsertModelForRestoreAsync(historicalId, ct);
+
+    public Task<bool> DeleteVersionAsync(Guid id, CancellationToken ct = default)
+        => _model.DeleteVersionAsync(id, ct);
 }

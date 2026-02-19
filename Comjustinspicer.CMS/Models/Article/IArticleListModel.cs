@@ -1,3 +1,5 @@
+using Comjustinspicer.CMS.Models.Shared;
+
 namespace Comjustinspicer.CMS.Models.Article;
 
 public interface IArticleListModel
@@ -9,4 +11,7 @@ public interface IArticleListModel
     Task<bool> DeleteArticleListAsync(Guid id, CancellationToken ct = default);
     Task<ArticleListViewModel?> GetArticlesForListAsync(Guid articleListMasterId, CancellationToken ct = default);
     Task<ArticleListViewModel?> GetArticlesForListBySlugAsync(string slug, CancellationToken ct = default);
+    Task<VersionHistoryViewModel?> GetVersionHistoryAsync(Guid masterId, CancellationToken ct = default);
+    Task<ArticleListUpsertViewModel?> GetUpsertModelForRestoreAsync(Guid historicalId, CancellationToken ct = default);
+    Task<bool> DeleteVersionAsync(Guid id, CancellationToken ct = default);
 }

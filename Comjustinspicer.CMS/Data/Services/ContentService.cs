@@ -39,6 +39,12 @@ public sealed class ContentService<T> : IContentService<T> where T : BaseContent
             .FirstOrDefaultAsync(ct);
     }
 
+    public async Task<List<T>> GetAllVersionsAsync(Guid masterId, CancellationToken ct = default)
+        => await _set.AsNoTracking()
+            .Where(e => e.MasterId == masterId)
+            .OrderByDescending(e => e.Version)
+            .ToListAsync(ct);
+
     public async Task<T> CreateAsync(T entity, CancellationToken ct = default)
     {
         if (entity == null) throw new ArgumentNullException(nameof(entity));

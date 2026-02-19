@@ -1,3 +1,5 @@
+using Comjustinspicer.CMS.Models.Shared;
+
 namespace Comjustinspicer.CMS.Models.Article;
 
 public interface IArticleModel
@@ -8,4 +10,7 @@ public interface IArticleModel
     Task<ArticleUpsertViewModel?> GetUpsertViewModelAsync(Guid? id, Guid articleListId, CancellationToken ct = default);
     Task<(bool Success, string? ErrorMessage)> SaveUpsertAsync(ArticleUpsertViewModel model, CancellationToken ct = default);
     Task<bool> DeleteAsync(Guid id, CancellationToken ct = default);
+    Task<VersionHistoryViewModel?> GetVersionHistoryAsync(Guid masterId, string parentKey, CancellationToken ct = default);
+    Task<ArticleUpsertViewModel?> GetUpsertModelForRestoreAsync(Guid historicalId, CancellationToken ct = default);
+    Task<bool> DeleteVersionAsync(Guid id, CancellationToken ct = default);
 }

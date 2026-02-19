@@ -1,4 +1,5 @@
 using Comjustinspicer.CMS.Data.Models;
+using Comjustinspicer.CMS.Models.Shared;
 
 namespace Comjustinspicer.CMS.Models.Page;
 
@@ -13,4 +14,7 @@ public interface IPageModel
     Task<(bool Success, string? ErrorMessage)> SavePageUpsertAsync(PageUpsertViewModel model, CancellationToken ct = default);
     Task<bool> DeletePageAsync(Guid id, CancellationToken ct = default);
     Task<bool> IsRouteAvailableAsync(string route, Guid? excludeMasterId = null, CancellationToken ct = default);
+    Task<VersionHistoryViewModel?> GetVersionHistoryAsync(Guid masterId, CancellationToken ct = default);
+    Task<PageUpsertViewModel?> GetPageUpsertForRestoreAsync(Guid historicalId, CancellationToken ct = default);
+    Task<bool> DeletePageVersionAsync(Guid id, CancellationToken ct = default);
 }

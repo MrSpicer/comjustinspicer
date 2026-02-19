@@ -100,6 +100,10 @@
                     {
                         <div class="buttons are-small">
                             <a href="@node.Route" target="_blank" class="button is-info">View</a>
+                            @if (node.PageMasterId.HasValue)
+                            {
+                                <a asp-controller="AdminContent" asp-action="VersionHistory" asp-route-contentType="pages" asp-route-masterId="@node.PageMasterId" class="button is-info">Versions</a>
+                            }
                             <a asp-controller="AdminContent" asp-action="Edit" asp-route-contentType="pages" asp-route-id="@node.PageId" class="button">Edit</a>
                             <form asp-controller="AdminContent" asp-action="Delete" asp-route-contentType="pages" asp-route-id="@node.PageId" method="post" style="display:inline">
                                 @Html.AntiForgeryToken()

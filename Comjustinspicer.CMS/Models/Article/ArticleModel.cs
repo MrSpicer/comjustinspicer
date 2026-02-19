@@ -1,5 +1,6 @@
 using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
+using Comjustinspicer.CMS.Models.Shared;
 using AutoMapper;
 
 namespace Comjustinspicer.CMS.Models.Article;
@@ -66,4 +67,46 @@ public sealed class ArticleModel : IArticleModel
     {
         return await _postService.DeleteAsync(id, false, true, ct);
     }
+
+    public async Task<VersionHistoryViewModel?> GetVersionHistoryAsync(Guid masterId, string parentKey, CancellationToken ct = default)
+    {
+        var versions = await _postService.GetAllVersionsAsync(masterId, ct);
+        if (!versions.Any()) return null;
+        var maxVersion = versions.Max(v => v.Version);
+        return new VersionHistoryViewModel
+        {
+            ContentType = "articles",
+            MasterId = masterId,
+            ItemTitle = versions.First().Title ?? string.Empty,
+            BackUrl = $"/admin/articles/{parentKey}/articles",
+            ParentKey = parentKey,
+            ChildType = "articles",
+            Versions = versions.Select(v => new VersionItemViewModel
+            {
+                Id = v.Id,
+                Version = v.Version,
+                Title = v.Title ?? string.Empty,
+                CreationDate = v.CreationDate,
+                ModificationDate = v.ModificationDate,
+                IsPublished = v.IsPublished,
+                IsDeleted = v.IsDeleted,
+                IsLatest = v.Version == maxVersion
+            }).ToList()
+        };
+    }
+
+    public async Task<ArticleUpsertViewModel?> GetUpsertModelForRestoreAsync(Guid historicalId, CancellationToken ct = default)
+    {
+        var historical = await _postService.GetByIdAsync(historicalId, ct);
+        if (historical == null) return null;
+        var latest = await _postService.GetByMasterIdAsync(historical.MasterId, ct);
+        if (latest == null) return null;
+        var vm = _mapper.Map<ArticleUpsertViewModel>(historical);
+        vm.Id = latest.Id;
+        vm.Version = latest.Version;
+        return vm;
+    }
+
+    public Task<bool> DeleteVersionAsync(Guid id, CancellationToken ct = default)
+        => _postService.DeleteAsync(id, softDelete: false, deleteHistory: false, ct: ct);
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Comjustinspicer.CMS.Models.Article;
+using Comjustinspicer.CMS.Models.Shared;
 
 namespace Comjustinspicer.CMS.Controllers.Admin.Handlers;
 
@@ -67,6 +68,17 @@ public class ArticleCrudHandler : IAdminCrudHandler
 
     public IAdminRegistryHandler? RegistryHandler => null;
     public IAdminCrudChildHandler? ChildHandler => _childHandler;
+
+    public bool SupportsVersionHistory => true;
+
+    public Task<VersionHistoryViewModel?> GetVersionHistoryViewModelAsync(Guid masterId, CancellationToken ct = default)
+        => _listModel.GetVersionHistoryAsync(masterId, ct);
+
+    public async Task<object?> GetRestoreVersionViewModelAsync(Guid historicalId, CancellationToken ct = default)
+        => await _listModel.GetUpsertModelForRestoreAsync(historicalId, ct);
+
+    public Task<bool> DeleteVersionAsync(Guid id, CancellationToken ct = default)
+        => _listModel.DeleteVersionAsync(id, ct);
 }
 
 /// <summary>Manages articles within an article list (child entities).</summary>
@@ -125,4 +137,15 @@ internal sealed class ArticleChildHandler : IAdminCrudChildHandler
 
     public Task<bool> ReorderAsync(string parentKey, List<Guid> orderedIds, CancellationToken ct = default)
         => Task.FromResult(false);
+
+    public bool SupportsVersionHistory => true;
+
+    public Task<VersionHistoryViewModel?> GetChildVersionHistoryViewModelAsync(string parentKey, Guid masterId, CancellationToken ct = default)
+        => _articleModel.GetVersionHistoryAsync(masterId, parentKey, ct);
+
+    public async Task<object?> GetChildRestoreVersionViewModelAsync(string parentKey, Guid historicalId, CancellationToken ct = default)
+        => await _articleModel.GetUpsertModelForRestoreAsync(historicalId, ct);
+
+    public Task<bool> DeleteChildVersionAsync(Guid id, CancellationToken ct = default)
+        => _articleModel.DeleteVersionAsync(id, ct);
 }

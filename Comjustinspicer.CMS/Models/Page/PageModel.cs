@@ -1,6 +1,7 @@
 using AutoMapper;
 using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
+using Comjustinspicer.CMS.Models.Shared;
 
 namespace Comjustinspicer.CMS.Models.Page;
 
@@ -71,6 +72,47 @@ public sealed class PageModel : IPageModel
         return await _service.IsRouteAvailableAsync(route, excludeMasterId, ct);
     }
 
+    public async Task<VersionHistoryViewModel?> GetVersionHistoryAsync(Guid masterId, CancellationToken ct = default)
+    {
+        var versions = await _service.GetAllVersionsAsync(masterId, ct);
+        if (!versions.Any()) return null;
+        var maxVersion = versions.Max(v => v.Version);
+        return new VersionHistoryViewModel
+        {
+            ContentType = "pages",
+            MasterId = masterId,
+            ItemTitle = versions.First().Title ?? string.Empty,
+            BackUrl = "/admin/pages",
+            Versions = versions.Select(v => new VersionItemViewModel
+            {
+                Id = v.Id,
+                Version = v.Version,
+                Title = v.Title ?? string.Empty,
+                CreationDate = v.CreationDate,
+                ModificationDate = v.ModificationDate,
+                IsPublished = v.IsPublished,
+                IsDeleted = v.IsDeleted,
+                IsLatest = v.Version == maxVersion
+            }).ToList()
+        };
+    }
+
+    public async Task<PageUpsertViewModel?> GetPageUpsertForRestoreAsync(Guid historicalId, CancellationToken ct = default)
+    {
+        var historical = await _service.GetByIdAsync(historicalId, ct);
+        if (historical == null) return null;
+        var latest = await _service.GetAllVersionsAsync(historical.MasterId, ct);
+        var latestVersion = latest.FirstOrDefault();
+        if (latestVersion == null) return null;
+        var vm = _mapper.Map<PageUpsertViewModel>(historical);
+        vm.Id = latestVersion.Id;
+        vm.Version = latestVersion.Version;
+        return vm;
+    }
+
+    public Task<bool> DeletePageVersionAsync(Guid id, CancellationToken ct = default)
+        => _service.DeleteVersionAsync(id, ct);
+
     private static List<PageTreeNode> BuildTree(List<PageDTO> pages)
     {
         var roots = new List<PageTreeNode>();
@@ -90,6 +132,8 @@ public sealed class PageModel : IPageModel
                         Route = "/",
                         Title = page.Title,
                         PageId = page.Id,
+                        PageMasterId = page.MasterId,
+                        PageVersion = page.Version,
                         ControllerName = page.ControllerName,
                         IsPublished = page.IsPublished
                     };
@@ -100,6 +144,8 @@ public sealed class PageModel : IPageModel
                 {
                     rootNode.Title = page.Title;
                     rootNode.PageId = page.Id;
+                    rootNode.PageMasterId = page.MasterId;
+                    rootNode.PageVersion = page.Version;
                     rootNode.ControllerName = page.ControllerName;
                     rootNode.IsPublished = page.IsPublished;
                 }
@@ -121,6 +167,8 @@ public sealed class PageModel : IPageModel
                         Route = currentPath,
                         Title = isLeaf ? page.Title : segments[i],
                         PageId = isLeaf ? page.Id : null,
+                        PageMasterId = isLeaf ? page.MasterId : null,
+                        PageVersion = isLeaf ? page.Version : 0,
                         ControllerName = isLeaf ? page.ControllerName : string.Empty,
                         IsPublished = isLeaf && page.IsPublished
                     };
@@ -143,6 +191,8 @@ public sealed class PageModel : IPageModel
                 {
                     node.Title = page.Title;
                     node.PageId = page.Id;
+                    node.PageMasterId = page.MasterId;
+                    node.PageVersion = page.Version;
                     node.ControllerName = page.ControllerName;
                     node.IsPublished = page.IsPublished;
                 }

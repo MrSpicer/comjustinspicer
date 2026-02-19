@@ -1,0 +1,129 @@
+@using Comjustinspicer.CMS.Models.Shared
+
+@model VersionHistoryViewModel
+
+@{
+    ViewData["Title"] = "Version History — " + Model.ItemTitle;
+}
+
+<section class="section">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+            <ul>
+                <li><a href="@Model.BackUrl">Back to listing</a></li>
+                <li class="is-active"><a>Version History: @Model.ItemTitle</a></li>
+            </ul>
+        </nav>
+
+        <h1 class="title">Version History</h1>
+        <h2 class="subtitle">@Model.ItemTitle</h2>
+
+        <table class="table is-fullwidth is-striped">
+            <thead>
+                <tr>
+                    <th>Version</th>
+                    <th>Title</th>
+                    <th>Modified</th>
+                    <th>Created</th>
+                    <th>Published</th>
+                    <th>Deleted</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var v in Model.Versions)
+                {
+                    <tr>
+                        <td><span class="tag is-light">v@(v.Version)</span></td>
+                        <td>@v.Title</td>
+                        <td>@v.ModificationDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@v.CreationDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>
+                            @if (v.IsPublished)
+                            {
+                                <span class="tag is-success">Yes</span>
+                            }
+                            else
+                            {
+                                <span class="tag is-warning">No</span>
+                            }
+                        </td>
+                        <td>
+                            @if (v.IsDeleted)
+                            {
+                                <span class="tag is-danger">Yes</span>
+                            }
+                            else
+                            {
+                                <span class="tag is-light">No</span>
+                            }
+                        </td>
+                        <td>
+                            @if (v.IsLatest)
+                            {
+                                <span class="tag is-info">Current</span>
+                            }
+                            else
+                            {
+                                <span class="tag is-light">Historical</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="buttons are-small">
+                                @if (Model.ParentKey != null)
+                                {
+                                    <a asp-controller="AdminContent"
+                                       asp-action="ChildVersionRestoreEdit"
+                                       asp-route-contentType="@Model.ContentType"
+                                       asp-route-parentKey="@Model.ParentKey"
+                                       asp-route-childType="@Model.ChildType"
+                                       asp-route-masterId="@Model.MasterId"
+                                       asp-route-id="@v.Id"
+                                       class="button is-small">Edit</a>
+                                    @if (!v.IsLatest)
+                                    {
+                                        <form asp-controller="AdminContent"
+                                              asp-action="ChildVersionDelete"
+                                              asp-route-contentType="@Model.ContentType"
+                                              asp-route-parentKey="@Model.ParentKey"
+                                              asp-route-childType="@Model.ChildType"
+                                              asp-route-masterId="@Model.MasterId"
+                                              asp-route-id="@v.Id"
+                                              method="post" style="display:inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="button is-small is-danger"
+                                                    onclick="return confirm('Delete this historical version?');">Delete</button>
+                                        </form>
+                                    }
+                                }
+                                else
+                                {
+                                    <a asp-controller="AdminContent"
+                                       asp-action="VersionRestoreEdit"
+                                       asp-route-contentType="@Model.ContentType"
+                                       asp-route-masterId="@Model.MasterId"
+                                       asp-route-id="@v.Id"
+                                       class="button is-small">Edit</a>
+                                    @if (!v.IsLatest)
+                                    {
+                                        <form asp-controller="AdminContent"
+                                              asp-action="VersionDelete"
+                                              asp-route-contentType="@Model.ContentType"
+                                              asp-route-masterId="@Model.MasterId"
+                                              asp-route-id="@v.Id"
+                                              method="post" style="display:inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="button is-small is-danger"
+                                                    onclick="return confirm('Delete this historical version?');">Delete</button>
+                                        </form>
+                                    }
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

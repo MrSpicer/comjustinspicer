@@ -16,6 +16,7 @@
                 <tr>
                     <th>Title</th>
                     <th>Slug</th>
+                    <th>Version</th>
                     <th>Articles</th>
                     <th>Created</th>
                     <th>Modified</th>
@@ -28,10 +29,12 @@
                     <tr>
                         <td>@list.Title</td>
                         <td>@list.Slug</td>
+                        <td><span class="tag is-light">v@(list.Version)</span></td>
                         <td>@list.ArticleCount</td>
                         <td>@list.CreationDate.ToString("yyyy-MM-dd HH:mm")</td>
                         <td>@list.ModificationDate.ToString("yyyy-MM-dd HH:mm")</td>
                         <td>
+                            <a asp-controller="AdminContent" asp-action="VersionHistory" asp-route-contentType="articles" asp-route-masterId="@list.MasterId" class="button is-small is-info">Versions</a>
                             <a asp-controller="AdminContent" asp-action="ChildIndex" asp-route-contentType="articles" asp-route-parentKey="@list.Slug" asp-route-childType="articles" class="button is-small is-info">Articles</a>
                             <a asp-controller="AdminContent" asp-action="Edit" asp-route-contentType="articles" asp-route-id="@list.Id" class="button is-small">Edit</a>
                             <form asp-controller="AdminContent" asp-action="Delete" asp-route-contentType="articles" asp-route-id="@list.Id" method="post" style="display:inline">

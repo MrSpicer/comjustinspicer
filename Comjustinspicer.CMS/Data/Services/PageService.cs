@@ -44,6 +44,13 @@ public sealed class PageService : IPageService
             .FirstOrDefaultAsync(ct);
     }
 
+    public async Task<List<PageDTO>> GetAllVersionsAsync(Guid masterId, CancellationToken ct = default)
+        => await _context.Pages
+            .AsNoTracking()
+            .Where(p => p.MasterId == masterId)
+            .OrderByDescending(p => p.Version)
+            .ToListAsync(ct);
+
     public async Task<PageDTO> CreateAsync(PageDTO page, CancellationToken ct = default)
     {
         if (page == null) throw new ArgumentNullException(nameof(page));
@@ -95,6 +102,15 @@ public sealed class PageService : IPageService
             .ToListAsync(ct);
 
         _context.Pages.RemoveRange(allVersions);
+        await _context.SaveChangesAsync(ct);
+        return true;
+    }
+
+    public async Task<bool> DeleteVersionAsync(Guid id, CancellationToken ct = default)
+    {
+        var entity = await _context.Pages.FirstOrDefaultAsync(p => p.Id == id, ct);
+        if (entity == null) return false;
+        _context.Pages.Remove(entity);
         await _context.SaveChangesAsync(ct);
         return true;
     }

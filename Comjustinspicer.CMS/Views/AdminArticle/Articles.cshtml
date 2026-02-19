@@ -24,6 +24,7 @@
                 <tr>
                     <th>Title</th>
                     <th>Slug</th>
+                    <th>Version</th>
                     <th>Created</th>
                     <th>Modified</th>
                     <th></th>
@@ -35,9 +36,20 @@
                     <tr>
                         <td>@article.Title</td>
                         <td>@article.Slug</td>
+                        <td><span class="tag is-light">v@(article.Version)</span></td>
                         <td>@article.CreationDate?.ToString("yyyy-MM-dd HH:mm")</td>
                         <td>@article.ModificationDate?.ToString("yyyy-MM-dd HH:mm")</td>
                         <td>
+                            @if (article.MasterId.HasValue)
+                            {
+                                <a asp-controller="AdminContent"
+                                   asp-action="ChildVersionHistory"
+                                   asp-route-contentType="articles"
+                                   asp-route-parentKey="@Model.ArticleListSlug"
+                                   asp-route-childType="articles"
+                                   asp-route-masterId="@article.MasterId"
+                                   class="button is-small is-info">Versions</a>
+                            }
                             <a asp-controller="AdminContent" asp-action="ChildEdit" asp-route-contentType="articles" asp-route-parentKey="@Model.ArticleListSlug" asp-route-childType="articles" asp-route-id="@article.Id" class="button is-small">Edit</a>
                             <form asp-controller="AdminContent" asp-action="ChildDelete" asp-route-contentType="articles" asp-route-parentKey="@Model.ArticleListSlug" asp-route-childType="articles" asp-route-id="@article.Id" method="post" style="display:inline">
                                 @Html.AntiForgeryToken()
