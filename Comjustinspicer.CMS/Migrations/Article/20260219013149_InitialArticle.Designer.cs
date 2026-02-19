@@ -9,11 +9,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Comjustinspicer.CMS.Migrations.ContentZone
+namespace Comjustinspicer.CMS.Migrations.Article
 {
-    [DbContext(typeof(ContentZoneContext))]
-    [Migration("20260219001635_InitialContentZone")]
-    partial class InitialContentZone
+    [DbContext(typeof(ArticleContext))]
+    [Migration("20260219013149_InitialArticle")]
+    partial class InitialArticle
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,22 +25,29 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ContentZoneDTO", b =>
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ArticleDTO", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<Guid>("ArticleListMasterId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("ArticleListMasterId");
+
+                    b.Property<string>("AuthorName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
 
                     b.Property<bool>("IsArchived")
                         .HasColumnType("boolean");
@@ -63,11 +70,6 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                     b.Property<DateTime>("ModificationDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
                     b.Property<DateTime>("PublicationDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -78,51 +80,36 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("Summary")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(20000)
+                        .HasColumnType("character varying(20000)");
 
                     b.Property<int>("Version")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
+                    b.HasIndex("ArticleListMasterId");
 
-                    b.ToTable("ContentZones", (string)null);
+                    b.ToTable("Articles", (string)null);
                 });
 
-            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ContentZoneItemDTO", b =>
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ArticleListDTO", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
-
-                    b.Property<string>("ComponentName")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("ComponentPropertiesJson")
-                        .IsRequired()
-                        .HasMaxLength(4000)
-                        .HasColumnType("character varying(4000)");
-
-                    b.Property<Guid>("ContentZoneId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsArchived")
                         .HasColumnType("boolean");
@@ -145,12 +132,6 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                     b.Property<DateTime>("ModificationDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("Ordinal")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("PublicationDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -170,16 +151,14 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ContentZoneId", "Ordinal");
-
-                    b.ToTable("ContentZoneItems", (string)null);
+                    b.ToTable("ArticleLists");
                 });
 
-            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ContentZoneDTO", b =>
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ArticleDTO", b =>
                 {
                     b.OwnsMany("Comjustinspicer.CMS.Data.Models.CustomField", "CustomFields", b1 =>
                         {
-                            b1.Property<Guid>("ContentZoneDTOId");
+                            b1.Property<Guid>("ArticleDTOId");
 
                             b1.Property<int>("__synthesizedOrdinal")
                                 .ValueGeneratedOnAdd();
@@ -225,30 +204,24 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
 
                             b1.Property<int>("Version");
 
-                            b1.HasKey("ContentZoneDTOId", "__synthesizedOrdinal");
+                            b1.HasKey("ArticleDTOId", "__synthesizedOrdinal");
 
-                            b1.ToTable("ContentZones");
+                            b1.ToTable("Articles");
 
                             b1.ToJson("CustomFields");
 
                             b1.WithOwner()
-                                .HasForeignKey("ContentZoneDTOId");
+                                .HasForeignKey("ArticleDTOId");
                         });
 
                     b.Navigation("CustomFields");
                 });
 
-            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ContentZoneItemDTO", b =>
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ArticleListDTO", b =>
                 {
-                    b.HasOne("Comjustinspicer.CMS.Data.Models.ContentZoneDTO", "ContentZone")
-                        .WithMany("Items")
-                        .HasForeignKey("ContentZoneId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.OwnsMany("Comjustinspicer.CMS.Data.Models.CustomField", "CustomFields", b1 =>
                         {
-                            b1.Property<Guid>("ContentZoneItemDTOId");
+                            b1.Property<Guid>("ArticleListDTOId");
 
                             b1.Property<int>("__synthesizedOrdinal")
                                 .ValueGeneratedOnAdd();
@@ -294,24 +267,17 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
 
                             b1.Property<int>("Version");
 
-                            b1.HasKey("ContentZoneItemDTOId", "__synthesizedOrdinal");
+                            b1.HasKey("ArticleListDTOId", "__synthesizedOrdinal");
 
-                            b1.ToTable("ContentZoneItems");
+                            b1.ToTable("ArticleLists");
 
                             b1.ToJson("CustomFields");
 
                             b1.WithOwner()
-                                .HasForeignKey("ContentZoneItemDTOId");
+                                .HasForeignKey("ArticleListDTOId");
                         });
 
-                    b.Navigation("ContentZone");
-
                     b.Navigation("CustomFields");
-                });
-
-            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ContentZoneDTO", b =>
-                {
-                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

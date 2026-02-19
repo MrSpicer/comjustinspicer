@@ -12,5 +12,5 @@ public interface IPageModel
     Task<PageUpsertViewModel?> GetPageUpsertAsync(Guid? id, CancellationToken ct = default);
     Task<(bool Success, string? ErrorMessage)> SavePageUpsertAsync(PageUpsertViewModel model, CancellationToken ct = default);
     Task<bool> DeletePageAsync(Guid id, CancellationToken ct = default);
-    Task<bool> IsRouteAvailableAsync(string route, Guid? excludeId = null, CancellationToken ct = default);
+    Task<bool> IsRouteAvailableAsync(string route, Guid? excludeMasterId = null, CancellationToken ct = default);
 }

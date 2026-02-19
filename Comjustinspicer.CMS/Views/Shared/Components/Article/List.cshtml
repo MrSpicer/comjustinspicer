@@ -9,9 +9,9 @@
 <section class="section">
 	<div class="container">
 		<div class="columns is-multiline">
-			@foreach (var post in Model.Articles)
+			@foreach (var article in Model.Articles)
 			{
-				@await Component.InvokeAsync("Article", new ArticleContentZoneConfiguration { ViewName = "Article", Article = post })
+				@await Component.InvokeAsync("Article", new ArticleContentZoneConfiguration { ViewName = "Article", Article = article })
 			}
 		</div>
 	</div>

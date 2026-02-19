@@ -93,7 +93,7 @@ namespace Comjustinspicer.CMS.Migrations.Article
 
                     b.HasIndex("ArticleListMasterId");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Articles", (string)null);
                 });
 
             modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ArticleListDTO", b =>
@@ -203,7 +203,7 @@ namespace Comjustinspicer.CMS.Migrations.Article
 
                             b1.HasKey("ArticleDTOId", "__synthesizedOrdinal");
 
-                            b1.ToTable("Posts");
+                            b1.ToTable("Articles");
 
                             b1.ToJson("CustomFields");
 

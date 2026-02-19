@@ -41,7 +41,7 @@ public class MappingProfile : Profile
         .ForMember(d => d.Version, opt => opt.MapFrom(s => s.Version ?? 0))
         .ForMember(d => d.CustomFields, opt => opt.Ignore());
 
-    // Post mappings
+    // Article mappings
     CreateMap<ArticleDTO, ArticleViewModel>()
         .ForMember(d => d.ArticleListId, opt => opt.MapFrom(s => s.ArticleListMasterId));
     CreateMap<ArticleDTO, ArticleUpsertViewModel>()

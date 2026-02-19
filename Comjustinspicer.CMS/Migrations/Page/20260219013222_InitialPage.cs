@@ -43,8 +43,7 @@ namespace Comjustinspicer.CMS.Migrations.Page
             migrationBuilder.CreateIndex(
                 name: "IX_Pages_Route",
                 table: "Pages",
-                column: "Route",
-                unique: true);
+                column: "Route");
         }
 
         /// <inheritdoc />

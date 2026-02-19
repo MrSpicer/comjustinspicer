@@ -18,7 +18,7 @@ public class PageContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Title).IsRequired().HasMaxLength(256);
             entity.Property(e => e.Route).IsRequired().HasMaxLength(512);
-            entity.HasIndex(e => e.Route).IsUnique();
+            entity.HasIndex(e => e.Route);
             entity.Property(e => e.ControllerName).IsRequired().HasMaxLength(256);
             entity.Property(e => e.ConfigurationJson).HasMaxLength(4000);
             entity.ToTable("Pages");

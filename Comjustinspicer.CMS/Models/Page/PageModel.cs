@@ -66,9 +66,9 @@ public sealed class PageModel : IPageModel
         return await _service.DeleteAsync(id, ct);
     }
 
-    public async Task<bool> IsRouteAvailableAsync(string route, Guid? excludeId = null, CancellationToken ct = default)
+    public async Task<bool> IsRouteAvailableAsync(string route, Guid? excludeMasterId = null, CancellationToken ct = default)
     {
-        return await _service.IsRouteAvailableAsync(route, excludeId, ct);
+        return await _service.IsRouteAvailableAsync(route, excludeMasterId, ct);
     }
 
     private static List<PageTreeNode> BuildTree(List<PageDTO> pages)

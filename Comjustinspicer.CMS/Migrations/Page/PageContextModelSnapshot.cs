@@ -90,8 +90,7 @@ namespace Comjustinspicer.CMS.Migrations.Page
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Route")
-                        .IsUnique();
+                    b.HasIndex("Route");
 
                     b.ToTable("Pages", (string)null);
                 });

@@ -18,7 +18,7 @@ public class ArticleContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Title).IsRequired().HasMaxLength(20000);
-            entity.ToTable("Posts");
+            entity.ToTable("Articles");
             entity.Property(e => e.ArticleListMasterId).HasColumnName("ArticleListMasterId");
             entity.HasIndex(e => e.ArticleListMasterId);
 

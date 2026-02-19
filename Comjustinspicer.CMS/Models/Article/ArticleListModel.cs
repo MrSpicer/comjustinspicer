@@ -6,13 +6,13 @@ namespace Comjustinspicer.CMS.Models.Article;
 
 public sealed class ArticleListModel : IArticleListModel
 {
-    private readonly IContentService<ArticleDTO> _postService;
+    private readonly IContentService<ArticleDTO> _articleService;
     private readonly IContentService<ArticleListDTO> _articleListService;
     private readonly IMapper _mapper;
 
-    public ArticleListModel(IContentService<ArticleListDTO> articleListService, IContentService<ArticleDTO> postService, IMapper mapper)
+    public ArticleListModel(IContentService<ArticleListDTO> articleListService, IContentService<ArticleDTO> articleService, IMapper mapper)
     {
-        _postService = postService ?? throw new ArgumentNullException(nameof(postService));
+        _articleService = articleService ?? throw new ArgumentNullException(nameof(articleService));
         _articleListService = articleListService ?? throw new ArgumentNullException(nameof(articleListService));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
@@ -20,8 +20,8 @@ public sealed class ArticleListModel : IArticleListModel
     public async Task<ArticleListViewModel> GetIndexViewModelAsync(CancellationToken ct = default)
     {
         var vm = new ArticleListViewModel();
-        var posts = await _postService.GetAllAsync(ct);
-        vm.Articles = posts
+        var articles = await _articleService.GetAllAsync(ct);
+        vm.Articles = articles
             .Where(p => p.IsPublished && p.PublicationDate <= DateTime.UtcNow)
             .Select(p => _mapper.Map<ArticleViewModel>(p))
             .ToList();
@@ -31,14 +31,14 @@ public sealed class ArticleListModel : IArticleListModel
     public async Task<ArticleListIndexViewModel> GetArticleListIndexAsync(CancellationToken ct = default)
     {
         var lists = await _articleListService.GetAllAsync(ct);
-        var posts = await _postService.GetAllAsync(ct);
+        var articles = await _articleService.GetAllAsync(ct);
 
         var vm = new ArticleListIndexViewModel
         {
             ArticleLists = lists.Select(l =>
             {
                 var item = _mapper.Map<ArticleListItemViewModel>(l);
-                item.ArticleCount = posts.Count(p => p.ArticleListMasterId == l.MasterId);
+                item.ArticleCount = articles.Count(p => p.ArticleListMasterId == l.MasterId);
                 return item;
             }).ToList()
         };
@@ -74,9 +74,9 @@ public sealed class ArticleListModel : IArticleListModel
     {
         var list = await _articleListService.GetByIdAsync(id, ct);
         if (list == null) return false;
-        var posts = await _postService.GetAllAsync(ct);
-        foreach (var p in posts.Where(p => p.ArticleListMasterId == list.MasterId))
-            await _postService.DeleteAsync(p.Id, false, true, ct);
+        var articles = await _articleService.GetAllAsync(ct);
+        foreach (var p in articles.Where(p => p.ArticleListMasterId == list.MasterId))
+            await _articleService.DeleteAsync(p.Id, false, true, ct);
         return await _articleListService.DeleteAsync(id, false, true, ct);
     }
 
@@ -85,13 +85,13 @@ public sealed class ArticleListModel : IArticleListModel
         var list = await _articleListService.GetByMasterIdAsync(articleListMasterId, ct);
         if (list == null) return null;
 
-        var posts = await _postService.GetAllAsync(ct);
+        var articles = await _articleService.GetAllAsync(ct);
         return new ArticleListViewModel
         {
             ArticleListId = list.MasterId,
             ArticleListTitle = list.Title,
             ArticleListSlug = list.Slug,
-            Articles = posts
+            Articles = articles
                 .Where(p => p.ArticleListMasterId == list.MasterId && p.IsPublished && p.PublicationDate <= DateTime.UtcNow)
                 .Select(p => _mapper.Map<ArticleViewModel>(p))
                 .ToList()

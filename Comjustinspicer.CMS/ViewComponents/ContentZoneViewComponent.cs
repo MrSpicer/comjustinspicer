@@ -136,7 +136,7 @@ public class ContentZoneViewComponent : ViewComponent
 	{
 		// If we're in a page context, use the page's unique ID for zone scoping
 		if (!IsGlobal && HttpContext.Items["CMS:PageData"] is PageDTO pageData)
-			return $"page:{pageData.Id}";
+			return $"page:{pageData.MasterId}";
 
 		// Fallback for non-page contexts (layout zones, admin pages, etc.)
 		var routeData = HttpContext.GetRouteData();

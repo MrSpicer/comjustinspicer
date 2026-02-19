@@ -38,7 +38,7 @@ namespace Comjustinspicer.CMS.Migrations.Article
                 });
 
             migrationBuilder.CreateTable(
-                name: "Posts",
+                name: "Articles",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -64,12 +64,12 @@ namespace Comjustinspicer.CMS.Migrations.Article
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Posts", x => x.Id);
+                    table.PrimaryKey("PK_Articles", x => x.Id);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Posts_ArticleListMasterId",
-                table: "Posts",
+                name: "IX_Articles_ArticleListMasterId",
+                table: "Articles",
                 column: "ArticleListMasterId");
         }
 
@@ -80,7 +80,7 @@ namespace Comjustinspicer.CMS.Migrations.Article
                 name: "ArticleLists");
 
             migrationBuilder.DropTable(
-                name: "Posts");
+                name: "Articles");
         }
     }
 }

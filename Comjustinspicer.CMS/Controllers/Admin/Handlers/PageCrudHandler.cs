@@ -54,8 +54,8 @@ public class PageCrudHandler : IAdminCrudHandler
         var vm = (PageUpsertViewModel)model;
 
         // Page-specific: route uniqueness validation
-        var excludeId = vm.Id.HasValue && vm.Id != Guid.Empty ? vm.Id : null;
-        var routeAvailable = await _model.IsRouteAvailableAsync(vm.Route, excludeId, ct);
+        var excludeMasterId = vm.MasterId.HasValue && vm.MasterId != Guid.Empty ? vm.MasterId : null;
+        var routeAvailable = await _model.IsRouteAvailableAsync(vm.Route, excludeMasterId, ct);
         if (!routeAvailable)
             return new AdminSaveResult(false, "This route is already in use by another page.", "Route");
 

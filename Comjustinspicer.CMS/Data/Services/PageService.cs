@@ -5,7 +5,7 @@ using Comjustinspicer.CMS.Data.DbContexts;
 namespace Comjustinspicer.CMS.Data.Services;
 
 /// <summary>
-/// Service for managing dynamic pages.
+/// Service for managing dynamic pages with versioning support.
 /// </summary>
 public sealed class PageService : IPageService
 {
@@ -20,7 +20,8 @@ public sealed class PageService : IPageService
     {
         return await _context.Pages
             .AsNoTracking()
-            .Where(p => !p.IsDeleted)
+            .Where(p => !p.IsDeleted
+                && !_context.Pages.Any(p2 => p2.MasterId == p.MasterId && p2.Version > p.Version))
             .OrderBy(p => p.Route)
             .ToListAsync(ct);
     }
@@ -38,7 +39,9 @@ public sealed class PageService : IPageService
 
         return await _context.Pages
             .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.Route == route && !p.IsDeleted && p.IsPublished, ct);
+            .Where(p => p.Route == route && !p.IsDeleted && p.IsPublished
+                && !_context.Pages.Any(p2 => p2.MasterId == p.MasterId && p2.Version > p.Version))
+            .FirstOrDefaultAsync(ct);
     }
 
     public async Task<PageDTO> CreateAsync(PageDTO page, CancellationToken ct = default)
@@ -48,6 +51,8 @@ public sealed class PageService : IPageService
         if (page.Id == Guid.Empty)
             page.Id = Guid.NewGuid();
 
+        page.MasterId = page.Id;
+        page.Version = 0;
         page.Route = NormalizeRoute(page.Route);
 
         var now = DateTime.UtcNow;
@@ -65,36 +70,46 @@ public sealed class PageService : IPageService
     {
         if (page == null) throw new ArgumentNullException(nameof(page));
 
-        var existing = await _context.Pages.FirstOrDefaultAsync(p => p.Id == page.Id, ct);
-        if (existing == null) return false;
+        if (!await _context.Pages.AnyAsync(p => p.Id == page.Id, ct))
+            return false;
 
+        page.Version++;
+        page.Id = Guid.NewGuid();
         page.Route = NormalizeRoute(page.Route);
         page.ModificationDate = DateTime.UtcNow;
-        _context.Entry(existing).CurrentValues.SetValues(page);
+        if (page.IsPublished && page.PublicationDate == default)
+            page.PublicationDate = DateTime.UtcNow;
+
+        _context.Pages.Add(page);
         await _context.SaveChangesAsync(ct);
         return true;
     }
 
     public async Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
     {
-        var existing = await _context.Pages.FirstOrDefaultAsync(p => p.Id == id, ct);
-        if (existing == null) return false;
+        var entity = await _context.Pages.FirstOrDefaultAsync(p => p.Id == id, ct);
+        if (entity == null) return false;
 
-        existing.IsDeleted = true;
-        existing.ModificationDate = DateTime.UtcNow;
+        var allVersions = await _context.Pages
+            .Where(p => p.MasterId == entity.MasterId)
+            .ToListAsync(ct);
+
+        _context.Pages.RemoveRange(allVersions);
         await _context.SaveChangesAsync(ct);
         return true;
     }
 
-    public async Task<bool> IsRouteAvailableAsync(string route, Guid? excludeId = null, CancellationToken ct = default)
+    public async Task<bool> IsRouteAvailableAsync(string route, Guid? excludeMasterId = null, CancellationToken ct = default)
     {
         route = NormalizeRoute(route);
 
         var query = _context.Pages
-            .Where(p => p.Route == route && !p.IsDeleted);
+            .Where(p => p.Route == route
+                && !p.IsDeleted
+                && !_context.Pages.Any(p2 => p2.MasterId == p.MasterId && p2.Version > p.Version));
 
-        if (excludeId.HasValue)
-            query = query.Where(p => p.Id != excludeId.Value);
+        if (excludeMasterId.HasValue)
+            query = query.Where(p => p.MasterId != excludeMasterId.Value);
 
         return !await query.AnyAsync(ct);
     }
