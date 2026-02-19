@@ -1,5 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.HttpOverrides;
 using AutoMapper;
 using Comjustinspicer.CMS.ContentZones;
 using Comjustinspicer.CMS.Controllers.Admin.Handlers;
@@ -53,8 +55,20 @@ public static class ServiceCollectionExtensions
 
 	private static void AddCmsCore(IServiceCollection services)
 	{
+		ConfigureForwardedHeaders(services);
 		MapTypes(services);
 		ConfigureAuthorization(services);
+	}
+
+	private static void ConfigureForwardedHeaders(IServiceCollection services)
+	{
+		services.Configure<ForwardedHeadersOptions>(options =>
+		{
+			options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+			// Trust all upstream proxies within Docker's internal network
+			options.KnownIPNetworks.Clear();
+			options.KnownProxies.Clear();
+		});
 	}
 
 	private static void ConfigureDatabaseServices(IServiceCollection services, IConfiguration configuration)

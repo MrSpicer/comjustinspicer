@@ -3,6 +3,7 @@ using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System.Linq;
@@ -237,6 +238,7 @@ public static class CMSExtensions
 
 	private static WebApplication ConfigureMiddleware(this WebApplication app, bool throwOnError = false)
 	{
+		app.UseForwardedHeaders();
 		app.UseHsts();
 		app.UseHttpsRedirection();
 

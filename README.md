@@ -51,20 +51,12 @@ The watch system monitors source files and automatically rebuilds when you save 
 ```
 ./Scripts/DockerBuild.sh
 ```
+
 ### Run with Docker Compose
+`DockerRun.sh` reads the same `dotnet user-secrets` used for local development — no additional secrets setup is required. It rewrites `Host=localhost` to `Host=db` in the connection string automatically before calling `docker compose up`.
 ```
-docker compose up
+./Scripts/DockerRun.sh
 ```
-### Run container standalone
-```
-docker run --rm -p 8080:8080 \
-  -e ConnectionStrings__DefaultConnection="Host=localhost;Port=5432;Database=comjustinspicer;Username=comjustinspicer;Password=postgres" \
-  -e AdminUser__Email="${ADMIN_EMAIL}" \
-  -e AdminUser__Password="${ADMIN_PASSWORD}" \
-  -e CKEditor__LicenseKey="${CKEDITOR_LICENSE_KEY}" \
-  -e AutoMapper__LicenseKey="${AUTOMAPPER_LICENSE_KEY}" \
-  comjustinspicer-web
-  ```
 
 ## Secrets
 
@@ -73,7 +65,7 @@ docker run --rm -p 8080:8080 \
 dotnet user-secrets init --project Comjustinspicer.Web
 dotnet user-secrets set "AdminUser:Email" "<you@example.com>" --project Comjustinspicer.Web
 dotnet user-secrets set "AdminUser:Password" "<ChangeThisStrongPassword!>" --project Comjustinspicer.Web
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=severname;Port=5432;Database=comjustinspicer;Username=comjustinspicer;Password=postgres" --project Comjustinspicer.Web
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=localhost;Port=5432;Database=comjustinspicer;Username=comjustinspicer;Password=<password>" --project Comjustinspicer.Web
 dotnet user-secrets set "CKEditor:LicenseKey" "<your-dev-license>" --project Comjustinspicer.Web
 dotnet user-secrets set "AutoMapper:LicenseKey" "<your-dev-license>" --project Comjustinspicer.Web
 ```
