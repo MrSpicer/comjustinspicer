@@ -53,7 +53,7 @@ The watch system monitors source files and automatically rebuilds when you save 
 ```
 
 ### Run with Docker Compose
-`DockerRun.sh` reads the same `dotnet user-secrets` used for local development — no additional secrets setup is required. It rewrites `Host=localhost` to `Host=db` in the connection string automatically before calling `docker compose up`.
+`DockerRun.sh` reads the same `dotnet user-secrets` used for local development — no additional secrets setup is required.
 ```
 ./Scripts/DockerRun.sh
 ```

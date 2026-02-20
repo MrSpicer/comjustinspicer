@@ -19,6 +19,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## rules
  - if you start the web project turn it off when you are done
  - when possible always use an mcp server to check all affected UI/UX
+ - after finishing work check to see if documentation needs to be updated to reflect the changes
 
 ## Architecture
 
