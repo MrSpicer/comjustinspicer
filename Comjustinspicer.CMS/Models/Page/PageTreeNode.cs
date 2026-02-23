@@ -13,5 +13,6 @@ public class PageTreeNode
     public int PageVersion { get; set; }
     public string ControllerName { get; set; } = string.Empty;
     public bool IsPublished { get; set; }
+    public bool IsHidden { get; set; }
     public List<PageTreeNode> Children { get; set; } = new();
 }

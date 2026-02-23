@@ -1,0 +1,44 @@
+@using Microsoft.AspNetCore.Identity
+@using Comjustinspicer.CMS.Models.Page;
+@inject SignInManager<IdentityUser> SignInManager
+
+<nav class="navbar" role="navigation" aria-label="admin navigation">
+    <div class="navbar-brand">
+        <a id="nav-toggle" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+            data-target="adminNav">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+
+    <div id="adminNav" class="navbar-menu">
+        <div class="navbar-start">
+            @await Component.InvokeAsync(name: "Page", new PageContentZoneConfiguration()
+            {
+                AdminPages = true,
+                ViewName = "Navbar"
+            })
+
+            <a class="navbar-item" href="/admin/pages">
+                Pages
+            </a>
+            <a class="navbar-item" href="/admin/contentzones">
+                Content Zones
+            </a>
+            <a class="navbar-item" href="/admin/contentblocks">
+                Content Blocks
+            </a>
+            <a class="navbar-item" href="/admin/articles">
+                Articles
+            </a>
+        </div>
+
+        <div class="navbar-end">
+            <a class="navbar-item" href="/">
+                View Site
+            </a>
+            <partial name="_LoginNavPartial" />
+        </div>
+    </div>
+</nav>

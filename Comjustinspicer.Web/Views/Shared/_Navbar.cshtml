@@ -1,17 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Comjustinspicer.CMS.Services;
 
-@inject UserService UserService
-
-@{
-    var isAuthor = UserService.IsUserAuthor;
-}
-
 <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <a class="navbar-item" href="/">
             @await Component.InvokeAsync(name: "ContentZone", new { zoneName = "Logo", IsGlobal = true })
-
         </a>
 
         <a id="nav-toggle" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
@@ -25,33 +18,6 @@
     <div id="siteNav" class="navbar-menu">
         <div class="navbar-start">
             @await Component.InvokeAsync(name: "ContentZone", new { zoneName = "NavBar", IsGlobal = true })
-            @* <a class="navbar-item" href="/">
-                Home
-            </a> *@
-
-            @if (isAuthor)
-            {
-                <div class="navbar-item has-dropdown is-hoverable">
-                    <a class="navbar-link">
-                        Admin
-                    </a>
-
-                    <div class="navbar-dropdown">
-                        <a class="navbar-item" href="/admin/pages">
-                            Pages
-                        </a>
-                        <a class="navbar-item" href="/admin/contentzones">
-                            Content Zones
-                        </a>
-                        <a class="navbar-item" href="/admin/ContentBlocks">
-                            Content Blocks
-                        </a>
-                        <a class="navbar-item" href="/admin/Articles">
-                            Article
-                        </a>
-                    </div>
-                </div>
-            }
         </div>
 
         <div class="navbar-end">

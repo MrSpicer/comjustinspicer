@@ -23,22 +23,36 @@ public class PageViewComponent : ViewComponent
 
     public async Task<IViewComponentResult> InvokeAsync(PageContentZoneConfiguration? config = null)
     {
+        config ??= new PageContentZoneConfiguration();
         var index = await _model.GetPageIndexAsync();
-        var items = MapNodes(index.Pages);
-        var viewName = config?.ViewName ?? "Default";
+        var items = MapNodes(index.Pages, config);
+        var viewName = config.ViewName ?? "Default";
         return View(viewName, new PageNavigationViewModel { Items = items });
     }
 
-    private static List<PageNavigationItem> MapNodes(List<PageTreeNode> nodes)
+    private static List<PageNavigationItem> MapNodes(List<PageTreeNode> nodes, PageContentZoneConfiguration config)
     {
-        return nodes
-            .Where(n => n.PageId.HasValue && n.IsPublished)
+        var filteredNodes = nodes
+            .Where(n => n.PageId.HasValue)
+            .Where(n => config.ShowDraftPages || n.IsPublished)
+            .Where(n => config.ShowHiddenPages || !n.IsHidden);
+
+        if (config.AdminPages)
+        {
+            filteredNodes = filteredNodes.Where(n => n.Route.StartsWith("/admin", StringComparison.OrdinalIgnoreCase));
+        }
+        else
+        {
+            filteredNodes = filteredNodes.Where(n => !n.Route.StartsWith("/admin", StringComparison.OrdinalIgnoreCase));
+        }
+        
+        return filteredNodes
             .Select(n => new PageNavigationItem
             {
                 Title = n.Title,
                 Route = n.Route,
                 IsPublished = n.IsPublished,
-                Children = MapNodes(n.Children)
+                Children = MapNodes(n.Children, config)
             })
             .ToList();
     }

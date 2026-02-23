@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = ViewContext.RouteData.Values["title"]?.ToString() ?? "Page";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 @*
 @if (!string.IsNullOrWhiteSpace(Model.Meta))

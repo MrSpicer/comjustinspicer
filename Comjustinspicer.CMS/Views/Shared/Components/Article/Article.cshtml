@@ -11,8 +11,6 @@
         return;
     }
 
-    var isAuthor = UserService.IsUserAuthor;
-
     // Build slug-based detail link from the current page route
     var pageData = Context.Items["CMS:PageData"] as Comjustinspicer.CMS.Data.Models.PageDTO;
     var pageRoute = pageData?.Route?.TrimEnd('/') ?? "";

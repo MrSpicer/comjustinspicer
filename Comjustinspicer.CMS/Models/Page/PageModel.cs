@@ -186,7 +186,8 @@ public sealed class PageModel : AdminCrudModel<PageDTO>, IPageModel
                         PageMasterId = page.MasterId,
                         PageVersion = page.Version,
                         ControllerName = page.ControllerName,
-                        IsPublished = page.IsPublished
+                        IsPublished = page.IsPublished,
+                        IsHidden = page.IsHidden
                     };
                     nodeMap["/"] = rootNode;
                     roots.Insert(0, rootNode);
@@ -199,6 +200,7 @@ public sealed class PageModel : AdminCrudModel<PageDTO>, IPageModel
                     rootNode.PageVersion = page.Version;
                     rootNode.ControllerName = page.ControllerName;
                     rootNode.IsPublished = page.IsPublished;
+                    rootNode.IsHidden = page.IsHidden;
                 }
                 continue;
             }
@@ -221,7 +223,8 @@ public sealed class PageModel : AdminCrudModel<PageDTO>, IPageModel
                         PageMasterId = isLeaf ? page.MasterId : null,
                         PageVersion = isLeaf ? page.Version : 0,
                         ControllerName = isLeaf ? page.ControllerName : string.Empty,
-                        IsPublished = isLeaf && page.IsPublished
+                        IsPublished = isLeaf && page.IsPublished,
+                        IsHidden = isLeaf && page.IsHidden
                     };
                     nodeMap[currentPath] = node;
 
@@ -246,6 +249,7 @@ public sealed class PageModel : AdminCrudModel<PageDTO>, IPageModel
                     node.PageVersion = page.Version;
                     node.ControllerName = page.ControllerName;
                     node.IsPublished = page.IsPublished;
+                    node.IsHidden = page.IsHidden;
                 }
             }
         }
