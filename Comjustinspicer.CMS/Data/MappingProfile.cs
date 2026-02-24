@@ -118,6 +118,7 @@ public class MappingProfile : Profile
         .ForMember(d => d.Route, opt => opt.MapFrom(s => s.Route ?? string.Empty))
         .ForMember(d => d.ControllerName, opt => opt.MapFrom(s => s.ControllerName ?? string.Empty))
         .ForMember(d => d.ConfigurationJson, opt => opt.MapFrom(s => s.ConfigurationJson ?? "{}"))
+        .ForMember(d => d.ViewName, opt => opt.MapFrom(s => s.ViewName))
         .ForMember(d => d.PublicationDate, opt => opt.MapFrom(s => s.PublicationDate == default ? (DateTime?)null : s.PublicationDate));
 
     CreateMap<PageUpsertViewModel, PageDTO>()
@@ -127,6 +128,7 @@ public class MappingProfile : Profile
         .ForMember(d => d.Route, opt => opt.MapFrom(s => s.Route ?? string.Empty))
         .ForMember(d => d.ControllerName, opt => opt.MapFrom(s => s.ControllerName ?? string.Empty))
         .ForMember(d => d.ConfigurationJson, opt => opt.MapFrom(s => s.ConfigurationJson ?? "{}"))
+        .ForMember(d => d.ViewName, opt => opt.MapFrom(s => s.ViewName))
         .ForMember(d => d.CreationDate, opt => opt.MapFrom(_ => DateTime.UtcNow))
         .ForMember(d => d.ModificationDate, opt => opt.MapFrom(_ => DateTime.UtcNow))
         .ForMember(d => d.PublicationDate, opt => opt.MapFrom(s => DateTime.SpecifyKind(s.PublicationDate ?? DateTime.UtcNow, DateTimeKind.Utc)))

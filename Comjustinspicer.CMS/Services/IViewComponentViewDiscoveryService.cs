@@ -15,4 +15,15 @@ public interface IViewComponentViewDiscoveryService
     /// Returns an empty list if no views are found or the component directory doesn't exist.
     /// </returns>
     IReadOnlyList<string> GetAvailableViews(string componentName);
+
+    /// <summary>
+    /// Gets a list of available view names for the specified page controller.
+    /// Scans Views/{controllerName}/ in the main project and sibling projects.
+    /// </summary>
+    /// <param name="controllerName">The name of the page controller.</param>
+    /// <returns>
+    /// A list of view names (without .cshtml extension) found in the controller's view directory.
+    /// Returns an empty list if no views are found or the directory doesn't exist.
+    /// </returns>
+    IReadOnlyList<string> GetControllerViews(string controllerName);
 }

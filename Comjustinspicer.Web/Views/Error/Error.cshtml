@@ -4,8 +4,10 @@
 
 @{
     ViewData["Title"] = "Error";
-    var isAuthor = UserService.IsUserAuthor;
+    var isAdmin = false;
 
+    @try { isAdmin = UserService.IsUserAdmin; }
+    catch { }
 }
 
 <h1 class="text-danger">Error.</h1>
@@ -40,7 +42,8 @@ catch (Exception ex)
         <p>
             An error occurred while loading the error content zone.
         </p>
-        @if(isAuthor)
+
+        @if(isAdmin)
         {
             <p>
                 <strong>Error Details:</strong> @ex.Message

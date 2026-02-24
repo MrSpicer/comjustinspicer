@@ -14,4 +14,7 @@ public class UserService
 	public bool IsUserAuthor =>
 		_httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated == true &&
 		(_httpContextAccessor.HttpContext.User.IsInRole("Admin") || _httpContextAccessor.HttpContext.User.IsInRole("Editor"));
+
+	public bool IsUserAdmin => _httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated == true &&
+							   _httpContextAccessor.HttpContext.User.IsInRole("Admin");
 }

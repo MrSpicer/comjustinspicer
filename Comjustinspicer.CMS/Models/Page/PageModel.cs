@@ -6,6 +6,7 @@ using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
 using Comjustinspicer.CMS.Models.Shared;
 using Comjustinspicer.CMS.Pages;
+using Comjustinspicer.CMS.Services;
 
 namespace Comjustinspicer.CMS.Models.Page;
 
@@ -26,11 +27,13 @@ public sealed class PageModel : AdminCrudModel<PageDTO>, IPageModel
     public override string UpsertViewPath => "~/Views/AdminPage/PageUpsert.cshtml";
     public override IAdminRegistryHandler? RegistryHandler => _registryHandler;
 
-    public PageModel(IPageService service, IMapper mapper, IPageControllerRegistry registry)
+    public PageModel(IPageService service, IMapper mapper, IPageControllerRegistry registry, IViewComponentViewDiscoveryService viewDiscovery)
     {
         _service = service ?? throw new ArgumentNullException(nameof(service));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        _registryHandler = new PageRegistryHandler(registry ?? throw new ArgumentNullException(nameof(registry)));
+        _registryHandler = new PageRegistryHandler(
+            registry ?? throw new ArgumentNullException(nameof(registry)),
+            viewDiscovery ?? throw new ArgumentNullException(nameof(viewDiscovery)));
     }
 
     public async Task<PageDTO?> GetByRouteAsync(string route, CancellationToken ct = default)
@@ -261,10 +264,12 @@ public sealed class PageModel : AdminCrudModel<PageDTO>, IPageModel
 internal sealed class PageRegistryHandler : IAdminRegistryHandler
 {
     private readonly IPageControllerRegistry _registry;
+    private readonly IViewComponentViewDiscoveryService _viewDiscovery;
 
-    public PageRegistryHandler(IPageControllerRegistry registry)
+    public PageRegistryHandler(IPageControllerRegistry registry, IViewComponentViewDiscoveryService viewDiscovery)
     {
         _registry = registry;
+        _viewDiscovery = viewDiscovery ?? throw new ArgumentNullException(nameof(viewDiscovery));
     }
 
     public IActionResult GetAll()
@@ -308,11 +313,14 @@ internal sealed class PageRegistryHandler : IAdminRegistryHandler
             maxLength = p.MaxLength
         }).OrderBy(p => p.order).ToList();
 
+        var availableViews = _viewDiscovery.GetControllerViews(name);
+
         return new JsonResult(new
         {
             controllerName = controller.Name,
             displayName = controller.DisplayName,
             category = controller.Category,
+            availableViews,
             properties
         });
     }

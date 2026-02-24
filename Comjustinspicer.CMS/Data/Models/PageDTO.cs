@@ -17,6 +17,11 @@ public record PageDTO : BaseContentDTO
     public string ControllerName { get; set; } = string.Empty;
 
     /// <summary>
+    /// Optional Razor view name to render instead of the default Index.cshtml.
+    /// </summary>
+    public string? ViewName { get; set; }
+
+    /// <summary>
     /// JSON-serialized configuration for the page controller.
     /// </summary>
     public string ConfigurationJson { get; set; } = "{}";

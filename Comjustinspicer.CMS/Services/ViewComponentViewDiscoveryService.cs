@@ -97,6 +97,33 @@ public sealed class ViewComponentViewDiscoveryService : IViewComponentViewDiscov
         return result;
     }
 
+    public IReadOnlyList<string> GetControllerViews(string controllerName)
+    {
+        if (string.IsNullOrWhiteSpace(controllerName))
+            return Array.Empty<string>();
+
+        var views = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var contentRoot = _env.ContentRootPath;
+
+        ScanDirectory(Path.Combine(contentRoot, "Views", controllerName), views);
+
+        var parentDir = Directory.GetParent(contentRoot);
+        if (parentDir != null)
+        {
+            foreach (var siblingDir in Directory.GetDirectories(parentDir.FullName))
+            {
+                if (siblingDir.Equals(contentRoot, StringComparison.OrdinalIgnoreCase))
+                    continue;
+                ScanDirectory(Path.Combine(siblingDir, "Views", controllerName), views);
+            }
+        }
+
+        var result = views.OrderBy(v => v, StringComparer.OrdinalIgnoreCase).ToList();
+        _logger.Debug("Discovered {Count} controller views for '{ControllerName}': {Views}",
+            result.Count, controllerName, string.Join(", ", result));
+        return result;
+    }
+
     private void ScanDirectory(string directoryPath, HashSet<string> views)
     {
         if (!Directory.Exists(directoryPath))

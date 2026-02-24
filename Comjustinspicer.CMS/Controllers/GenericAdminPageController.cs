@@ -28,6 +28,10 @@ public class GenericAdminPageController : PageControllerBase<GenericPageConfigur
             CurrentPage?.Id,
             CurrentPage?.Title);
 
+        var viewName = CurrentPage?.ViewName;
+        if (!string.IsNullOrWhiteSpace(viewName))
+            return Task.FromResult<IActionResult>(View(viewName, PageConfig));
+
         return Task.FromResult<IActionResult>(View(PageConfig));
     }
 }

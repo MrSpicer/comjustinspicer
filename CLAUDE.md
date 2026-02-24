@@ -21,6 +21,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
  - when possible always use an mcp server to check all affected UI/UX
  - after finishing work check to see if documentation needs to be updated to reflect the changes
  - Do not Remove todo notes from the code unless the todo not has been completed. If you are unsure. ask
+ - If Tests fail that were previously passing, do not modify those tests without permission from a human
 
 ## Architecture
 

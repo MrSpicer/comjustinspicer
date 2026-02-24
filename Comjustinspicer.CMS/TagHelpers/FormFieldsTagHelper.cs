@@ -240,8 +240,12 @@ public class FormFieldsTagHelper : TagHelper
         var strValue = FormatValue(value, prop.EditorType);
         var requiredAttr = prop.IsRequired ? " required" : "";
 
+        var dataCurrentValue = prop.EditorType == EditorType.ViewPicker && !string.IsNullOrEmpty(strValue)
+            ? $" data-current-value=\"{System.Text.Encodings.Web.HtmlEncoder.Default.Encode(strValue)}\""
+            : "";
+
         sb.AppendLine($"<div class=\"select is-fullwidth\">");
-        sb.AppendLine($"<select name=\"{encodedName}\" id=\"{encodedName}\"{requiredAttr}>");
+        sb.AppendLine($"<select name=\"{encodedName}\" id=\"{encodedName}\"{requiredAttr}{dataCurrentValue}>");
         sb.AppendLine("<option value=\"\">-- Select --</option>");
 
         if (prop.DropdownOptions.Count > 0)

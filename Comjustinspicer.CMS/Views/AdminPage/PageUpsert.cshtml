@@ -19,7 +19,8 @@
 
         <form asp-controller="AdminContent" asp-action="Edit" asp-route-contentType="pages" method="post" id="pageForm"
               data-controller="@Model.ControllerName"
-              data-config="@Html.Raw(Model.ConfigurationJson)">
+              data-config="@Html.Raw(Model.ConfigurationJson)"
+              data-view-name="@Model.ViewName">
             @Html.AntiForgeryToken()
 
             <form-fields for="@Model" />

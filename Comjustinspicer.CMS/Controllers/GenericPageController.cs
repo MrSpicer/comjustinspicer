@@ -10,7 +10,7 @@ namespace Comjustinspicer.CMS.Controllers;
 public class GenericPageConfiguration
 {
     [FormProperty("View Name", EditorType.Text,
-        HelpText = "Reserved for future use.",
+        HelpText = "Override the view template for this page's JSON config block. Leave empty for default behavior.",
         Order = 0)]
     public string ViewName { get; set; } = string.Empty;
 
@@ -51,6 +51,10 @@ public class GenericPageController : PageControllerBase<GenericPageConfiguration
         _logger.Information("Rendering generic page: {PageId} - {PageTitle}",
             CurrentPage?.Id,
             CurrentPage?.Title);
+
+        var viewName = CurrentPage?.ViewName;
+        if (!string.IsNullOrWhiteSpace(viewName))
+            return Task.FromResult<IActionResult>(View(viewName, PageConfig));
 
         return Task.FromResult<IActionResult>(View(PageConfig));
     }
