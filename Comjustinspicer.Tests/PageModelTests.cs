@@ -19,7 +19,7 @@ namespace Comjustinspicer.Tests;
 public class PageModelTests
 {
     private IMapper _mapper;
-    private Mock<IViewComponentViewDiscoveryService> _viewDiscovery;
+    private Mock<IViewDiscoveryService> _viewDiscovery;
 
     [SetUp]
     public void Setup()
@@ -30,7 +30,7 @@ public class PageModelTests
         }, LoggerFactory.Create(builder => builder.AddConsole()));
 
         _mapper = config.CreateMapper();
-        _viewDiscovery = new Mock<IViewComponentViewDiscoveryService>();
+        _viewDiscovery = new Mock<IViewDiscoveryService>();
         _viewDiscovery.Setup(v => v.GetControllerViews(It.IsAny<string>())).Returns(Array.Empty<string>());
     }
 

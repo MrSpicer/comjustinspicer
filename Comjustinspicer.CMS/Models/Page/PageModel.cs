@@ -27,7 +27,7 @@ public sealed class PageModel : AdminCrudModel<PageDTO>, IPageModel
     public override string UpsertViewPath => "~/Views/AdminPage/PageUpsert.cshtml";
     public override IAdminRegistryHandler? RegistryHandler => _registryHandler;
 
-    public PageModel(IPageService service, IMapper mapper, IPageControllerRegistry registry, IViewComponentViewDiscoveryService viewDiscovery)
+    public PageModel(IPageService service, IMapper mapper, IPageControllerRegistry registry, IViewDiscoveryService viewDiscovery)
     {
         _service = service ?? throw new ArgumentNullException(nameof(service));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -264,9 +264,9 @@ public sealed class PageModel : AdminCrudModel<PageDTO>, IPageModel
 internal sealed class PageRegistryHandler : IAdminRegistryHandler
 {
     private readonly IPageControllerRegistry _registry;
-    private readonly IViewComponentViewDiscoveryService _viewDiscovery;
+    private readonly IViewDiscoveryService _viewDiscovery;
 
-    public PageRegistryHandler(IPageControllerRegistry registry, IViewComponentViewDiscoveryService viewDiscovery)
+    public PageRegistryHandler(IPageControllerRegistry registry, IViewDiscoveryService viewDiscovery)
     {
         _registry = registry;
         _viewDiscovery = viewDiscovery ?? throw new ArgumentNullException(nameof(viewDiscovery));

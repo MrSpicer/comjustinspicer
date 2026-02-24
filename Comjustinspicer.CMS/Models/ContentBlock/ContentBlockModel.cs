@@ -112,7 +112,7 @@ public sealed class ContentBlockModel : AdminCrudModel<ContentBlockDTO>, IConten
     public override async Task<IEnumerable<object>> GetApiListAsync(CancellationToken ct = default)
     {
         var vm = await GetContentBlockIndexAsync(ct);
-        return vm.ContentBlocks.Select(cb => (object)new { id = cb.Id, title = cb.Title });
+        return vm.ContentBlocks.Select(cb => (object)new { id = cb.MasterId, title = cb.Title });
     }
 
     public override async Task<object?> GetRestoreVersionViewModelAsync(Guid historicalId, CancellationToken ct = default)

@@ -111,7 +111,7 @@ public static class ServiceCollectionExtensions
 		services.AddSingleton<Services.UserService>();
 
 		// ViewComponent view discovery service
-		services.AddScoped<Services.IViewComponentViewDiscoveryService, Services.ViewComponentViewDiscoveryService>();
+		services.AddScoped<Services.IViewDiscoveryService, Services.ViewDiscoveryService>();
 
 		// Content Zone Component Registry - scans assemblies for registered ViewComponents
 		services.AddSingleton<IContentZoneComponentRegistry>(sp =>

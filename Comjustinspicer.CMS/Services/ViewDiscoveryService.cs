@@ -6,12 +6,12 @@ namespace Comjustinspicer.CMS.Services;
 /// Service for discovering available views for ViewComponents by scanning the filesystem.
 /// Searches standard ASP.NET ViewComponent view locations.
 /// </summary>
-public sealed class ViewComponentViewDiscoveryService : IViewComponentViewDiscoveryService
+public sealed class ViewDiscoveryService : IViewDiscoveryService
 {
     private readonly IWebHostEnvironment _env;
-    private readonly Serilog.ILogger _logger = Serilog.Log.ForContext<ViewComponentViewDiscoveryService>();
+    private readonly Serilog.ILogger _logger = Serilog.Log.ForContext<ViewDiscoveryService>();
 
-    public ViewComponentViewDiscoveryService(IWebHostEnvironment env)
+    public ViewDiscoveryService(IWebHostEnvironment env)
     {
         _env = env ?? throw new ArgumentNullException(nameof(env));
     }

@@ -16,17 +16,16 @@ public sealed class PageUpsertViewModel : BaseContentViewModel
     [FormProperty(Label = "Page Controller", EditorType = EditorType.Hidden, IsRequired = true, Order = 3)]
     public string ControllerName { get; set; } = string.Empty;
 
-    //todo: what in the AI hallucination is this?
-    [FormProperty(EditorType = EditorType.Hidden, Order = 99)]
-    public string ConfigurationJson { get; set; } = "{}";
-
     [FormProperty(
     Label = "View Name",
     HelpText = "The view template to use. Leave empty for default behavior.",
     Placeholder = "e.g., Default",
     EditorType = EditorType.ViewPicker,
     ViewComponentName = "Page",
-    Order = 5
-)]
+    Order = 90)]
     public string? ViewName { get; set; }
+
+    //todo: what in the AI hallucination is
+    [FormProperty(EditorType = EditorType.Hidden, Order = 99)]
+    public string ConfigurationJson { get; set; } = "{}";
 }

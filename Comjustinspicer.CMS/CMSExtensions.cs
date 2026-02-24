@@ -207,6 +207,7 @@ public static class CMSExtensions
 					ControllerName = "GenericAdminPage",
 					Title = "Admin",
 					Slug = "admin",
+					ViewName = "Dashboard",
 					ConfigurationJson = "{}",
 					IsPublished = true,
 					PublicationDate = DateTime.UtcNow,

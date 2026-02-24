@@ -21,7 +21,7 @@ public class ContentZoneModel : IContentZoneModel, IAdminCrudHandler
     public ContentZoneModel(
         IContentZoneService service,
         IContentZoneComponentRegistry registry,
-        IViewComponentViewDiscoveryService viewDiscoveryService)
+        IViewDiscoveryService viewDiscoveryService)
     {
         _service = service ?? throw new ArgumentNullException(nameof(service));
         _registry = registry ?? throw new ArgumentNullException(nameof(registry));
@@ -239,13 +239,13 @@ internal sealed class ContentZoneChildHandler : IAdminCrudChildHandler
 internal sealed class ContentZoneRegistryHandler : IAdminRegistryHandler
 {
     private readonly IContentZoneComponentRegistry _registry;
-    private readonly IViewComponentViewDiscoveryService _viewDiscoveryService;
+    private readonly IViewDiscoveryService _viewDiscoveryService;
     private readonly Serilog.ILogger _logger =
         Serilog.Log.ForContext<ContentZoneRegistryHandler>();
 
     public ContentZoneRegistryHandler(
         IContentZoneComponentRegistry registry,
-        IViewComponentViewDiscoveryService viewDiscoveryService)
+        IViewDiscoveryService viewDiscoveryService)
     {
         _registry = registry;
         _viewDiscoveryService = viewDiscoveryService;

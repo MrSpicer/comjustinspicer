@@ -4,7 +4,7 @@ namespace Comjustinspicer.CMS.Services;
 /// Service for discovering available views for ViewComponents.
 /// Scans the ASP.NET view search paths to find .cshtml files in ViewComponent directories.
 /// </summary>
-public interface IViewComponentViewDiscoveryService
+public interface IViewDiscoveryService
 {
     /// <summary>
     /// Gets a list of available view names for the specified ViewComponent.
