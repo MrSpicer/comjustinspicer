@@ -17,7 +17,9 @@ public class ContentBlockContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Content).IsRequired().HasMaxLength(10000);
             entity.ToTable("ContentBlocks");
-            
+            entity.HasIndex(e => e.ParentMasterId)
+                .HasDatabaseName("IX_ContentBlocks_ParentMasterId");
+
             // Store CustomFields as JSON
             entity.OwnsMany(e => e.CustomFields, cf =>
             {

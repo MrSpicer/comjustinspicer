@@ -26,7 +26,9 @@ public class ContentZoneContext : DbContext
                   .WithOne(i => i.ContentZone)
                   .HasForeignKey(i => i.ContentZoneId)
                   .OnDelete(DeleteBehavior.Cascade);
-            
+            entity.HasIndex(e => e.ParentMasterId)
+                .HasDatabaseName("IX_ContentZones_ParentMasterId");
+
             // Store CustomFields as JSON
             entity.OwnsMany(e => e.CustomFields, cf =>
             {
@@ -42,6 +44,8 @@ public class ContentZoneContext : DbContext
             entity.ToTable("ContentZoneItems");
 
             entity.HasIndex(e => new { e.ContentZoneId, e.Ordinal });
+            entity.HasIndex(e => e.ParentMasterId)
+                .HasDatabaseName("IX_ContentZoneItems_ParentMasterId");
 
             // Store CustomFields as JSON
             entity.OwnsMany(e => e.CustomFields, cf =>

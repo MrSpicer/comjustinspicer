@@ -31,6 +31,8 @@ public abstract record BaseContentDTO
 
     public Guid MasterId { get; set; }
 
+    public Guid? ParentMasterId { get; set; }
+
     public int Version { get; set; }
 
     public List<CustomField> CustomFields { get; set; } = new();

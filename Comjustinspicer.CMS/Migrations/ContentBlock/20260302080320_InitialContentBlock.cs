@@ -30,6 +30,7 @@ namespace Comjustinspicer.CMS.Migrations.ContentBlock
                     IsHidden = table.Column<bool>(type: "boolean", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     MasterId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ParentMasterId = table.Column<Guid>(type: "uuid", nullable: true),
                     Version = table.Column<int>(type: "integer", nullable: false),
                     CustomFields = table.Column<string>(type: "jsonb", nullable: true)
                 },
@@ -37,6 +38,11 @@ namespace Comjustinspicer.CMS.Migrations.ContentBlock
                 {
                     table.PrimaryKey("PK_ContentBlocks", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContentBlocks_ParentMasterId",
+                table: "ContentBlocks",
+                column: "ParentMasterId");
         }
 
         /// <inheritdoc />

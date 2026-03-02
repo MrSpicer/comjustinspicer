@@ -39,6 +39,7 @@ public class MappingProfile : Profile
         .ForMember(d => d.LastModifiedBy, opt => opt.Ignore())
         .ForMember(d => d.MasterId, opt => opt.MapFrom(s => s.MasterId ?? Guid.Empty))
         .ForMember(d => d.Version, opt => opt.MapFrom(s => s.Version ?? 0))
+        .ForMember(d => d.ParentMasterId, opt => opt.Ignore())
         .ForMember(d => d.CustomFields, opt => opt.Ignore());
 
     // Article mappings
@@ -71,6 +72,7 @@ public class MappingProfile : Profile
         .ForMember(d => d.LastModifiedBy, opt => opt.Ignore())
         .ForMember(d => d.MasterId, opt => opt.MapFrom(s => s.MasterId ?? Guid.Empty))
         .ForMember(d => d.Version, opt => opt.MapFrom(s => s.Version ?? 0))
+        .ForMember(d => d.ParentMasterId, opt => opt.Ignore())
         .ForMember(d => d.CustomFields, opt => opt.Ignore());
 
     // ArticleList mappings
@@ -96,6 +98,7 @@ public class MappingProfile : Profile
         .ForMember(d => d.LastModifiedBy, opt => opt.Ignore())
         .ForMember(d => d.MasterId, opt => opt.MapFrom(s => s.MasterId ?? Guid.Empty))
         .ForMember(d => d.Version, opt => opt.MapFrom(s => s.Version ?? 0))
+        .ForMember(d => d.ParentMasterId, opt => opt.Ignore())
         .ForMember(d => d.CustomFields, opt => opt.Ignore());
 
     CreateMap<ArticleListDTO, ArticleListItemViewModel>()
@@ -143,6 +146,7 @@ public class MappingProfile : Profile
         .ForMember(d => d.LastModifiedBy, opt => opt.Ignore())
         .ForMember(d => d.MasterId, opt => opt.MapFrom(s => s.MasterId ?? Guid.Empty))
         .ForMember(d => d.Version, opt => opt.MapFrom(s => s.Version ?? 0))
+        .ForMember(d => d.ParentMasterId, opt => opt.Ignore())
         .ForMember(d => d.CustomFields, opt => opt.Ignore());
 
     CreateMap<PageDTO, PageItemViewModel>()

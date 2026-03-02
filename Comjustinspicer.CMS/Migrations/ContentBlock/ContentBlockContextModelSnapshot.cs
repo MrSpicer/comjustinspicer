@@ -60,6 +60,9 @@ namespace Comjustinspicer.CMS.Migrations.ContentBlock
                     b.Property<DateTime>("ModificationDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid?>("ParentMasterId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("PublicationDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -78,6 +81,9 @@ namespace Comjustinspicer.CMS.Migrations.ContentBlock
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ParentMasterId")
+                        .HasDatabaseName("IX_ContentBlocks_ParentMasterId");
 
                     b.ToTable("ContentBlocks", (string)null);
                 });
@@ -113,6 +119,8 @@ namespace Comjustinspicer.CMS.Migrations.ContentBlock
                             b1.Property<Guid>("MasterId");
 
                             b1.Property<DateTime>("ModificationDate");
+
+                            b1.Property<Guid?>("ParentMasterId");
 
                             b1.Property<DateTime>("PublicationDate");
 

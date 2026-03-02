@@ -21,6 +21,8 @@ public class ArticleContext : DbContext
             entity.ToTable("Articles");
             entity.Property(e => e.ArticleListMasterId).HasColumnName("ArticleListMasterId");
             entity.HasIndex(e => e.ArticleListMasterId);
+            entity.HasIndex(e => e.ParentMasterId)
+                .HasDatabaseName("IX_Articles_ParentMasterId");
 
             // Store CustomFields as JSON
             entity.OwnsMany(e => e.CustomFields, cf =>
@@ -28,9 +30,12 @@ public class ArticleContext : DbContext
                 cf.ToJson();
             });
         });
-        
+
         modelBuilder.Entity<ArticleListDTO>(entity =>
         {
+            entity.HasIndex(e => e.ParentMasterId)
+                .HasDatabaseName("IX_ArticleLists_ParentMasterId");
+
             // Store CustomFields as JSON
             entity.OwnsMany(e => e.CustomFields, cf =>
             {

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Comjustinspicer.CMS.Migrations.ContentZone
 {
     [DbContext(typeof(ContentZoneContext))]
-    [Migration("20260219013211_InitialContentZone")]
+    [Migration("20260302080332_InitialContentZone")]
     partial class InitialContentZone
     {
         /// <inheritdoc />
@@ -68,6 +68,9 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<Guid?>("ParentMasterId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("PublicationDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -89,6 +92,9 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
 
                     b.HasIndex("Name")
                         .IsUnique();
+
+                    b.HasIndex("ParentMasterId")
+                        .HasDatabaseName("IX_ContentZones_ParentMasterId");
 
                     b.ToTable("ContentZones", (string)null);
                 });
@@ -151,6 +157,9 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                     b.Property<int>("Ordinal")
                         .HasColumnType("integer");
 
+                    b.Property<Guid?>("ParentMasterId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("PublicationDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -169,6 +178,9 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ParentMasterId")
+                        .HasDatabaseName("IX_ContentZoneItems_ParentMasterId");
 
                     b.HasIndex("ContentZoneId", "Ordinal");
 
@@ -206,6 +218,8 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                             b1.Property<Guid>("MasterId");
 
                             b1.Property<DateTime>("ModificationDate");
+
+                            b1.Property<Guid?>("ParentMasterId");
 
                             b1.Property<DateTime>("PublicationDate");
 
@@ -275,6 +289,8 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                             b1.Property<Guid>("MasterId");
 
                             b1.Property<DateTime>("ModificationDate");
+
+                            b1.Property<Guid?>("ParentMasterId");
 
                             b1.Property<DateTime>("PublicationDate");
 

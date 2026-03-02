@@ -31,6 +31,7 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                     IsHidden = table.Column<bool>(type: "boolean", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     MasterId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ParentMasterId = table.Column<Guid>(type: "uuid", nullable: true),
                     Version = table.Column<int>(type: "integer", nullable: false),
                     CustomFields = table.Column<string>(type: "jsonb", nullable: true)
                 },
@@ -64,6 +65,7 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                     IsHidden = table.Column<bool>(type: "boolean", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     MasterId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ParentMasterId = table.Column<Guid>(type: "uuid", nullable: true),
                     Version = table.Column<int>(type: "integer", nullable: false),
                     CustomFields = table.Column<string>(type: "jsonb", nullable: true)
                 },
@@ -84,10 +86,20 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                 columns: new[] { "ContentZoneId", "Ordinal" });
 
             migrationBuilder.CreateIndex(
+                name: "IX_ContentZoneItems_ParentMasterId",
+                table: "ContentZoneItems",
+                column: "ParentMasterId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ContentZones_Name",
                 table: "ContentZones",
                 column: "Name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContentZones_ParentMasterId",
+                table: "ContentZones",
+                column: "ParentMasterId");
         }
 
         /// <inheritdoc />

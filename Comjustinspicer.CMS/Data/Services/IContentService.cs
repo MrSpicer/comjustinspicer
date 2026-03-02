@@ -13,4 +13,6 @@ public interface IContentService<T> where T : BaseContentDTO
     Task<bool> UpsertAsync(T entity, CancellationToken ct = default);
     Task<T?> GetBySlugAsync(string slug, CancellationToken ct = default);
     Task<bool> DeleteAsync(Guid id, bool softDelete = false, bool deleteHistory = false, CancellationToken ct = default);
+    Task<List<T>> GetChildrenAsync(Guid parentMasterId, CancellationToken ct = default);
+    Task<List<T>> GetRootsAsync(CancellationToken ct = default);
 }

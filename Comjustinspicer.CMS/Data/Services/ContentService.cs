@@ -129,6 +129,26 @@ public sealed class ContentService<T> : IContentService<T> where T : BaseContent
             .FirstOrDefaultAsync(ct);
     }
 
+    public async Task<List<T>> GetChildrenAsync(Guid parentMasterId, CancellationToken ct = default)
+    {
+        return await _set
+            .AsNoTracking()
+            .Where(e => e.ParentMasterId == parentMasterId
+                     && !_set.Any(e2 => e2.MasterId == e.MasterId && e2.Version > e.Version))
+            .OrderByDescending(e => e.ModificationDate)
+            .ToListAsync(ct);
+    }
+
+    public async Task<List<T>> GetRootsAsync(CancellationToken ct = default)
+    {
+        return await _set
+            .AsNoTracking()
+            .Where(e => e.ParentMasterId == null
+                     && !_set.Any(e2 => e2.MasterId == e.MasterId && e2.Version > e.Version))
+            .OrderByDescending(e => e.ModificationDate)
+            .ToListAsync(ct);
+    }
+
     public async Task<bool> DeleteAsync(Guid id, bool softDelete = false, bool deleteHistory = false, CancellationToken ct = default)
     {
         var entity = await _set.FirstOrDefaultAsync(e => e.Id == id, ct);

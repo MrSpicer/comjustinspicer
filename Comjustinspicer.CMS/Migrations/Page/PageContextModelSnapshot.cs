@@ -65,6 +65,9 @@ namespace Comjustinspicer.CMS.Migrations.Page
                     b.Property<DateTime>("ModificationDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid?>("ParentMasterId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("PublicationDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -92,6 +95,9 @@ namespace Comjustinspicer.CMS.Migrations.Page
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ParentMasterId")
+                        .HasDatabaseName("IX_Pages_ParentMasterId");
 
                     b.HasIndex("Route");
 
@@ -129,6 +135,8 @@ namespace Comjustinspicer.CMS.Migrations.Page
                             b1.Property<Guid>("MasterId");
 
                             b1.Property<DateTime>("ModificationDate");
+
+                            b1.Property<Guid?>("ParentMasterId");
 
                             b1.Property<DateTime>("PublicationDate");
 

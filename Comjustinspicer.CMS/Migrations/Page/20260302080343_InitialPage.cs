@@ -18,6 +18,7 @@ namespace Comjustinspicer.CMS.Migrations.Page
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Route = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
                     ControllerName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    ViewName = table.Column<string>(type: "text", nullable: true),
                     ConfigurationJson = table.Column<string>(type: "character varying(4000)", maxLength: 4000, nullable: false),
                     Slug = table.Column<string>(type: "text", nullable: false),
                     Title = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
@@ -32,6 +33,7 @@ namespace Comjustinspicer.CMS.Migrations.Page
                     IsHidden = table.Column<bool>(type: "boolean", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     MasterId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ParentMasterId = table.Column<Guid>(type: "uuid", nullable: true),
                     Version = table.Column<int>(type: "integer", nullable: false),
                     CustomFields = table.Column<string>(type: "jsonb", nullable: true)
                 },
@@ -39,6 +41,11 @@ namespace Comjustinspicer.CMS.Migrations.Page
                 {
                     table.PrimaryKey("PK_Pages", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Pages_ParentMasterId",
+                table: "Pages",
+                column: "ParentMasterId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Pages_Route",

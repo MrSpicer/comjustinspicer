@@ -9,11 +9,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Comjustinspicer.CMS.Migrations.ContentBlock
+namespace Comjustinspicer.CMS.Migrations.Page
 {
-    [DbContext(typeof(ContentBlockContext))]
-    [Migration("20260219013200_InitialContentBlock")]
-    partial class InitialContentBlock
+    [DbContext(typeof(PageContext))]
+    [Migration("20260302080343_InitialPage")]
+    partial class InitialPage
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,16 +25,21 @@ namespace Comjustinspicer.CMS.Migrations.ContentBlock
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ContentBlockDTO", b =>
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.PageDTO", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Content")
+                    b.Property<string>("ConfigurationJson")
                         .IsRequired()
-                        .HasMaxLength(10000)
-                        .HasColumnType("character varying(10000)");
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<string>("ControllerName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uuid");
@@ -63,11 +68,19 @@ namespace Comjustinspicer.CMS.Migrations.ContentBlock
                     b.Property<DateTime>("ModificationDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid?>("ParentMasterId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("PublicationDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("PublicationEndDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Route")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<string>("Slug")
                         .IsRequired()
@@ -75,21 +88,30 @@ namespace Comjustinspicer.CMS.Migrations.ContentBlock
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<int>("Version")
                         .HasColumnType("integer");
 
+                    b.Property<string>("ViewName")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
-                    b.ToTable("ContentBlocks", (string)null);
+                    b.HasIndex("ParentMasterId")
+                        .HasDatabaseName("IX_Pages_ParentMasterId");
+
+                    b.HasIndex("Route");
+
+                    b.ToTable("Pages", (string)null);
                 });
 
-            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.ContentBlockDTO", b =>
+            modelBuilder.Entity("Comjustinspicer.CMS.Data.Models.PageDTO", b =>
                 {
                     b.OwnsMany("Comjustinspicer.CMS.Data.Models.CustomField", "CustomFields", b1 =>
                         {
-                            b1.Property<Guid>("ContentBlockDTOId");
+                            b1.Property<Guid>("PageDTOId");
 
                             b1.Property<int>("__synthesizedOrdinal")
                                 .ValueGeneratedOnAdd();
@@ -117,6 +139,8 @@ namespace Comjustinspicer.CMS.Migrations.ContentBlock
 
                             b1.Property<DateTime>("ModificationDate");
 
+                            b1.Property<Guid?>("ParentMasterId");
+
                             b1.Property<DateTime>("PublicationDate");
 
                             b1.Property<DateTime?>("PublicationEndDate");
@@ -135,14 +159,14 @@ namespace Comjustinspicer.CMS.Migrations.ContentBlock
 
                             b1.Property<int>("Version");
 
-                            b1.HasKey("ContentBlockDTOId", "__synthesizedOrdinal");
+                            b1.HasKey("PageDTOId", "__synthesizedOrdinal");
 
-                            b1.ToTable("ContentBlocks");
+                            b1.ToTable("Pages");
 
                             b1.ToJson("CustomFields");
 
                             b1.WithOwner()
-                                .HasForeignKey("ContentBlockDTOId");
+                                .HasForeignKey("PageDTOId");
                         });
 
                     b.Navigation("CustomFields");
