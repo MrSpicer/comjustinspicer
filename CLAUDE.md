@@ -22,6 +22,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
  - after finishing work check to see if documentation needs to be updated to reflect the changes
  - Do not Remove todo notes from the code unless the todo not has been completed. If you are unsure. ask
  - If Tests fail that were previously passing, do not modify those tests without permission from a human
+ - When multiple good options exist ask the user which they would prefer
+ - always ask clarifying questions when planning if you have any uncertainty.
 
 ## Architecture
 

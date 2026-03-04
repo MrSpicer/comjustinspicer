@@ -17,11 +17,5 @@
   "bugs": {
     "url": "https://github.com/MrSpicer/comjustinspicer/issues"
   },
-  "homepage": "https://github.com/MrSpicer/comjustinspicer#readme",
-  "dependencies": {
-    "@playwright/mcp": "^0.0.64"
-  },
-  "devDependencies": {
-    "playwright": "^1.59.0-alpha-1770338664000"
-  }
+  "homepage": "https://github.com/MrSpicer/comjustinspicer#readme"
 }

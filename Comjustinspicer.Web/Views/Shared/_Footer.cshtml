@@ -1,4 +1,4 @@
-﻿@using Comjustinspicer.CMS.ViewComponents
-@using Comjustinspicer.CMS.Models.ContentBlock
-
-@await Component.InvokeAsync(name: "ContentZone", new { zoneName = "Footer", IsGlobal = true })
+<div class="container footer__inner">
+	<p class="footer__copy">&copy; @DateTime.Now.Year Justin Paul Spicer &middot; Chicago, IL</p>
+	<p class="footer__built">Built with ASP.NET Core MVC &middot; No frameworks</p>
+</div>

@@ -1,0 +1,199 @@
+/* ============================================================
+   PRINT STYLES — Justin Paul Spicer Portfolio
+   Clean one-page resume layout for printing
+   ============================================================ */
+
+@media print {
+  /* Reset to white/black */
+  :root {
+    --color-bg-deep:      #ffffff;
+    --color-bg-surface:   #ffffff;
+    --color-bg-raised:    #f5f5f5;
+    --color-bg-border:    #dddddd;
+    --color-accent:       #006655;
+    --color-text-primary: #111111;
+    --color-text-secondary: #444444;
+    --color-text-muted:   #777777;
+  }
+
+  * {
+    background: transparent !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 11pt;
+    color: #111;
+    background: #fff;
+    line-height: 1.5;
+  }
+
+  /* Hide decorative and interactive elements */
+  .nav,
+  .hero__cursor,
+  .hero__scroll,
+  .hero::before,
+  .hero::after,
+  .hero__actions,
+  .contact__links,
+  .footer,
+  .btn,
+  .copy-btn,
+  [data-animate]:not(.is-visible) {
+    display: none !important;
+  }
+
+  /* Show everything */
+  [data-animate] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* Hero: compact header */
+  .hero {
+    min-height: auto;
+    padding: 0;
+    margin-bottom: 1.5rem;
+    page-break-after: avoid;
+  }
+
+  .hero__name {
+    font-size: 28pt;
+    -webkit-text-fill-color: #111;
+    color: #111;
+    animation: none;
+    opacity: 1;
+  }
+
+  .hero__eyebrow,
+  .hero__typewriter-wrapper,
+  .hero__description {
+    opacity: 1;
+    animation: none;
+  }
+
+  .hero__typewriter-wrapper {
+    font-size: 12pt;
+  }
+
+  /* Sections */
+  .section,
+  .section--alt {
+    padding: 1.5rem 0;
+    background: transparent;
+    border-top: 0.5pt solid #ccc;
+  }
+
+  .section-label {
+    font-size: 8pt;
+    letter-spacing: 0.15em;
+    color: var(--color-accent);
+  }
+
+  .section-title {
+    font-size: 16pt;
+    color: #111;
+  }
+
+  /* Timeline */
+  .timeline::before {
+    display: none;
+  }
+
+  .timeline__dot {
+    display: none;
+  }
+
+  .timeline {
+    padding-left: 0;
+    gap: 1rem;
+  }
+
+  .job-card {
+    border: 0.5pt solid #ddd;
+    padding: 0.75rem;
+    page-break-inside: avoid;
+  }
+
+  .job-card::before {
+    display: none;
+  }
+
+  .job-card__company {
+    font-size: 13pt;
+    color: #111;
+  }
+
+  .job-card__title {
+    font-size: 10pt;
+    color: var(--color-accent);
+    font-family: monospace;
+  }
+
+  .job-card__bullet {
+    font-size: 9.5pt;
+    color: #333;
+  }
+
+  /* Skills */
+  .skill-group {
+    border: 0.5pt solid #ddd;
+    page-break-inside: avoid;
+  }
+
+  .tag {
+    font-size: 8pt;
+    border: 0.5pt solid #ddd;
+    color: #444;
+  }
+
+  /* About stats */
+  .stat-card {
+    border: 0.5pt solid #ddd;
+  }
+
+  .stat-card__number {
+    color: var(--color-accent);
+    -webkit-text-fill-color: var(--color-accent);
+  }
+
+  /* URLs */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 8pt;
+    color: #666;
+  }
+
+  /* Page breaks */
+  #experience { page-break-before: always; }
+  #skills     { page-break-before: always; }
+
+  .container {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  /* Contact info */
+  .contact-card {
+    border: 0.5pt solid #ddd;
+    padding: 0.5rem;
+  }
+
+  .contact__cards {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .gradient-text {
+    -webkit-text-fill-color: #111;
+    color: #111;
+  }
+
+  @page {
+    margin: 0.75in;
+    size: letter;
+  }
+}

@@ -1,27 +1,46 @@
-﻿@using Microsoft.AspNetCore.Identity
-@using Comjustinspicer.CMS.Services;
+@{
+	var path = Context.Request.Path.Value ?? "/";
+}
 
-<nav class="navbar" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-        <a class="navbar-item" href="/">
-            @await Component.InvokeAsync(name: "ContentZone", new { zoneName = "Logo", IsGlobal = true })
-        </a>
+<nav class="nav" aria-label="Main navigation">
+	<div class="container nav__inner">
+		<!-- Logo / Monogram -->
+		<a href="/" class="nav__logo" aria-label="Justin Paul Spicer — home">JPS</a>
 
-        <a id="nav-toggle" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
-            data-target="siteNav">
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-        </a>
-    </div>
+		<!-- Desktop links -->
+		<ul class="nav__links" role="list">
+			<li><a href="/about" class="nav__link @(path.StartsWith("/about") ? "is-active" : "")">About</a></li>
+			<li><a href="/experience" class="nav__link @(path.StartsWith("/experience") ? "is-active" : "")">Experience</a></li>
+			<li><a href="/skills" class="nav__link @(path.StartsWith("/skills") ? "is-active" : "")">Skills</a></li>
+			<li><a href="/certifications" class="nav__link @(path.StartsWith("/certifications") ? "is-active" : "")">Certifications</a></li>
+			<li><a href="/contact" class="nav__link @(path.StartsWith("/contact") ? "is-active" : "")">Contact</a></li>
+			<li>
+				<a href="https://www.github.com/MrSpicer/Resume/justin_resume.pdf" download class="nav__cta" aria-label="Download resume PDF">
+					<svg width="14" height="14" aria-hidden="true"><use href="#icon-download"/></svg>
+					Resume
+				</a>
+			</li>
+		</ul>
 
-    <div id="siteNav" class="navbar-menu">
-        <div class="navbar-start">
-            @await Component.InvokeAsync(name: "ContentZone", new { zoneName = "NavBar", IsGlobal = true })
-        </div>
+		<!-- Hamburger button (mobile) -->
+		<button class="nav__hamburger" aria-label="Toggle navigation menu" aria-controls="mobile-nav" aria-expanded="false">
+			<svg class="icon-menu" aria-hidden="true"><use href="#icon-menu"/></svg>
+			<svg class="icon-close" aria-hidden="true"><use href="#icon-close"/></svg>
+		</button>
+	</div>
 
-        <div class="navbar-end">
-            @await Component.InvokeAsync(name: "ContentZone", new { zoneName = "NavBar End", IsGlobal = true })
-        </div>
-    </div>
+	<!-- Mobile overlay -->
+	<nav id="mobile-nav" class="nav__overlay" aria-label="Mobile navigation" aria-hidden="true">
+		<ul role="list" style="display:flex;flex-direction:column;align-items:center;gap:2rem;list-style:none;">
+			<li><a href="/about" class="nav__link @(path.StartsWith("/about") ? "is-active" : "")">About</a></li>
+			<li><a href="/experience" class="nav__link @(path.StartsWith("/experience") ? "is-active" : "")">Experience</a></li>
+			<li><a href="/skills" class="nav__link @(path.StartsWith("/skills") ? "is-active" : "")">Skills</a></li>
+			<li><a href="/certifications" class="nav__link @(path.StartsWith("/certifications") ? "is-active" : "")">Certifications</a></li>
+			<li><a href="/contact" class="nav__link @(path.StartsWith("/contact") ? "is-active" : "")">Contact</a></li>
+		</ul>
+		<a href="https://www.github.com/MrSpicer/Resume/justin_resume.pdf" download class="btn btn--primary btn--lg">
+			<svg aria-hidden="true"><use href="#icon-download"/></svg>
+			Download Resume
+		</a>
+	</nav>
 </nav>

@@ -1,0 +1,249 @@
+/* ============================================================
+   ANIMATIONS — Justin Paul Spicer Portfolio
+   @keyframes + data-animate scroll system
+   ============================================================ */
+
+/* --- Core @keyframes --- */
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fade-down {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+@keyframes bounce-y {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(6px); }
+}
+
+@keyframes dotgrid-drift {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(32px, 32px); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer {
+  0%   { transform: translateX(-200%); }
+  100% { transform: translateX(200%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33%       { transform: translateY(-8px) rotate(1deg); }
+  66%       { transform: translateY(-4px) rotate(-1deg); }
+}
+
+/* --- data-animate scroll system --- */
+/* Elements with [data-animate] start hidden and gain .is-visible via JS IntersectionObserver */
+
+[data-animate] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-animate="fade-in"] {
+  transform: none;
+}
+
+[data-animate="slide-left"] {
+  transform: translateX(-32px);
+}
+
+[data-animate="slide-right"] {
+  transform: translateX(32px);
+}
+
+[data-animate="scale"] {
+  transform: scale(0.92);
+}
+
+[data-animate].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Stagger delays via data-delay attribute */
+[data-delay="100"] { transition-delay: 0.1s; }
+[data-delay="150"] { transition-delay: 0.15s; }
+[data-delay="200"] { transition-delay: 0.2s; }
+[data-delay="250"] { transition-delay: 0.25s; }
+[data-delay="300"] { transition-delay: 0.3s; }
+[data-delay="350"] { transition-delay: 0.35s; }
+[data-delay="400"] { transition-delay: 0.4s; }
+[data-delay="450"] { transition-delay: 0.45s; }
+[data-delay="500"] { transition-delay: 0.5s; }
+[data-delay="600"] { transition-delay: 0.6s; }
+[data-delay="700"] { transition-delay: 0.7s; }
+[data-delay="800"] { transition-delay: 0.8s; }
+
+/* Stat counter number animation */
+[data-counter] {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Timeline animation --- */
+.timeline__item {
+  --item-delay: 0ms;
+}
+.timeline__item:nth-child(1) { --item-delay: 0ms; }
+.timeline__item:nth-child(2) { --item-delay: 150ms; }
+.timeline__item:nth-child(3) { --item-delay: 300ms; }
+
+/* --- Tag hover ripple --- */
+.tag {
+  position: relative;
+  overflow: hidden;
+}
+.tag::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 212, 180, 0.06);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+.tag:hover::after {
+  opacity: 1;
+}
+
+/* --- Skill group entrance --- */
+.skill-group[data-animate].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* --- Contact card pulse on load --- */
+.contact-card {
+  position: relative;
+}
+
+/* --- Gradient border shimmer --- */
+.job-card::before {
+  animation: none;
+}
+.job-card:hover::before {
+  opacity: 1;
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  [data-animate] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .hero__eyebrow,
+  .hero__name,
+  .hero__typewriter-wrapper,
+  .hero__description,
+  .hero__actions,
+  .hero__scroll {
+    opacity: 1 !important;
+    animation: none !important;
+  }
+
+  .hero__cursor {
+    animation: none !important;
+    opacity: 1;
+  }
+
+  .hero::before {
+    animation: none !important;
+  }
+
+  .bounce-y,
+  .hero__scroll svg {
+    animation: none !important;
+  }
+
+  .contact__availability::before {
+    animation: none !important;
+  }
+}

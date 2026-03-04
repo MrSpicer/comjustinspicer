@@ -9,12 +9,7 @@ nginx/certs/
 *.exe
 *.log
 Comjustinspicer.Tests/TestResults/
-
-# Node.js / Playwright
 node_modules/
 package-lock.json
-playwright-report/
-test-results/
-playwright/.cache/
-.playwright-mcp
 .env
+designsite/*
