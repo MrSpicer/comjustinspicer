@@ -8,12 +8,34 @@ namespace Comjustinspicer.CMS.Models.ContentZone;
 public interface IContentZoneModel
 {
     /// <summary>
-    /// Gets the view model for a content zone by name.
+    /// Gets the view model for a content zone by name (used for global/fallback zones).
     /// </summary>
-    /// <param name="contentZoneName">The content zone identifier/name.</param>
-    /// <param name="ct">Cancellation token.</param>
-    /// <returns>A view model for rendering the content zone.</returns>
     Task<ContentZoneViewModel?> GetViewModelAsync(string contentZoneName, CancellationToken ct = default);
+
+    /// <summary>
+    /// Gets or creates the view model for a page's named slot.
+    /// </summary>
+    Task<ContentZoneViewModel> GetOrCreateViewModelByPageSlotAsync(Guid pageMasterId, string slotName, CancellationToken ct = default);
+
+    /// <summary>
+    /// Gets the view model for a page's named slot without creating it (returns null if not found).
+    /// </summary>
+    Task<ContentZoneViewModel?> GetViewModelByPageSlotAsync(Guid pageMasterId, string slotName, CancellationToken ct = default);
+
+    /// <summary>
+    /// Gets or creates the view model for a parent zone's named slot.
+    /// </summary>
+    Task<ContentZoneViewModel> GetOrCreateViewModelByZoneSlotAsync(Guid parentZoneId, string slotName, CancellationToken ct = default);
+
+    /// <summary>
+    /// Gets the view model for a parent zone's named slot without creating it (returns null if not found).
+    /// </summary>
+    Task<ContentZoneViewModel?> GetViewModelByZoneSlotAsync(Guid parentZoneId, string slotName, CancellationToken ct = default);
+
+    /// <summary>
+    /// Gets a fully-mapped view model for a zone by its database ID.
+    /// </summary>
+    Task<ContentZoneViewModel?> GetViewModelByIdAsync(Guid id, CancellationToken ct = default);
 
     /// <summary>
     /// Gets a content zone by ID.

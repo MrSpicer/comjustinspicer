@@ -41,7 +41,7 @@ Content Zones are named, database-backed regions in a view that an admin can pop
 @await Component.InvokeAsync("ContentZone", new { zoneName = "Sidebar", IsGlobal = true })
 ```
 
-- `zoneName` — logical name for the zone; combined with the current page/route context to form a unique path stored in the database.
+- `zoneName` — slot name for the zone (e.g. `"Main"`, `"Sidebar"`); scoped to the current page or parent zone via a `ContentZoneAssignment` record.
 - `IsGlobal = true` — bypasses the page context so one zone instance is shared across all pages.
 
 In normal (non-admin) mode the component renders nothing if the zone has no items assigned.
@@ -151,12 +151,12 @@ Additional named views (e.g. `Compact.cshtml`) can be added in the same folder a
 
 ---
 
-## How Zone Paths Work
+## How Zone Resolution Works
 
-The `ContentZoneViewComponent` builds a unique database path for each zone instance at render time:
+The `ContentZoneViewComponent` resolves zones via the `ContentZoneAssignments` table rather than path strings:
 
-- **Page-scoped zones** use the page's `MasterId`: `page:{masterId}/{zoneName}#{ordinal}`
-- **Global zones** use a `"Global"` prefix: `Global/{zoneName}#{ordinal}`
-- The `#ordinal` suffix ensures that multiple invocations of the same zone name on a single page each get their own independent slot.
+- **Page-scoped zones** look up by `(ParentPageMasterId, SlotName)` in `ContentZoneAssignments`. If no assignment exists and the user is an admin, a `ContentZoneDTO` + `ContentZoneAssignment` record are created automatically.
+- **Nested zones** (zones rendered inside another zone's layout component) look up by `(ParentZoneId, SlotName)` using the parent zone's ID stored in render context.
+- **Global zones** (`IsGlobal = true`) bypass assignment lookup and use name-based lookup on `ContentZoneDTO.Name`.
 
-This path is what is stored as the `Name` on the `ContentZoneDTO` record and is transparent to widget authors.
+The `ContentZoneDTO.Name` field now stores a human-readable slot name (e.g. `"Main"`, `"Sidebar"`) rather than an opaque path. Zone identity is determined by the assignment record, not the name.

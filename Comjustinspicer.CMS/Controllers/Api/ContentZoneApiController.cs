@@ -48,24 +48,32 @@ public class ContentZoneApiController : ControllerBase
             }
             else
             {
-                // Try to find existing zone by name, or create new one
-                var existingZone = await _service.GetByNameAsync(request.ZoneName, ct);
-                if (existingZone != null)
+                // Prefer assignment-based lookup if context is provided
+                if (request.ParentPageMasterId.HasValue && !string.IsNullOrWhiteSpace(request.SlotName))
                 {
-                    zoneId = existingZone.Id;
+                    var (zone, _) = await _service.GetOrCreateByPageSlotAsync(request.ParentPageMasterId.Value, request.SlotName, ct);
+                    zoneId = zone.Id;
                 }
                 else
                 {
-                    // Create new zone - ID is auto-generated
-                    var newZone = new ContentZoneDTO
+                    // Fallback: name-based lookup or create
+                    var existingZone = await _service.GetByNameAsync(request.ZoneName, ct);
+                    if (existingZone != null)
                     {
-                        Id = Guid.NewGuid(),
-                        Name = request.ZoneName,
-                        Title = request.ZoneName,
-                        IsPublished = true
-                    };
-                    var createdZone = await _service.CreateAsync(newZone, ct);
-                    zoneId = createdZone.Id;
+                        zoneId = existingZone.Id;
+                    }
+                    else
+                    {
+                        var newZone = new ContentZoneDTO
+                        {
+                            Id = Guid.NewGuid(),
+                            Name = request.ZoneName,
+                            Title = request.ZoneName,
+                            IsPublished = true
+                        };
+                        var createdZone = await _service.CreateAsync(newZone, ct);
+                        zoneId = createdZone.Id;
+                    }
                 }
             }
 
@@ -163,12 +171,22 @@ public class ContentZoneApiController : ControllerBase
 public class SaveItemRequest
 {
     /// <summary>
-    /// The zone path/name (used to find or create the zone).
+    /// The zone slot name (used as fallback when ZoneId is not provided).
     /// </summary>
     public string ZoneName { get; set; } = string.Empty;
 
     /// <summary>
-    /// The zone ID if known (optional, zone will be looked up by name if not provided).
+    /// The human-readable slot name (e.g. "Main"). Used with ParentPageMasterId for assignment lookup.
+    /// </summary>
+    public string? SlotName { get; set; }
+
+    /// <summary>
+    /// The page MasterId to scope zone creation via assignment lookup.
+    /// </summary>
+    public Guid? ParentPageMasterId { get; set; }
+
+    /// <summary>
+    /// The zone ID if known (optional, zone will be looked up by assignment or name if not provided).
     /// This is set automatically and never displayed to users.
     /// </summary>
     public Guid? ZoneId { get; set; }

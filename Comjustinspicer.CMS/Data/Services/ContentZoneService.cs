@@ -58,6 +58,7 @@ public sealed class ContentZoneService : IContentZoneService
         if (zone.PublicationDate == default)
             zone.PublicationDate = now;
 
+        zone.MasterId = zone.Id;
         _context.ContentZones.Add(zone);
         await _context.SaveChangesAsync(ct);
         return zone;
@@ -163,5 +164,189 @@ public sealed class ContentZoneService : IContentZoneService
 
         await _context.SaveChangesAsync(ct);
         return true;
+    }
+
+    public async Task<ContentZoneAssignmentDTO?> GetByPageSlotAsync(Guid pageMasterId, string slotName, CancellationToken ct = default)
+    {
+        return await _context.ContentZoneAssignments
+            .AsNoTracking()
+            .FirstOrDefaultAsync(a => a.ParentPageMasterId == pageMasterId && a.SlotName == slotName, ct);
+    }
+
+    public async Task<(ContentZoneDTO Zone, ContentZoneAssignmentDTO Assignment)> GetOrCreateByPageSlotAsync(Guid pageMasterId, string slotName, CancellationToken ct = default)
+    {
+        var assignment = await _context.ContentZoneAssignments
+            .Include(a => a.ContentZone)
+            .ThenInclude(z => z.Items.Where(i => i.IsActive).OrderBy(i => i.Ordinal))
+            .FirstOrDefaultAsync(a => a.ParentPageMasterId == pageMasterId && a.SlotName == slotName, ct);
+
+        if (assignment != null)
+            return (assignment.ContentZone, assignment);
+
+        // Create zone + assignment atomically
+        using var transaction = await _context.Database.BeginTransactionAsync(ct);
+        try
+        {
+            // Re-check inside transaction to avoid duplicate creation
+            assignment = await _context.ContentZoneAssignments
+                .Include(a => a.ContentZone)
+                .ThenInclude(z => z.Items.Where(i => i.IsActive).OrderBy(i => i.Ordinal))
+                .FirstOrDefaultAsync(a => a.ParentPageMasterId == pageMasterId && a.SlotName == slotName, ct);
+
+            if (assignment != null)
+            {
+                await transaction.RollbackAsync(ct);
+                return (assignment.ContentZone, assignment);
+            }
+
+            var zoneId = Guid.NewGuid();
+            var zone = new ContentZoneDTO
+            {
+                Id = zoneId,
+                MasterId = zoneId,
+                Name = slotName,
+                Title = slotName,
+                IsPublished = true,
+                CreationDate = DateTime.UtcNow,
+                ModificationDate = DateTime.UtcNow,
+                PublicationDate = DateTime.UtcNow
+            };
+            _context.ContentZones.Add(zone);
+
+            var newAssignment = new ContentZoneAssignmentDTO
+            {
+                Id = Guid.NewGuid(),
+                SlotName = slotName,
+                ContentZoneId = zoneId,
+                ParentPageMasterId = pageMasterId,
+                ParentZoneId = null
+            };
+            _context.ContentZoneAssignments.Add(newAssignment);
+            await _context.SaveChangesAsync(ct);
+            await transaction.CommitAsync(ct);
+
+            newAssignment.ContentZone = zone;
+            return (zone, newAssignment);
+        }
+        catch
+        {
+            await transaction.RollbackAsync(ct);
+            throw;
+        }
+    }
+
+    public async Task<ContentZoneAssignmentDTO?> GetByZoneSlotAsync(Guid parentZoneId, string slotName, CancellationToken ct = default)
+    {
+        return await _context.ContentZoneAssignments
+            .AsNoTracking()
+            .FirstOrDefaultAsync(a => a.ParentZoneId == parentZoneId && a.SlotName == slotName, ct);
+    }
+
+    public async Task<(ContentZoneDTO Zone, ContentZoneAssignmentDTO Assignment)> GetOrCreateByZoneSlotAsync(Guid parentZoneId, string slotName, CancellationToken ct = default)
+    {
+        var assignment = await _context.ContentZoneAssignments
+            .Include(a => a.ContentZone)
+            .ThenInclude(z => z.Items.Where(i => i.IsActive).OrderBy(i => i.Ordinal))
+            .FirstOrDefaultAsync(a => a.ParentZoneId == parentZoneId && a.SlotName == slotName, ct);
+
+        if (assignment != null)
+            return (assignment.ContentZone, assignment);
+
+        using var transaction = await _context.Database.BeginTransactionAsync(ct);
+        try
+        {
+            assignment = await _context.ContentZoneAssignments
+                .Include(a => a.ContentZone)
+                .ThenInclude(z => z.Items.Where(i => i.IsActive).OrderBy(i => i.Ordinal))
+                .FirstOrDefaultAsync(a => a.ParentZoneId == parentZoneId && a.SlotName == slotName, ct);
+
+            if (assignment != null)
+            {
+                await transaction.RollbackAsync(ct);
+                return (assignment.ContentZone, assignment);
+            }
+
+            var zoneId = Guid.NewGuid();
+            var zone = new ContentZoneDTO
+            {
+                Id = zoneId,
+                MasterId = zoneId,
+                Name = slotName,
+                Title = slotName,
+                IsPublished = true,
+                CreationDate = DateTime.UtcNow,
+                ModificationDate = DateTime.UtcNow,
+                PublicationDate = DateTime.UtcNow
+            };
+            _context.ContentZones.Add(zone);
+
+            var newAssignment = new ContentZoneAssignmentDTO
+            {
+                Id = Guid.NewGuid(),
+                SlotName = slotName,
+                ContentZoneId = zoneId,
+                ParentPageMasterId = null,
+                ParentZoneId = parentZoneId
+            };
+            _context.ContentZoneAssignments.Add(newAssignment);
+            await _context.SaveChangesAsync(ct);
+            await transaction.CommitAsync(ct);
+
+            newAssignment.ContentZone = zone;
+            return (zone, newAssignment);
+        }
+        catch
+        {
+            await transaction.RollbackAsync(ct);
+            throw;
+        }
+    }
+
+    public async Task<IEnumerable<ContentZoneAssignmentDTO>> GetAllAssignmentsForPageAsync(Guid pageMasterId, CancellationToken ct = default)
+    {
+        return await _context.ContentZoneAssignments
+            .AsNoTracking()
+            .Where(a => a.ParentPageMasterId == pageMasterId)
+            .ToListAsync(ct);
+    }
+
+    public async Task<List<ContentZoneDTO>> GetAllByPageAsync(Guid pageMasterId, CancellationToken ct = default)
+    {
+        return await _context.ContentZoneAssignments
+            .AsNoTracking()
+            .Where(a => a.ParentPageMasterId == pageMasterId)
+            .Include(a => a.ContentZone)
+            .ThenInclude(z => z.Items.OrderBy(i => i.Ordinal))
+            .Select(a => a.ContentZone)
+            .OrderBy(z => z.Name)
+            .ToListAsync(ct);
+    }
+
+    public async Task<List<ContentZoneDTO>> GetAllByParentZoneAsync(Guid parentZoneId, CancellationToken ct = default)
+    {
+        return await _context.ContentZoneAssignments
+            .AsNoTracking()
+            .Where(a => a.ParentZoneId == parentZoneId)
+            .Include(a => a.ContentZone)
+            .ThenInclude(z => z.Items.OrderBy(i => i.Ordinal))
+            .Select(a => a.ContentZone)
+            .OrderBy(z => z.Name)
+            .ToListAsync(ct);
+    }
+
+    public async Task<HashSet<Guid>> GetZoneIdsWithChildrenAsync(IEnumerable<Guid> zoneIds, CancellationToken ct = default)
+    {
+        var ids = zoneIds.ToList();
+        if (ids.Count == 0)
+            return [];
+
+        var parentIds = await _context.ContentZoneAssignments
+            .AsNoTracking()
+            .Where(a => a.ParentZoneId != null && ids.Contains(a.ParentZoneId.Value))
+            .Select(a => a.ParentZoneId!.Value)
+            .Distinct()
+            .ToListAsync(ct);
+
+        return [.. parentIds];
     }
 }

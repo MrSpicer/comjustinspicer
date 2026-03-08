@@ -34,7 +34,7 @@ public class AdminContentController : Controller
         var handler = _registry.GetHandler(contentType);
         if (handler == null) return HandlerNotFound(contentType);
 
-        var vm = await handler.GetIndexViewModelAsync(ct);
+        var vm = await handler.GetIndexViewModelAsync(Request.Query, ct);
         return View(handler.IndexViewPath, vm);
     }
 

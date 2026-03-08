@@ -103,6 +103,8 @@
                             @if (node.PageMasterId.HasValue)
                             {
                                 <a asp-controller="AdminContent" asp-action="VersionHistory" asp-route-contentType="pages" asp-route-masterId="@node.PageMasterId" class="button is-info">Versions</a>
+                                <a href="@Url.Action("Index", "AdminContent", new { contentType = "contentzones" })?pageId=@node.PageMasterId"
+                                   class="button is-small is-link">Content Zones</a>
                             }
                             <a asp-controller="AdminContent" asp-action="Edit" asp-route-contentType="pages" asp-route-id="@node.PageId" class="button">Edit</a>
                             <form asp-controller="AdminContent" asp-action="Delete" asp-route-contentType="pages" asp-route-id="@node.PageId" method="post" style="display:inline">

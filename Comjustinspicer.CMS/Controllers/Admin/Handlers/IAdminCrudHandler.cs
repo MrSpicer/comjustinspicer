@@ -29,6 +29,13 @@ public interface IAdminCrudHandler
     Task<object> GetIndexViewModelAsync(CancellationToken ct = default);
 
     /// <summary>
+    /// Returns the index view model, allowing handlers to filter based on query parameters.
+    /// Default implementation falls through to the parameterless overload.
+    /// </summary>
+    Task<object> GetIndexViewModelAsync(IQueryCollection query, CancellationToken ct = default)
+        => GetIndexViewModelAsync(ct);
+
+    /// <summary>
     /// Returns the upsert view model, or null if the record was not found.
     /// id is null for create. query carries extra GET params (e.g. parentRoute for pages).
     /// </summary>

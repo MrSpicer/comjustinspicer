@@ -28,6 +28,11 @@ public class ContentZoneViewModel
 	public List<ContentZoneObject> ZoneObjects { get; set; } = new();
 
 	/// <summary>
+	/// The page MasterId this zone belongs to (if page-scoped). Used for assignment-based zone creation fallback.
+	/// </summary>
+	public Guid? ParentPageMasterId { get; set; }
+
+	/// <summary>
 	/// Indicates whether the current user can edit this zone.
 	/// </summary>
 	public bool CanEdit { get; set; } = false;

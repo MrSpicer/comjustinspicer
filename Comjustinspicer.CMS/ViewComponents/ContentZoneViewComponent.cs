@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using Comjustinspicer.CMS.ContentZones;
 using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Models.ContentZone;
@@ -7,9 +6,10 @@ using Comjustinspicer.CMS.Models.ContentZone;
 namespace Comjustinspicer.CMS.ViewComponents;
 
 /// <summary>
-/// ViewComponent that renders a content zone by path.
+/// ViewComponent that renders a content zone by slot name.
 /// Content zones contain a list of other view components configured in the database.
-/// The path is auto-generated from context or can be explicitly provided.
+/// Page and nested zones are resolved via the ContentZoneAssignments table.
+/// Global zones fall back to name-based lookup.
 /// When an admin user is viewing, an edit mode is displayed allowing inline management.
 /// </summary>
 public class ContentZoneViewComponent : ViewComponent
@@ -24,132 +24,95 @@ public class ContentZoneViewComponent : ViewComponent
 	}
 
 	/// <summary>
-	/// Renders the content zone with the specified path.
+	/// Renders the content zone for the given slot name within the current context.
 	/// </summary>
-	/// <param name="zonePath">
-	/// The path identifier for the content zone. If not provided, it will be auto-generated
-	/// from the current route and zone name.
-	/// </param>
-	/// <param name="zoneName">
-	/// The zone name within the current context. Used to build the path if zonePath is not provided.
-	/// </param>
-	/// <param name="parentPath">
-	/// Optional parent path for nested content zones (e.g., when a zone is inside another ViewComponent).
-	/// </param>
-	/// <returns>The rendered view containing all zone items.</returns>
+	/// <param name="zoneName">The slot name, e.g. "Main", "Sidebar".</param>
+	/// <param name="IsGlobal">When true, bypasses page/zone context and uses name-based lookup.</param>
+	/// <param name="editMode">When true, renders the edit UI regardless of the current user's role.</param>
+	/// <param name="zoneId">When provided, skips name/page resolution and fetches the zone directly by ID.</param>
 	public async Task<IViewComponentResult> InvokeAsync(
-		string? zonePath = null,
 		string? zoneName = null,
-		string? parentPath = null,
-		bool IsGlobal = false)
+		bool IsGlobal = false,
+		bool editMode = false,
+		Guid? zoneId = null)
 	{
-		// Build the effective path
-		var effectivePath = BuildZonePath(zonePath, zoneName, parentPath, IsGlobal);
+		var ct = HttpContext.RequestAborted;
 
-		if (string.IsNullOrWhiteSpace(effectivePath))
-			return Content(string.Empty);
+		ContentZoneViewModel? vm;
 
-		// Check if user is an admin
-		var isAdmin = HttpContext.User?.IsInRole("Admin") == true;
+		Guid? pageMasterIdForVm = null;
 
-		// Try to get the zone - it may not exist yet
-		var vm = await _model.GetViewModelAsync(effectivePath, HttpContext.RequestAborted);
+		if (zoneId.HasValue)
+		{
+			// Direct lookup by zone ID - bypasses name/page resolution
+			vm = await _model.GetViewModelByIdAsync(zoneId.Value, ct);
+		}
+		else
+		{
+			if (string.IsNullOrWhiteSpace(zoneName))
+				return Content(string.Empty);
+
+			if (!IsGlobal && HttpContext.Items["CMS:PageData"] is PageDTO pageData)
+			{
+				pageMasterIdForVm = pageData.MasterId;
+
+				// Page-scoped zone: resolve via assignment
+				var parentZoneId = ViewData["ContentZone:ParentZoneId"] as Guid?;
+
+				if (parentZoneId.HasValue)
+				{
+					// Nested zone inside another zone
+					vm = editMode
+						? await _model.GetOrCreateViewModelByZoneSlotAsync(parentZoneId.Value, zoneName, ct)
+						: await _model.GetViewModelByZoneSlotAsync(parentZoneId.Value, zoneName, ct);
+				}
+				else
+				{
+					// Top-level page zone
+					vm = editMode
+						? await _model.GetOrCreateViewModelByPageSlotAsync(pageData.MasterId, zoneName, ct)
+						: await _model.GetViewModelByPageSlotAsync(pageData.MasterId, zoneName, ct);
+				}
+			}
+			else
+			{
+				// Global or layout zone: name-based lookup (no assignment)
+				vm = await _model.GetViewModelAsync(zoneName, ct);
+			}
+		}
 
 		if (vm == null)
 		{
-			// Zone doesn't exist - create an empty view model for edit mode
 			vm = new ContentZoneViewModel
 			{
 				Id = Guid.Empty,
-				Name = effectivePath,
+				Name = zoneName ?? string.Empty,
 				RawZoneName = zoneName ?? string.Empty,
 				ZoneObjects = new List<ContentZoneObject>(),
-				CanEdit = isAdmin
+				CanEdit = editMode,
+				ParentPageMasterId = pageMasterIdForVm
 			};
 		}
 		else
 		{
-			vm.CanEdit = isAdmin;
-			vm.RawZoneName = zoneName ?? string.Empty;
+			vm.CanEdit = editMode;
+			vm.RawZoneName = zoneName ?? vm.Name;
+			vm.ParentPageMasterId = pageMasterIdForVm;
 		}
 
-		// Store the current path in ViewData for nested zones to access
-		ViewData["ContentZone:ParentPath"] = effectivePath;
+		// Store this zone's ID in ViewData so nested zones can use it as their parent
+		if (vm.Id != Guid.Empty)
+			ViewData["ContentZone:ParentZoneId"] = vm.Id;
 
-		// If admin, show edit mode with inline editing capabilities
-		if (isAdmin)
+		if (editMode)
 		{
-			// Pass component registry data for the modal
 			ViewData["ComponentsByCategory"] = _registry.GetComponentsByCategory();
 			return View("Edit", vm);
 		}
 
-		// Normal mode - only render if there are items
 		if (vm.ZoneObjects?.Any() != true)
 			return Content(string.Empty);
 
 		return View(vm);
-	}
-
-	/// <summary>
-	/// Builds the effective zone path from the available context.
-	/// Uses render-position ordinals to ensure each zone instance is unique,
-	/// even when the same component is rendered multiple times on a page.
-	/// </summary>
-	private string BuildZonePath(string? zonePath, string? zoneName, string? parentPath, bool IsGlobal = false)
-	{
-		// Determine the parent context for this zone
-		var inheritedParentPath = parentPath ?? ViewData["ContentZone:ParentPath"] as string;
-		var parentContext = inheritedParentPath ?? GetRoutePath(IsGlobal);
-
-		// Get the next ordinal for zones under this parent
-		var ordinal = GetNextOrdinal(parentContext);
-
-		// If explicit path provided, append ordinal for uniqueness
-		if (!string.IsNullOrWhiteSpace(zonePath))
-			return $"{zonePath}#{ordinal}";
-
-		// If no zone name, we can't build a path
-		if (string.IsNullOrWhiteSpace(zoneName))
-			return string.Empty;
-
-		// Build path with ordinal: parentContext/zoneName#ordinal
-		return $"{parentContext}/{zoneName}#{ordinal}";
-	}
-
-	/// <summary>
-	/// Gets the next ordinal number for zones rendered under the specified parent.
-	/// This ensures each zone instance gets a unique position-based identifier.
-	/// </summary>
-	private int GetNextOrdinal(string parentContext)
-	{
-		var counterKey = $"ContentZone:Ordinal:{parentContext}";
-		var currentOrdinal = ViewData[counterKey] as int? ?? 0;
-		ViewData[counterKey] = currentOrdinal + 1;
-		return currentOrdinal;
-	}
-
-	/// <summary>
-	/// Gets the current route path for zone identification.
-	/// </summary>
-	private string GetRoutePath(bool IsGlobal)
-	{
-		// If we're in a page context, use the page's unique ID for zone scoping
-		if (!IsGlobal && HttpContext.Items["CMS:PageData"] is PageDTO pageData)
-			return $"page:{pageData.MasterId}";
-
-		// Fallback for non-page contexts (layout zones, admin pages, etc.)
-		var routeData = HttpContext.GetRouteData();
-		var controller = IsGlobal ? "Global" : routeData.Values["controller"]?.ToString() ?? string.Empty;
-		var action = routeData.Values["action"]?.ToString() ?? string.Empty;
-
-		//todo: this seems wrong
-		if (string.IsNullOrEmpty(controller))
-		{
-			var path = HttpContext.Request.Path.Value?.Trim('/') ?? string.Empty;
-			return string.IsNullOrEmpty(path) ? "Home" : path.Replace("/", "_");
-		}
-
-		return $"{controller}/{action}";
 	}
 }

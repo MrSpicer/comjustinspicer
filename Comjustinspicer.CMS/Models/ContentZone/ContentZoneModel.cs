@@ -14,16 +14,19 @@ namespace Comjustinspicer.CMS.Models.ContentZone;
 public class ContentZoneModel : IContentZoneModel, IAdminCrudHandler
 {
     private readonly IContentZoneService _service;
+    private readonly IPageService _pageService;
     private readonly IContentZoneComponentRegistry _registry;
     private readonly ContentZoneChildHandler _childHandler;
     private readonly ContentZoneRegistryHandler _registryHandler;
 
     public ContentZoneModel(
         IContentZoneService service,
+        IPageService pageService,
         IContentZoneComponentRegistry registry,
         IViewDiscoveryService viewDiscoveryService)
     {
         _service = service ?? throw new ArgumentNullException(nameof(service));
+        _pageService = pageService ?? throw new ArgumentNullException(nameof(pageService));
         _registry = registry ?? throw new ArgumentNullException(nameof(registry));
         _childHandler = new ContentZoneChildHandler(this);
         _registryHandler = new ContentZoneRegistryHandler(
@@ -43,6 +46,44 @@ public class ContentZoneModel : IContentZoneModel, IAdminCrudHandler
             return new ContentZoneViewModel { Name = contentZoneName };
 
         return MapToViewModel(zone);
+    }
+
+    public async Task<ContentZoneViewModel> GetOrCreateViewModelByPageSlotAsync(Guid pageMasterId, string slotName, CancellationToken ct = default)
+    {
+        var (zone, _) = await _service.GetOrCreateByPageSlotAsync(pageMasterId, slotName, ct);
+        return MapToViewModel(zone);
+    }
+
+    public async Task<ContentZoneViewModel?> GetViewModelByPageSlotAsync(Guid pageMasterId, string slotName, CancellationToken ct = default)
+    {
+        var assignment = await _service.GetByPageSlotAsync(pageMasterId, slotName, ct);
+        if (assignment == null)
+            return null;
+
+        var zone = await _service.GetByIdAsync(assignment.ContentZoneId, ct);
+        return zone == null ? null : MapToViewModel(zone);
+    }
+
+    public async Task<ContentZoneViewModel> GetOrCreateViewModelByZoneSlotAsync(Guid parentZoneId, string slotName, CancellationToken ct = default)
+    {
+        var (zone, _) = await _service.GetOrCreateByZoneSlotAsync(parentZoneId, slotName, ct);
+        return MapToViewModel(zone);
+    }
+
+    public async Task<ContentZoneViewModel?> GetViewModelByZoneSlotAsync(Guid parentZoneId, string slotName, CancellationToken ct = default)
+    {
+        var assignment = await _service.GetByZoneSlotAsync(parentZoneId, slotName, ct);
+        if (assignment == null)
+            return null;
+
+        var zone = await _service.GetByIdAsync(assignment.ContentZoneId, ct);
+        return zone == null ? null : MapToViewModel(zone);
+    }
+
+    public async Task<ContentZoneViewModel?> GetViewModelByIdAsync(Guid id, CancellationToken ct = default)
+    {
+        var zone = await _service.GetByIdAsync(id, ct);
+        return zone == null ? null : MapToViewModel(zone);
     }
 
     public async Task<ContentZoneDTO?> GetByIdAsync(Guid id, CancellationToken ct = default)
@@ -104,7 +145,55 @@ public class ContentZoneModel : IContentZoneModel, IAdminCrudHandler
     public string UpsertViewPath => ""; // No upsert view currently exists
 
     public async Task<object> GetIndexViewModelAsync(CancellationToken ct = default)
-        => await _service.GetAllAsync(ct);
+    {
+        var zones = await _service.GetAllAsync(ct);
+        var zoneIdsWithChildren = await _service.GetZoneIdsWithChildrenAsync(zones.Select(z => z.Id), ct);
+        return new ContentZoneIndexViewModel
+        {
+            Zones = zones,
+            ZoneIdsWithChildren = zoneIdsWithChildren
+        };
+    }
+
+    public async Task<object> GetIndexViewModelAsync(IQueryCollection query, CancellationToken ct = default)
+    {
+        List<ContentZoneDTO> zones;
+        Guid? filterPageId = null;
+        string? filterPageRoute = null;
+        Guid? filterParentZoneId = null;
+        string? filterParentZoneName = null;
+
+        if (Guid.TryParse(query["pageId"], out var pageId))
+        {
+            filterPageId = pageId;
+            zones = await _service.GetAllByPageAsync(pageId, ct);
+            var pages = await _pageService.GetAllVersionsAsync(pageId, ct);
+            filterPageRoute = pages.FirstOrDefault()?.Route;
+        }
+        else if (Guid.TryParse(query["zoneId"], out var zoneId))
+        {
+            filterParentZoneId = zoneId;
+            zones = await _service.GetAllByParentZoneAsync(zoneId, ct);
+            var parentZone = await _service.GetByIdAsync(zoneId, ct);
+            filterParentZoneName = parentZone?.Name ?? parentZone?.Title;
+        }
+        else
+        {
+            zones = await _service.GetAllAsync(ct);
+        }
+
+        var zoneIdsWithChildren = await _service.GetZoneIdsWithChildrenAsync(zones.Select(z => z.Id), ct);
+
+        return new ContentZoneIndexViewModel
+        {
+            Zones = zones,
+            FilterPageId = filterPageId,
+            FilterPageRoute = filterPageRoute,
+            FilterParentZoneId = filterParentZoneId,
+            FilterParentZoneName = filterParentZoneName,
+            ZoneIdsWithChildren = zoneIdsWithChildren
+        };
+    }
 
     public Task<object?> GetUpsertViewModelAsync(Guid? id, IQueryCollection query, CancellationToken ct = default)
         => Task.FromResult<object?>(null); // Not currently implemented

@@ -1,6 +1,6 @@
-@using Comjustinspicer.CMS.Data.Models
+@using Comjustinspicer.CMS.Models.ContentZone
 
-@model List<ContentZoneDTO>
+@model ContentZoneIndexViewModel
 
 @{
     ViewData["Title"] = "Content Zones";
@@ -17,6 +17,19 @@
             </div>
         }
 
+        @if (Model.FilterPageId.HasValue || Model.FilterParentZoneId.HasValue)
+        {
+            var label = Model.FilterPageId.HasValue
+                ? $"page: {Model.FilterPageRoute ?? Model.FilterPageId.ToString()}"
+                : $"zone: {Model.FilterParentZoneName ?? Model.FilterParentZoneId.ToString()}";
+            <div class="message is-info mt-4">
+                <div class="message-body">
+                    Filtered by @label
+                    <a href="@Url.Action("Index", "AdminContent", new { contentType = "contentzones" })" class="ml-3 button is-small">Clear filter</a>
+                </div>
+            </div>
+        }
+
         <table class="table is-fullwidth is-striped mt-4">
             <thead>
                 <tr>
@@ -29,7 +42,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var zone in Model)
+                @foreach (var zone in Model.Zones)
                 {
                     <tr>
                         <td>@zone.Name</td>
@@ -48,7 +61,13 @@
                         <td>@zone.ModificationDate.ToString("yyyy-MM-dd HH:mm")</td>
                         <td>
                             <div class="buttons are-small">
+                                <a href="/admin/contentzones/zone-edit/@zone.Id" class="button is-primary">Edit</a>
                                 <a asp-controller="AdminContent" asp-action="ChildIndex" asp-route-contentType="contentzones" asp-route-parentKey="@zone.Id" asp-route-childType="items" class="button is-info">Items (@zone.Items.Count)</a>
+                                @if (Model.ZoneIdsWithChildren.Contains(zone.Id))
+                                {
+                                    <a href="@Url.Action("Index", "AdminContent", new { contentType = "contentzones" })?zoneId=@zone.Id"
+                                       class="button is-small is-link">Child Zones</a>
+                                }
                                 @* <a asp-controller="AdminContent" asp-action="Edit" asp-route-contentType="contentzones" asp-route-id="@zone.Id" class="button">Edit</a> *@
                                 <form asp-controller="AdminContent" asp-action="Delete" asp-route-contentType="contentzones" asp-route-id="@zone.Id" method="post" style="display:inline">
                                     @Html.AntiForgeryToken()
@@ -61,7 +80,7 @@
             </tbody>
         </table>
 
-        @if (!Model.Any())
+        @if (!Model.Zones.Any())
         {
             <div class="notification is-info">
                 No content zones defined yet. Go create one!

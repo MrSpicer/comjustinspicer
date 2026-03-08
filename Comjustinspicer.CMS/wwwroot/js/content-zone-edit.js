@@ -350,6 +350,8 @@ function initContentZones() {
             const zoneIdField = czOwnElements(container, '.zone-id-field')[0];
             const zoneId = zoneIdField ? zoneIdField.value : null;
             const propertiesJson = propsJsonInput.value;
+            const parentPageMasterIdField = form.querySelector('[name="parentPageMasterId"]');
+            const slotNameField = form.querySelector('[name="slotName"]');
 
             try {
                 const response = await fetch('/api/contentzones/items', {
@@ -361,6 +363,8 @@ function initContentZones() {
                     body: JSON.stringify({
                         zoneName: zoneName,
                         zoneId: zoneId && zoneId !== '00000000-0000-0000-0000-000000000000' ? zoneId : null,
+                        parentPageMasterId: parentPageMasterIdField ? parentPageMasterIdField.value : null,
+                        slotName: slotNameField ? slotNameField.value : null,
                         itemId: editingItemId,
                         componentName: componentName,
                         componentPropertiesJson: propertiesJson

@@ -61,4 +61,44 @@ public interface IContentZoneService
     /// Reorders items within a zone.
     /// </summary>
     Task<bool> ReorderItemsAsync(Guid zoneId, List<Guid> itemIdsInOrder, CancellationToken ct = default);
+
+    /// <summary>
+    /// Gets the assignment for a page's named slot, if it exists.
+    /// </summary>
+    Task<ContentZoneAssignmentDTO?> GetByPageSlotAsync(Guid pageMasterId, string slotName, CancellationToken ct = default);
+
+    /// <summary>
+    /// Gets or creates a content zone for a page's named slot. Transaction-safe against concurrent first renders.
+    /// </summary>
+    Task<(ContentZoneDTO Zone, ContentZoneAssignmentDTO Assignment)> GetOrCreateByPageSlotAsync(Guid pageMasterId, string slotName, CancellationToken ct = default);
+
+    /// <summary>
+    /// Gets the assignment for a parent zone's named slot, if it exists.
+    /// </summary>
+    Task<ContentZoneAssignmentDTO?> GetByZoneSlotAsync(Guid parentZoneId, string slotName, CancellationToken ct = default);
+
+    /// <summary>
+    /// Gets or creates a content zone for a parent zone's named slot. Transaction-safe against concurrent first renders.
+    /// </summary>
+    Task<(ContentZoneDTO Zone, ContentZoneAssignmentDTO Assignment)> GetOrCreateByZoneSlotAsync(Guid parentZoneId, string slotName, CancellationToken ct = default);
+
+    /// <summary>
+    /// Gets all assignments for a page's slots.
+    /// </summary>
+    Task<IEnumerable<ContentZoneAssignmentDTO>> GetAllAssignmentsForPageAsync(Guid pageMasterId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Gets all content zones assigned to a specific page.
+    /// </summary>
+    Task<List<ContentZoneDTO>> GetAllByPageAsync(Guid pageMasterId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Gets all content zones assigned as children of a specific parent zone.
+    /// </summary>
+    Task<List<ContentZoneDTO>> GetAllByParentZoneAsync(Guid parentZoneId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Returns the set of zone IDs (from the provided list) that have at least one child zone assigned.
+    /// </summary>
+    Task<HashSet<Guid>> GetZoneIdsWithChildrenAsync(IEnumerable<Guid> zoneIds, CancellationToken ct = default);
 }
