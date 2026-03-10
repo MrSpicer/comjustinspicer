@@ -83,6 +83,11 @@ public interface IContentZoneService
     Task<(ContentZoneDTO Zone, ContentZoneAssignmentDTO Assignment)> GetOrCreateByZoneSlotAsync(Guid parentZoneId, string slotName, CancellationToken ct = default);
 
     /// <summary>
+    /// Gets or creates a global content zone by name. Transaction-safe against concurrent first renders.
+    /// </summary>
+    Task<ContentZoneDTO> GetOrCreateByNameAsync(string name, CancellationToken ct = default);
+
+    /// <summary>
     /// Gets all assignments for a page's slots.
     /// </summary>
     Task<IEnumerable<ContentZoneAssignmentDTO>> GetAllAssignmentsForPageAsync(Guid pageMasterId, CancellationToken ct = default);

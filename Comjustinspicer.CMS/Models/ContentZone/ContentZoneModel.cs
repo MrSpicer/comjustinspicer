@@ -48,6 +48,12 @@ public class ContentZoneModel : IContentZoneModel, IAdminCrudHandler
         return MapToViewModel(zone);
     }
 
+    public async Task<ContentZoneViewModel> GetOrCreateViewModelAsync(string contentZoneName, CancellationToken ct = default)
+    {
+        var zone = await _service.GetOrCreateByNameAsync(contentZoneName, ct);
+        return MapToViewModel(zone);
+    }
+
     public async Task<ContentZoneViewModel> GetOrCreateViewModelByPageSlotAsync(Guid pageMasterId, string slotName, CancellationToken ct = default)
     {
         var (zone, _) = await _service.GetOrCreateByPageSlotAsync(pageMasterId, slotName, ct);

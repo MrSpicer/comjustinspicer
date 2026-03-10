@@ -1,0 +1,33 @@
+@using Comjustinspicer.CMS.Models.Page
+@using Microsoft.CodeAnalysis
+@model PageNavigationViewModel
+
+@if (Model.Items.Any())
+{
+	<nav id="mobile-nav" class="nav__overlay" aria-label="Mobile navigation" aria-hidden="true">
+		<ul role="list" style="display:flex;flex-direction:column;align-items:center;gap:2rem;list-style:none;">
+			@foreach (var item in Model.Items)
+			{
+				await RenderNavItem(item);
+			}
+			</ul>
+			<a href="https://www.github.com/MrSpicer/Resume/justin_resume.pdf" download class="btn btn--primary btn--lg">
+				<svg aria-hidden="true">
+					<use href="#icon-download" />
+				</svg>
+				Download Resume
+			</a>
+	</nav>
+}
+
+@functions {
+	async Task RenderNavItem(PageNavigationItem item)
+	{
+		<li>
+			<a href="@item.Route" class="nav__link">
+				@* @(HttpContext.Request.Path.StartsWith(item.Route) ? "is-active" : "") *@
+				@item.Title
+			</a>
+		</li>
+	}
+}

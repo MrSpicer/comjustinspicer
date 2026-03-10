@@ -76,8 +76,8 @@ public class ContentZoneViewComponent : ViewComponent
 			}
 			else
 			{
-				// Global or layout zone: name-based lookup (no assignment)
-				vm = await _model.GetViewModelAsync(zoneName, ct);
+				// Global or layout zone: get or create by name
+				vm = await _model.GetOrCreateViewModelAsync(zoneName, ct);
 			}
 		}
 

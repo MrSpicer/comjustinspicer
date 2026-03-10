@@ -334,6 +334,52 @@ public sealed class ContentZoneService : IContentZoneService
             .ToListAsync(ct);
     }
 
+    public async Task<ContentZoneDTO> GetOrCreateByNameAsync(string name, CancellationToken ct = default)
+    {
+        var zone = await _context.ContentZones
+            .Include(z => z.Items.Where(i => i.IsActive).OrderBy(i => i.Ordinal))
+            .FirstOrDefaultAsync(z => z.Name == name && !z.IsDeleted && z.IsPublished, ct);
+
+        if (zone != null)
+            return zone;
+
+        using var transaction = await _context.Database.BeginTransactionAsync(ct);
+        try
+        {
+            zone = await _context.ContentZones
+                .Include(z => z.Items.Where(i => i.IsActive).OrderBy(i => i.Ordinal))
+                .FirstOrDefaultAsync(z => z.Name == name && !z.IsDeleted && z.IsPublished, ct);
+
+            if (zone != null)
+            {
+                await transaction.RollbackAsync(ct);
+                return zone;
+            }
+
+            var zoneId = Guid.NewGuid();
+            zone = new ContentZoneDTO
+            {
+                Id = zoneId,
+                MasterId = zoneId,
+                Name = name,
+                Title = name,
+                IsPublished = true,
+                CreationDate = DateTime.UtcNow,
+                ModificationDate = DateTime.UtcNow,
+                PublicationDate = DateTime.UtcNow
+            };
+            _context.ContentZones.Add(zone);
+            await _context.SaveChangesAsync(ct);
+            await transaction.CommitAsync(ct);
+            return zone;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(ct);
+            throw;
+        }
+    }
+
     public async Task<HashSet<Guid>> GetZoneIdsWithChildrenAsync(IEnumerable<Guid> zoneIds, CancellationToken ct = default)
     {
         var ids = zoneIds.ToList();

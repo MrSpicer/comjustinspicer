@@ -13,6 +13,11 @@ public interface IContentZoneModel
     Task<ContentZoneViewModel?> GetViewModelAsync(string contentZoneName, CancellationToken ct = default);
 
     /// <summary>
+    /// Gets or creates the view model for a global content zone by name.
+    /// </summary>
+    Task<ContentZoneViewModel> GetOrCreateViewModelAsync(string contentZoneName, CancellationToken ct = default);
+
+    /// <summary>
     /// Gets or creates the view model for a page's named slot.
     /// </summary>
     Task<ContentZoneViewModel> GetOrCreateViewModelByPageSlotAsync(Guid pageMasterId, string slotName, CancellationToken ct = default);
