@@ -3,28 +3,26 @@
 
 @if (Model.Items.Any())
 {
-    <ul>
-        @foreach (var item in Model.Items)
-        {
-            await RenderNavItem(item);
-        }
-    </ul>
+    @foreach (var item in Model.Items)
+    {
+        await RenderNavItem(item);
+    }
 }
 
 @functions {
     async Task RenderNavItem(PageNavigationItem item)
     {
-        <li>
-            <a href="@item.Route">@item.Title</a>
-            @if (item.Children.Any())
-            {
-                <ul>
-                    @foreach (var child in item.Children)
-                    {
-                        await RenderNavItem(child);
-                    }
-                </ul>
-            }
-        </li>
+        <a class="navbar-item" href="@item.Route">@item.Title</a>
+        @if (item.Children.Any())
+        {
+            <ul>
+                @foreach (var child in item.Children)
+                {
+                    <li>
+                        <a class="navbar-item" href="@child.Route">@child.Title</a>
+                    </li>
+                }
+            </ul>
+        }
     }
 }

@@ -12,6 +12,7 @@ using Comjustinspicer.CMS.Data.Services;
 using Comjustinspicer.CMS.Models.ContentBlock;
 using Comjustinspicer.CMS.Models.ContentZone;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using System.Reflection;
@@ -200,6 +201,7 @@ public static class ServiceCollectionExtensions
 			if (!apm.ApplicationParts.Any(p => p.Name == asm.GetName().Name))
 			{
 				apm.ApplicationParts.Add(new AssemblyPart(asm));
+				apm.ApplicationParts.Add(new CompiledRazorAssemblyPart(asm));
 			}
 		});
 	}
