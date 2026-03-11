@@ -35,9 +35,13 @@
                 <tr>
                     <th>Name</th>
                     <th>Description</th>
-                    <th>Items</th>
                     <th>Published</th>
                     <th>Modified</th>
+                    <th>Version</th>
+                    <th>MasterId</th>
+                    <th>Versions</th>
+                    <th>Assignments</th>
+                    <th>Global</th>
                     <th></th>
                 </tr>
             </thead>
@@ -47,7 +51,6 @@
                     <tr>
                         <td>@zone.Name</td>
                         <td>@zone.Description</td>
-                        <td>@zone.Items.Count</td>
                         <td>
                             @if (zone.IsPublished)
                             {
@@ -59,16 +62,38 @@
                             }
                         </td>
                         <td>@zone.ModificationDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td><span class="tag is-light">v@(zone.Version)</span></td>
+                        <td><small>@zone.MasterId</small></td>
+                        <td>
+                            <a asp-controller="AdminContent" asp-action="VersionHistory"
+                               asp-route-contentType="contentzones"
+                               asp-route-masterId="@zone.MasterId"
+                               class="button is-small is-info">Versions</a>
+                        </td>
+                        <td>@Model.AssignmentCountsByMasterId.GetValueOrDefault(zone.MasterId, 0)</td>
+                        <td>
+                            @if (!Model.AssignmentCountsByMasterId.ContainsKey(zone.MasterId) || Model.AssignmentCountsByMasterId[zone.MasterId] == 0)
+                            {
+                                <span class="tag is-success">Yes</span>
+                            }
+                            else
+                            {
+                                <span class="tag is-light">No</span>
+                            }
+                        </td>
                         <td>
                             <div class="buttons are-small">
-                                <a href="/admin/contentzones/zone-edit/@zone.Id" class="button is-primary">Edit</a>
-                                <a asp-controller="AdminContent" asp-action="ChildIndex" asp-route-contentType="contentzones" asp-route-parentKey="@zone.Id" asp-route-childType="items" class="button is-info">Items (@zone.Items.Count)</a>
+                                <a asp-controller="AdminContent" asp-action="Edit"
+                                   asp-route-contentType="contentzones"
+                                   asp-route-id="@zone.Id"
+                                   class="button is-primary">Edit</a>
+                                <a href="/admin/contentzones/zone-edit/@zone.Id" class="button is-primary">Edit Zone</a>
+                                <a asp-controller="AdminContent" asp-action="ChildIndex" asp-route-contentType="contentzones" asp-route-parentKey="@zone.Id" asp-route-childType="items" class="button is-info">Advanced (@zone.Items.Count)</a>
                                 @if (Model.ZoneIdsWithChildren.Contains(zone.Id))
                                 {
                                     <a href="@Url.Action("Index", "AdminContent", new { contentType = "contentzones" })?zoneId=@zone.Id"
                                        class="button is-small is-link">Child Zones</a>
                                 }
-                                @* <a asp-controller="AdminContent" asp-action="Edit" asp-route-contentType="contentzones" asp-route-id="@zone.Id" class="button">Edit</a> *@
                                 <form asp-controller="AdminContent" asp-action="Delete" asp-route-contentType="contentzones" asp-route-id="@zone.Id" method="post" style="display:inline">
                                     @Html.AntiForgeryToken()
                                     <button type="submit" class="button is-danger" onclick="return confirm('Delete this content zone and all its items?');">Delete</button>
@@ -83,7 +108,7 @@
         @if (!Model.Zones.Any())
         {
             <div class="notification is-info">
-                No content zones defined yet. Go create one!
+                No content zones defined.
             </div>
         }
     </div>

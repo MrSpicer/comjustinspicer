@@ -62,16 +62,12 @@ public class ContentZoneViewComponent : ViewComponent
 				if (parentZoneId.HasValue)
 				{
 					// Nested zone inside another zone
-					vm = editMode
-						? await _model.GetOrCreateViewModelByZoneSlotAsync(parentZoneId.Value, zoneName, ct)
-						: await _model.GetViewModelByZoneSlotAsync(parentZoneId.Value, zoneName, ct);
+					vm = await _model.GetOrCreateViewModelByZoneSlotAsync(parentZoneId.Value, zoneName, ct);
 				}
 				else
 				{
 					// Top-level page zone
-					vm = editMode
-						? await _model.GetOrCreateViewModelByPageSlotAsync(pageData.MasterId, zoneName, ct)
-						: await _model.GetViewModelByPageSlotAsync(pageData.MasterId, zoneName, ct);
+					vm = await _model.GetOrCreateViewModelByPageSlotAsync(pageData.MasterId, zoneName, ct);
 				}
 			}
 			else

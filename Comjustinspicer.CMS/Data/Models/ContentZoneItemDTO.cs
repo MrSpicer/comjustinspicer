@@ -37,8 +37,4 @@ public record ContentZoneItemDTO : BaseContentDTO
     /// Whether this item is active and should be rendered.
     /// </summary>
     public bool IsActive { get; set; } = true;
-
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-    public DateTime ModifiedAt { get; set; } = DateTime.UtcNow;
 }

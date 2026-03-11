@@ -7,11 +7,12 @@ using Comjustinspicer.CMS.ContentZones;
 using Comjustinspicer.CMS.Controllers.Admin.Handlers;
 using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
+using Comjustinspicer.CMS.Models.Shared;
 using Comjustinspicer.CMS.Services;
 
 namespace Comjustinspicer.CMS.Models.ContentZone;
 
-public class ContentZoneModel : IContentZoneModel, IAdminCrudHandler
+public class ContentZoneModel : AdminCrudModel<ContentZoneDTO>, IContentZoneModel, IAdminCrudHandler
 {
     private readonly IContentZoneService _service;
     private readonly IPageService _pageService;
@@ -112,7 +113,7 @@ public class ContentZoneModel : IContentZoneModel, IAdminCrudHandler
         return await _service.UpdateAsync(zone, ct);
     }
 
-    public async Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
+    public override async Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
     {
         return await _service.DeleteAsync(id, ct);
     }
@@ -142,26 +143,39 @@ public class ContentZoneModel : IContentZoneModel, IAdminCrudHandler
         return await _service.ReorderItemsAsync(zoneId, itemIdsInOrder, ct);
     }
 
+    // Explicit interface implementation to avoid conflict with VersionedModel protected abstract
+    async Task<List<ContentZoneDTO>> IContentZoneModel.GetAllVersionsAsync(Guid masterId, CancellationToken ct)
+    {
+        return await _service.GetAllVersionsAsync(masterId, ct);
+    }
+
+    public async Task<List<ContentZoneItemDTO>> GetAllItemVersionsAsync(Guid itemMasterId, CancellationToken ct = default)
+    {
+        return await _service.GetAllItemVersionsAsync(itemMasterId, ct);
+    }
+
     // IAdminCrudHandler members
 
-    public string ContentType => "contentzones";
-    public string DisplayName => "Content Zone";
-    public string[]? WriteRoles => null;
-    public string IndexViewPath => "~/Views/AdminContentZone/ContentZones.cshtml";
-    public string UpsertViewPath => ""; // No upsert view currently exists
+    public override string ContentType => "contentzones";
+    public override string DisplayName => "Content Zone";
+    public override string[]? WriteRoles => null;
+    public override string IndexViewPath => "~/Views/AdminContentZone/ContentZones.cshtml";
+    public override string UpsertViewPath => "~/Views/AdminContentZone/ContentZoneUpsert.cshtml";
 
-    public async Task<object> GetIndexViewModelAsync(CancellationToken ct = default)
+    public override async Task<object> GetIndexViewModelAsync(CancellationToken ct = default)
     {
         var zones = await _service.GetAllAsync(ct);
         var zoneIdsWithChildren = await _service.GetZoneIdsWithChildrenAsync(zones.Select(z => z.Id), ct);
+        var assignmentCounts = await _service.GetAssignmentCountsByMasterIdAsync(zones.Select(z => z.MasterId), ct);
         return new ContentZoneIndexViewModel
         {
             Zones = zones,
-            ZoneIdsWithChildren = zoneIdsWithChildren
+            ZoneIdsWithChildren = zoneIdsWithChildren,
+            AssignmentCountsByMasterId = assignmentCounts
         };
     }
 
-    public async Task<object> GetIndexViewModelAsync(IQueryCollection query, CancellationToken ct = default)
+    async Task<object> IAdminCrudHandler.GetIndexViewModelAsync(IQueryCollection query, CancellationToken ct)
     {
         List<ContentZoneDTO> zones;
         Guid? filterPageId = null;
@@ -189,6 +203,7 @@ public class ContentZoneModel : IContentZoneModel, IAdminCrudHandler
         }
 
         var zoneIdsWithChildren = await _service.GetZoneIdsWithChildrenAsync(zones.Select(z => z.Id), ct);
+        var assignmentCounts = await _service.GetAssignmentCountsByMasterIdAsync(zones.Select(z => z.MasterId), ct);
 
         return new ContentZoneIndexViewModel
         {
@@ -197,33 +212,92 @@ public class ContentZoneModel : IContentZoneModel, IAdminCrudHandler
             FilterPageRoute = filterPageRoute,
             FilterParentZoneId = filterParentZoneId,
             FilterParentZoneName = filterParentZoneName,
-            ZoneIdsWithChildren = zoneIdsWithChildren
+            ZoneIdsWithChildren = zoneIdsWithChildren,
+            AssignmentCountsByMasterId = assignmentCounts
         };
     }
 
-    public Task<object?> GetUpsertViewModelAsync(Guid? id, IQueryCollection query, CancellationToken ct = default)
-        => Task.FromResult<object?>(null); // Not currently implemented
+    public override async Task<object?> GetUpsertViewModelAsync(Guid? id, IQueryCollection query, CancellationToken ct = default)
+    {
+        if (id == null) return new ContentZoneUpsertViewModel();
+        var zone = await _service.GetByIdAsync(id.Value, ct);
+        if (zone == null) return null;
+        return new ContentZoneUpsertViewModel
+        {
+            Id = zone.Id,
+            MasterId = zone.MasterId,
+            Version = zone.Version,
+            Title = zone.Title,
+            Slug = zone.Slug,
+            IsPublished = zone.IsPublished,
+            Name = zone.Name,
+            Description = zone.Description,
+        };
+    }
 
-    public object CreateEmptyUpsertViewModel() => new ContentZoneDTO();
+    public override object CreateEmptyUpsertViewModel() => new ContentZoneUpsertViewModel();
 
-    public Task<AdminSaveResult> SaveUpsertAsync(object model, CancellationToken ct = default)
-        => Task.FromResult(new AdminSaveResult(false, "Content zone upsert is not implemented via this interface."));
+    public override async Task<AdminSaveResult> SaveUpsertAsync(object model, CancellationToken ct = default)
+    {
+        var vm = (ContentZoneUpsertViewModel)model;
+        var isEdit = vm.Id.HasValue && vm.Id != Guid.Empty;
 
-    public async Task<IEnumerable<object>> GetApiListAsync(CancellationToken ct = default)
+        if (isEdit)
+        {
+            var existing = await _service.GetByIdAsync(vm.Id!.Value, ct);
+            if (existing == null)
+                return new AdminSaveResult(false, "Content zone not found.");
+
+            var updated = existing with
+            {
+                Title = vm.Title,
+                Slug = vm.Slug ?? string.Empty,
+                Name = vm.Name,
+                Description = vm.Description,
+                IsPublished = vm.IsPublished,
+            };
+            var ok = await _service.UpdateAsync(updated, ct);
+            return ok ? new AdminSaveResult(true) : new AdminSaveResult(false, "Update failed.");
+        }
+        else
+        {
+            var zone = new ContentZoneDTO
+            {
+                Id = Guid.NewGuid(),
+                Title = vm.Title,
+                Slug = vm.Slug ?? string.Empty,
+                Name = vm.Name,
+                Description = vm.Description,
+                IsPublished = vm.IsPublished,
+            };
+            zone = zone with { MasterId = zone.Id };
+            await _service.CreateAsync(zone, ct);
+            return new AdminSaveResult(true);
+        }
+    }
+
+    public override async Task<IEnumerable<object>> GetApiListAsync(CancellationToken ct = default)
     {
         var zones = await _service.GetAllAsync(ct);
         return zones.Select(z => (object)new { id = z.Id, title = !string.IsNullOrEmpty(z.Title) ? z.Title : z.Name });
     }
 
-    public bool HasSecondaryApiList => false;
+    public override bool HasSecondaryApiList => false;
 
-    public Task<IEnumerable<object>> GetSecondaryApiListAsync(string key, CancellationToken ct = default)
+    public override Task<IEnumerable<object>> GetSecondaryApiListAsync(string key, CancellationToken ct = default)
         => Task.FromResult(Enumerable.Empty<object>());
 
-    public IAdminRegistryHandler? RegistryHandler => _registryHandler;
-    public IAdminCrudChildHandler? ChildHandler => _childHandler;
+    public override IAdminRegistryHandler? RegistryHandler => _registryHandler;
+    public override IAdminCrudChildHandler? ChildHandler => _childHandler;
 
-    // Versioning: ContentZone does not support version history; use interface defaults.
+    // VersionedModel abstract implementations
+
+    protected override string VersionHistoryContentType => "contentzones";
+    protected override string GetVersionHistoryBackUrl(string? parentKey = null) => "/admin/contentzones";
+    protected override Task<List<ContentZoneDTO>> GetAllVersionsAsync(Guid masterId, CancellationToken ct)
+        => _service.GetAllVersionsAsync(masterId, ct);
+    protected override Task<bool> DeleteVersionCoreAsync(Guid id, CancellationToken ct)
+        => _service.DeleteAsync(id, ct);
 
     private ContentZoneViewModel MapToViewModel(ContentZoneDTO zone)
     {

@@ -80,7 +80,7 @@ public class ContentZoneApiController : ControllerBase
             // Create or update the item
             if (request.ItemId.HasValue && request.ItemId.Value != Guid.Empty)
             {
-                // Update existing item
+                // Update existing item — service preserves Ordinal, ContentZoneId, MasterId from existing record
                 var item = new ContentZoneItemDTO
                 {
                     Id = request.ItemId.Value,
@@ -88,7 +88,7 @@ public class ContentZoneApiController : ControllerBase
                     ComponentName = request.ComponentName,
                     ComponentPropertiesJson = request.ComponentPropertiesJson ?? "{}",
                     IsActive = true,
-                    ModifiedAt = DateTime.UtcNow
+                    ModificationDate = DateTime.UtcNow
                 };
 
                 var updated = await _service.UpdateItemAsync(item, ct);
@@ -107,7 +107,7 @@ public class ContentZoneApiController : ControllerBase
                     ComponentName = request.ComponentName,
                     ComponentPropertiesJson = request.ComponentPropertiesJson ?? "{}",
                     IsActive = true,
-                    CreatedAt = DateTime.UtcNow
+                    CreationDate = DateTime.UtcNow
                 };
 
                 var createdItem = await _service.AddItemAsync(zoneId, item, ct);

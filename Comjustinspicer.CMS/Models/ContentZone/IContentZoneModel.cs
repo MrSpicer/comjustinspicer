@@ -91,4 +91,14 @@ public interface IContentZoneModel
     /// Reorders items within a zone.
     /// </summary>
     Task<bool> ReorderItemsAsync(Guid zoneId, List<Guid> itemIdsInOrder, CancellationToken ct = default);
+
+    /// <summary>
+    /// Gets all versions of a content zone by master ID.
+    /// </summary>
+    Task<List<ContentZoneDTO>> GetAllVersionsAsync(Guid masterId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Gets all versions of a content zone item by master ID.
+    /// </summary>
+    Task<List<ContentZoneItemDTO>> GetAllItemVersionsAsync(Guid itemMasterId, CancellationToken ct = default);
 }

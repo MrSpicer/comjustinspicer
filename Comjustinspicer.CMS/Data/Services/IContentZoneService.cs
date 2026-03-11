@@ -106,4 +106,19 @@ public interface IContentZoneService
     /// Returns the set of zone IDs (from the provided list) that have at least one child zone assigned.
     /// </summary>
     Task<HashSet<Guid>> GetZoneIdsWithChildrenAsync(IEnumerable<Guid> zoneIds, CancellationToken ct = default);
+
+    /// <summary>
+    /// Gets all versions of a content zone by master ID.
+    /// </summary>
+    Task<List<ContentZoneDTO>> GetAllVersionsAsync(Guid masterId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Gets all versions of a content zone item by master ID.
+    /// </summary>
+    Task<List<ContentZoneItemDTO>> GetAllItemVersionsAsync(Guid itemMasterId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Returns the number of assignments per zone MasterId.
+    /// </summary>
+    Task<Dictionary<Guid, int>> GetAssignmentCountsByMasterIdAsync(IEnumerable<Guid> masterIds, CancellationToken ct = default);
 }

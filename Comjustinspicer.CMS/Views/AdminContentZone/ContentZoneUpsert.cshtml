@@ -1,0 +1,22 @@
+@model Comjustinspicer.CMS.Models.ContentZone.ContentZoneUpsertViewModel
+@{
+    var isEdit = Model?.Id != null && Model.Id != Guid.Empty;
+    ViewData["Title"] = isEdit ? "Edit Content Zone" : "New Content Zone";
+}
+<section class="section">
+    <div class="container">
+        <h1 class="title">@ViewData["Title"]</h1>
+        <form asp-action="Edit" asp-controller="AdminContent" asp-route-contentType="contentzones" method="post">
+            @Html.AntiForgeryToken()
+            <form-fields for="@Model" />
+            <div class="field is-grouped">
+                <div class="control">
+                    <button class="button is-primary" type="submit">Save</button>
+                </div>
+                <div class="control">
+                    <a asp-action="Index" asp-controller="AdminContent" asp-route-contentType="contentzones" class="button">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
