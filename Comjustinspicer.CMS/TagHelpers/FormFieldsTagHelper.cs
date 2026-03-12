@@ -193,10 +193,11 @@ public class FormFieldsTagHelper : TagHelper
 
         if (!string.IsNullOrEmpty(prop.HelpText))
         {
-            sb.AppendLine($"<p class=\"help\">{HtmlEncoder.Default.Encode(prop.HelpText)}</p>");
+            var helpId = $"{encodedName}_help";
+            sb.AppendLine($"<p class=\"help\" id=\"{helpId}\">{HtmlEncoder.Default.Encode(prop.HelpText)}</p>");
         }
 
-        sb.AppendLine($"<span data-valmsg-for=\"{encodedName}\" class=\"has-text-danger\"></span>");
+        sb.AppendLine($"<span role=\"alert\" data-valmsg-for=\"{encodedName}\" class=\"has-text-danger\"></span>");
         sb.AppendLine("</div>");
     }
 
@@ -228,9 +229,13 @@ public class FormFieldsTagHelper : TagHelper
         if (!string.IsNullOrEmpty(prop.Placeholder))
             attrs += $" placeholder=\"{HtmlEncoder.Default.Encode(prop.Placeholder)}\"";
         if (prop.IsRequired && prop.EditorType != EditorType.RichText)
-            attrs += " required";
+            attrs += " required aria-required=\"true\"";
+        // Note: aria-required is intentionally omitted for RichText — CKEditor replaces the textarea,
+        // so native HTML validation does not fire on the underlying textarea element.
         if (prop.MaxLength.HasValue)
             attrs += $" maxlength=\"{prop.MaxLength.Value}\"";
+        if (!string.IsNullOrEmpty(prop.HelpText))
+            attrs += $" aria-describedby=\"{encodedName}_help\"";
 
         sb.AppendLine($"<textarea class=\"{cssClass}\" {attrs} rows=\"6\">{HtmlEncoder.Default.Encode(strValue)}</textarea>");
     }
@@ -238,14 +243,15 @@ public class FormFieldsTagHelper : TagHelper
     private static void RenderSelect(StringBuilder sb, FormPropertyInfo prop, string encodedName, object? value)
     {
         var strValue = FormatValue(value, prop.EditorType);
-        var requiredAttr = prop.IsRequired ? " required" : "";
+        var requiredAttr = prop.IsRequired ? " required aria-required=\"true\"" : "";
+        var describedByAttr = !string.IsNullOrEmpty(prop.HelpText) ? $" aria-describedby=\"{encodedName}_help\"" : "";
 
         var dataCurrentValue = prop.EditorType == EditorType.ViewPicker && !string.IsNullOrEmpty(strValue)
             ? $" data-current-value=\"{System.Text.Encodings.Web.HtmlEncoder.Default.Encode(strValue)}\""
             : "";
 
         sb.AppendLine($"<div class=\"select is-fullwidth\">");
-        sb.AppendLine($"<select name=\"{encodedName}\" id=\"{encodedName}\"{requiredAttr}{dataCurrentValue}>");
+        sb.AppendLine($"<select name=\"{encodedName}\" id=\"{encodedName}\"{requiredAttr}{describedByAttr}{dataCurrentValue}>");
         sb.AppendLine("<option value=\"\">-- Select --</option>");
 
         if (prop.DropdownOptions.Count > 0)
@@ -268,11 +274,13 @@ public class FormFieldsTagHelper : TagHelper
         if (!string.IsNullOrEmpty(prop.Placeholder))
             attrs += $" placeholder=\"{HtmlEncoder.Default.Encode(prop.Placeholder)}\"";
         if (prop.IsRequired)
-            attrs += " required";
+            attrs += " required aria-required=\"true\"";
         if (prop.MaxLength.HasValue)
             attrs += $" maxlength=\"{prop.MaxLength.Value}\"";
         if (!string.IsNullOrEmpty(prop.Pattern))
             attrs += $" pattern=\"{HtmlEncoder.Default.Encode(prop.Pattern)}\"";
+        if (!string.IsNullOrEmpty(prop.HelpText))
+            attrs += $" aria-describedby=\"{encodedName}_help\"";
 
         return attrs;
     }

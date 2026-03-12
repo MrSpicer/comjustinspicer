@@ -15,23 +15,24 @@
 .content-zone-edit {
     position: relative;
     min-height: 50px;
-    border: 2px dashed #ccc;
-    border-radius: 4px;
+    border: 2px dashed var(--admin-border, #e2e8f0);
+    border-radius: var(--admin-radius, 8px);
     padding: 1rem;
     margin: 0.5rem 0;
-    background: rgba(0, 0, 0, 0.02);
+    background: rgba(248, 250, 252, 0.5);
 
     &:hover {
-        border-color: #3273dc;
+        border-color: var(--admin-primary, #4f46e5);
     }
 }
 
 .zone-object-edit {
     position: relative;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 1px solid var(--admin-border, #e2e8f0);
+    border-radius: var(--admin-radius-sm, 4px);
     margin-bottom: 0.5rem;
-    background: white;
+    background: var(--admin-surface-raised, #fff);
+    box-shadow: var(--admin-shadow-sm, 0 1px 3px rgba(15, 23, 42, 0.08));
 }
 
 .zone-object-toolbar {
@@ -39,8 +40,8 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.25rem 0.5rem;
-    background: #f5f5f5;
-    border-bottom: 1px solid #ddd;
+    background: var(--admin-surface, #f8fafc);
+    border-bottom: 1px solid var(--admin-border, #e2e8f0);
     font-size: 0.85rem;
 
     button {
@@ -49,21 +50,36 @@
         cursor: pointer;
         padding: 0.25rem;
         font-size: 1rem;
+        border-radius: var(--admin-radius-sm, 4px);
+
+        &:focus-visible {
+            outline: 3px solid var(--admin-primary, #4f46e5);
+            outline-offset: 2px;
+        }
     }
 
     .zone-edit-item {
-        color: #3273dc;
+        color: var(--admin-primary, #4f46e5);
+
+        &:hover {
+            color: var(--admin-primary-dark, #4338ca);
+            background: var(--admin-primary-light, #eef2ff);
+        }
     }
 
     .zone-delete-item {
-        color: #f14668;
+        color: var(--admin-danger, #dc2626);
+
+        &:hover {
+            background: #fef2f2;
+        }
     }
 }
 
 .zone-object-label {
     flex: 1;
     font-weight: 500;
-    color: #666;
+    color: var(--admin-text-muted, #64748b);
 }
 
 .zone-object-content {
@@ -77,4 +93,8 @@
 
 .dynamic-properties-container {
     margin-top: 1rem;
+}
+
+.cz-modal-error {
+    margin-bottom: 1rem;
 }

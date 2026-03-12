@@ -21,6 +21,8 @@
  - If Tests fail that were previously passing, do not modify those tests without permission from a human
  - When multiple good options exist ask the user which they would prefer
  - always ask clarifying questions when planning if you have any uncertainty.
+ - Do not use JQuery.
+ - Get confirmation from a human before using any external library or code.
 
 ## Code Conventions
 

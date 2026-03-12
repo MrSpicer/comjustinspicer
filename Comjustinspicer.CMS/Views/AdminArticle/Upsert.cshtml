@@ -7,29 +7,36 @@
     var listTitle = ViewData["ArticleListTitle"] as string ?? "Article List";
 }
 
-<section class="section">
+<div class="admin-page-header">
     <div class="container">
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
                 <li><a asp-controller="AdminContent" asp-action="Index" asp-route-contentType="articles">Article Lists</a></li>
                 <li><a asp-controller="AdminContent" asp-action="ChildIndex" asp-route-contentType="articles" asp-route-parentKey="@slug" asp-route-childType="articles">@listTitle</a></li>
-                <li class="is-active"><a>@ViewData["Title"]</a></li>
+                <li class="is-active"><a aria-current="page">@ViewData["Title"]</a></li>
             </ul>
         </nav>
+        <h1 class="title is-4 mt-2">@ViewData["Title"]</h1>
+    </div>
+</div>
 
-        <h1 class="title">@ViewData["Title"]</h1>
-
-        <form asp-action="ChildEdit" asp-controller="AdminContent" asp-route-contentType="articles" asp-route-parentKey="@slug" asp-route-childType="articles" method="post">
-            @Html.ValidationSummary(false, "", new { @class = "notification is-danger" })
-            <form-fields for="@Model" />
-
-            <div class="field is-grouped">
-                <div class="control">
-                    <button type="submit" class="button is-primary">Save</button>
+<section class="section pt-4">
+    <div class="container">
+        <form asp-action="ChildEdit" asp-controller="AdminContent" asp-route-contentType="articles" asp-route-parentKey="@slug" asp-route-childType="articles" method="post" novalidate>
+            @Html.AntiForgeryToken()
+            <div role="alert" aria-live="polite">
+                @Html.ValidationSummary(false, "", new { @class = "notification is-danger" })
+            </div>
+            <div class="card">
+                <div class="card-content">
+                    <form-fields for="@Model" />
                 </div>
-                <div class="control">
-                    <a asp-action="ChildIndex" asp-controller="AdminContent" asp-route-contentType="articles" asp-route-parentKey="@slug" asp-route-childType="articles" class="button is-light">Cancel</a>
-                </div>
+                <footer class="card-footer">
+                    <div class="card-footer-item is-justify-content-flex-start">
+                        <button type="submit" class="button is-primary mr-3">Save</button>
+                        <a asp-action="ChildIndex" asp-controller="AdminContent" asp-route-contentType="articles" asp-route-parentKey="@slug" asp-route-childType="articles" class="button">Cancel</a>
+                    </div>
+                </footer>
             </div>
         </form>
     </div>

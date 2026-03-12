@@ -1,0 +1,197 @@
+/* =============================================================
+   Admin Design Tokens
+   ============================================================= */
+:root {
+  --admin-primary: #4f46e5;
+  --admin-primary-dark: #4338ca;
+  --admin-primary-light: #eef2ff;
+  --admin-surface: #f8fafc;
+  --admin-surface-raised: #ffffff;
+  --admin-border: #e2e8f0;
+  --admin-text: #0f172a;
+  --admin-text-muted: #64748b;
+  --admin-danger: #dc2626;
+  --admin-success: #16a34a;
+  --admin-warning: #d97706;
+  --admin-info: #0284c7;
+  --admin-navbar-bg: #1e293b;
+  --admin-navbar-text: #f1f5f9;
+  --admin-navbar-height: 56px;
+  --admin-radius: 8px;
+  --admin-radius-sm: 4px;
+  --admin-shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+  --admin-shadow-md: 0 4px 12px rgba(15, 23, 42, 0.12);
+}
+
+/* =============================================================
+   Skip to Content
+   ============================================================= */
+.skip-to-content {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  background: var(--admin-primary);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: var(--admin-radius-sm);
+  font-weight: 600;
+  z-index: 9999;
+  text-decoration: none;
+}
+.skip-to-content:focus {
+  top: 0.5rem;
+}
+
+/* =============================================================
+   Admin Shell
+   ============================================================= */
+body.admin-shell {
+  background: var(--admin-surface);
+  min-height: 100vh;
+  margin: 0;
+}
+
+/* =============================================================
+   Admin Navbar
+   ============================================================= */
+.admin-navbar {
+  background: var(--admin-navbar-bg) !important;
+  min-height: var(--admin-navbar-height) !important;
+  box-shadow: var(--admin-shadow-sm);
+}
+
+.admin-navbar .navbar-brand .admin-logo {
+  color: var(--admin-navbar-text) !important;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  padding: 0 1.25rem;
+}
+
+.admin-navbar .navbar-item,
+.admin-navbar .navbar-link {
+  color: var(--admin-navbar-text) !important;
+}
+
+.admin-navbar .navbar-burger span {
+  background-color: var(--admin-navbar-text) !important;
+}
+
+.admin-navbar .navbar-item:hover,
+.admin-navbar .navbar-item:focus,
+.admin-navbar .navbar-link:hover,
+.admin-navbar .navbar-link:focus {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+}
+
+.admin-navbar .navbar-item[aria-current="page"] {
+  background: rgba(79, 70, 229, 0.35) !important;
+  color: #fff !important;
+}
+
+/* Mobile burger toggle background */
+@media screen and (max-width: 1023px) {
+  .admin-navbar .navbar-menu.is-active {
+    background: var(--admin-navbar-bg);
+  }
+}
+
+/* =============================================================
+   Admin Main Content
+   ============================================================= */
+.admin-main {
+  background: var(--admin-surface);
+  min-height: calc(100vh - var(--admin-navbar-height));
+  padding: 2rem 0;
+}
+
+/* =============================================================
+   Focus Rings (Visible for Keyboard Users)
+   ============================================================= */
+.button:focus-visible,
+.input:focus-visible,
+.textarea:focus-visible,
+.select select:focus-visible,
+.navbar-item:focus-visible,
+a:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--admin-primary);
+  outline-offset: 2px;
+}
+
+/* =============================================================
+   Page Header
+   ============================================================= */
+.admin-page-header {
+  background: var(--admin-surface-raised);
+  border-bottom: 1px solid var(--admin-border);
+  padding: 1.25rem 0;
+  margin-bottom: 0;
+}
+
+.admin-page-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.admin-page-title-row .title {
+  margin-bottom: 0 !important;
+}
+
+/* =============================================================
+   Tables
+   ============================================================= */
+table thead th {
+  color: var(--admin-text-muted);
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+/* =============================================================
+   Empty State
+   ============================================================= */
+.admin-empty-state {
+  border: 2px dashed var(--admin-border) !important;
+  background: var(--admin-surface-raised) !important;
+  border-radius: var(--admin-radius) !important;
+}
+
+/* =============================================================
+   Form Group Section (from FormFieldsTagHelper)
+   ============================================================= */
+.form-group-section {
+  border-left: 3px solid var(--admin-primary-light);
+  padding-left: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* =============================================================
+   Delete Confirm Modal
+   ============================================================= */
+#deleteConfirmModal .modal-card {
+  border-radius: var(--admin-radius);
+  box-shadow: var(--admin-shadow-md);
+}
+
+#deleteConfirmModal .modal-card-head {
+  background: var(--admin-surface-raised);
+  border-bottom: 1px solid var(--admin-border);
+}
+
+#deleteConfirmModal .modal-card-foot {
+  background: var(--admin-surface);
+  border-top: 1px solid var(--admin-border);
+  gap: 0.5rem;
+}
+
+/* =============================================================
+   Validation Summary
+   ============================================================= */
+.validation-summary-valid {
+  display: none;
+}

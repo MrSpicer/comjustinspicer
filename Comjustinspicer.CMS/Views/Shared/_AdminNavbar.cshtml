@@ -1,35 +1,41 @@
 @using Microsoft.AspNetCore.Identity
 @using Comjustinspicer.CMS.Models.Page;
 @inject SignInManager<IdentityUser> SignInManager
+@{
+    var currentPath = Context.Request.Path.Value ?? "";
+}
 
-<nav class="navbar" role="navigation" aria-label="admin navigation">
+<nav class="navbar admin-navbar" role="navigation" aria-label="Administration">
     <div class="navbar-brand">
-        <a id="nav-toggle" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
-            data-target="adminNav">
+        @* <a class="navbar-item admin-logo" href="/admin" aria-label="CMS Admin Home">
+            <span>CMS Admin</span>
+        </a> *@
+        <button id="adminBurger" class="navbar-burger" aria-label="Toggle navigation menu"   aria-expanded="false"
+                aria-controls="adminNav">
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
-        </a>
+        </button>
     </div>
 
     <div id="adminNav" class="navbar-menu">
-        <div class="navbar-start">
+        <div class="navbar-start" role="list">
             @await Component.InvokeAsync(name: "Page", new PageContentZoneConfiguration()
             {
                 AdminPages = true,
                 ViewName = "Default"
             })
 
-            <a class="navbar-item" href="/admin/pages">
+            <a class="navbar-item" href="/admin/pages" @(currentPath.StartsWith("/admin/pages") ? "aria-current=\"page\"" : "") role="listitem">
                 Pages
             </a>
-            <a class="navbar-item" href="/admin/contentzones">
+            <a class="navbar-item" href="/admin/contentzones" @(currentPath.StartsWith("/admin/contentzones") ? "aria-current=\"page\"" : "") role="listitem">
                 Content Zones
             </a>
-            <a class="navbar-item" href="/admin/contentblocks">
+            <a class="navbar-item" href="/admin/contentblocks" @(currentPath.StartsWith("/admin/contentblocks") ? "aria-current=\"page\"" : "") role="listitem">
                 Content Blocks
             </a>
-            <a class="navbar-item" href="/admin/articles">
+            <a class="navbar-item" href="/admin/articles" @(currentPath.StartsWith("/admin/articles") ? "aria-current=\"page\"" : "") role="listitem">
                 Articles
             </a>
         </div>
