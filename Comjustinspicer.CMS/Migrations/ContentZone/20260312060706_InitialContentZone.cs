@@ -41,6 +41,34 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                 });
 
             migrationBuilder.CreateTable(
+                name: "ContentZoneAssignments",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    SlotName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    ContentZoneId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ParentPageMasterId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ParentZoneId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContentZoneAssignments", x => x.Id);
+                    table.CheckConstraint("CK_ContentZoneAssignments_OneParent", "(\"ParentPageMasterId\" IS NOT NULL AND \"ParentZoneId\" IS NULL) OR (\"ParentPageMasterId\" IS NULL AND \"ParentZoneId\" IS NOT NULL)");
+                    table.ForeignKey(
+                        name: "FK_ContentZoneAssignments_ContentZones_ContentZoneId",
+                        column: x => x.ContentZoneId,
+                        principalTable: "ContentZones",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ContentZoneAssignments_ContentZones_ParentZoneId",
+                        column: x => x.ParentZoneId,
+                        principalTable: "ContentZones",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ContentZoneItems",
                 columns: table => new
                 {
@@ -50,8 +78,6 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                     ComponentName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     ComponentPropertiesJson = table.Column<string>(type: "character varying(4000)", maxLength: 4000, nullable: false),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Slug = table.Column<string>(type: "text", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: false),
@@ -81,6 +107,25 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_ContentZoneAssignments_ContentZoneId",
+                table: "ContentZoneAssignments",
+                column: "ContentZoneId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContentZoneAssignments_PageSlot",
+                table: "ContentZoneAssignments",
+                columns: new[] { "ParentPageMasterId", "SlotName" },
+                unique: true,
+                filter: "\"ParentPageMasterId\" IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContentZoneAssignments_ZoneSlot",
+                table: "ContentZoneAssignments",
+                columns: new[] { "ParentZoneId", "SlotName" },
+                unique: true,
+                filter: "\"ParentZoneId\" IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ContentZoneItems_ContentZoneId_Ordinal",
                 table: "ContentZoneItems",
                 columns: new[] { "ContentZoneId", "Ordinal" });
@@ -91,12 +136,6 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                 column: "ParentMasterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ContentZones_Name",
-                table: "ContentZones",
-                column: "Name",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ContentZones_ParentMasterId",
                 table: "ContentZones",
                 column: "ParentMasterId");
@@ -105,6 +144,9 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "ContentZoneAssignments");
+
             migrationBuilder.DropTable(
                 name: "ContentZoneItems");
 

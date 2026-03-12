@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Comjustinspicer.CMS.Migrations.ContentZone
 {
     [DbContext(typeof(ContentZoneContext))]
-    [Migration("20260306170218_AddContentZoneAssignments")]
-    partial class AddContentZoneAssignments
+    [Migration("20260312060706_InitialContentZone")]
+    partial class InitialContentZone
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -155,9 +155,6 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                     b.Property<Guid>("ContentZoneId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uuid");
 
@@ -186,9 +183,6 @@ namespace Comjustinspicer.CMS.Migrations.ContentZone
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("ModificationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Ordinal")

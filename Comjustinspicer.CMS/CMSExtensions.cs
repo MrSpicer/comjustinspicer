@@ -39,29 +39,52 @@ public static class CMSExtensions
 			return app;
 		}
 
-		using var scope = app.Services.CreateScope();
-		var services = scope.ServiceProvider;
 		var logger = Log.ForContext(typeof(CMSExtensions));
+		const int maxAttempts = 10;
+		var delay = TimeSpan.FromSeconds(3);
 
-		try
+		for (int attempt = 1; attempt <= maxAttempts; attempt++)
 		{
-			// Order shouldn't matter for independent contexts, but we keep a deterministic order.
-			Migrate<ApplicationDbContext>(services, logger);
-			Migrate<ArticleContext>(services, logger);
-			Migrate<ContentBlockContext>(services, logger);
-			Migrate<ContentZoneContext>(services, logger);
-			Migrate<PageContext>(services, logger);
-		}
-		catch (Exception ex)
-		{
-			logger.Error(ex, "An error occurred migrating CMS databases.");
-			if (throwOnError)
+			try
 			{
-				throw;
+				using var scope = app.Services.CreateScope();
+				var services = scope.ServiceProvider;
+				// Order shouldn't matter for independent contexts, but we keep a deterministic order.
+				Migrate<ApplicationDbContext>(services, logger);
+				Migrate<ArticleContext>(services, logger);
+				Migrate<ContentBlockContext>(services, logger);
+				Migrate<ContentZoneContext>(services, logger);
+				Migrate<PageContext>(services, logger);
+				return app;
+			}
+			catch (Exception ex) when (IsTransientDbStartupException(ex) && attempt < maxAttempts)
+			{
+				logger.Warning("Database not yet available (attempt {Attempt}/{Max}). Retrying in {Delay}s...",
+					attempt, maxAttempts, delay.TotalSeconds);
+				Thread.Sleep(delay);
+				delay = TimeSpan.FromSeconds(Math.Min(delay.TotalSeconds * 2, 30));
+			}
+			catch (Exception ex)
+			{
+				logger.Error(ex, "An error occurred migrating CMS databases.");
+				if (throwOnError) throw;
+				return app;
 			}
 		}
 
 		return app;
+	}
+
+	private static bool IsTransientDbStartupException(Exception ex)
+	{
+		// DNS not yet resolved or connection refused — typical Swarm startup race
+		var inner = ex.InnerException;
+		while (inner != null)
+		{
+			if (inner is System.Net.Sockets.SocketException) return true;
+			inner = inner.InnerException;
+		}
+		return false;
 	}
 
 	private static void Migrate<TContext>(IServiceProvider services, ILogger logger) where TContext : DbContext
