@@ -376,7 +376,7 @@ internal sealed class ContentZoneChildHandler : IAdminCrudChildHandler
     public string[]? WriteRoles => null;
 
     public string ChildIndexViewPath => "~/Views/AdminContentZone/ContentZoneItems.cshtml";
-    public string ChildUpsertViewPath => ""; // Item add/edit is handled via JavaScript modal
+    public string ChildUpsertViewPath => "~/Views/AdminContentZone/ContentZoneItemUpsert.cshtml";
 
     public async Task<object?> GetChildIndexViewModelAsync(string parentKey, CancellationToken ct = default)
     {
@@ -384,16 +384,52 @@ internal sealed class ContentZoneChildHandler : IAdminCrudChildHandler
         return await _model.GetByIdAsync(zoneId, ct);
     }
 
-    public Task<object?> GetChildUpsertViewModelAsync(string parentKey, Guid? id, CancellationToken ct = default)
-        => Task.FromResult<object?>(null); // Managed via JavaScript modal
+    public async Task<object?> GetChildUpsertViewModelAsync(string parentKey, Guid? id, CancellationToken ct = default)
+    {
+        if (id == null || id == Guid.Empty) return null;
+        var item = await _model.GetItemByIdAsync(id.Value, ct);
+        if (item == null) return null;
+        return new ContentZoneItemUpsertViewModel
+        {
+            Id = item.Id,
+            ContentZoneId = item.ContentZoneId,
+            MasterId = item.MasterId,
+            Version = item.Version,
+            ComponentName = item.ComponentName,
+            ComponentPropertiesJson = item.ComponentPropertiesJson,
+            IsActive = item.IsActive,
+        };
+    }
 
-    public Task SetChildUpsertViewDataAsync(ViewDataDictionary viewData, string parentKey, CancellationToken ct = default)
-        => Task.CompletedTask;
+    public async Task SetChildUpsertViewDataAsync(ViewDataDictionary viewData, string parentKey, CancellationToken ct = default)
+    {
+        if (!Guid.TryParse(parentKey, out var zoneId)) return;
+        var zone = await _model.GetByIdAsync(zoneId, ct);
+        viewData["ZoneName"] = zone?.Name ?? zone?.Title ?? parentKey;
+        viewData["ZoneId"] = parentKey;
+    }
 
-    public object CreateEmptyChildUpsertViewModel() => new ContentZoneItemDTO();
+    public object CreateEmptyChildUpsertViewModel() => new ContentZoneItemUpsertViewModel();
 
-    public Task<AdminSaveResult> SaveChildUpsertAsync(string parentKey, object model, CancellationToken ct = default)
-        => Task.FromResult(new AdminSaveResult(false, "Content zone item save is handled via the API controller."));
+    public async Task<AdminSaveResult> SaveChildUpsertAsync(string parentKey, object model, CancellationToken ct = default)
+    {
+        var vm = (ContentZoneItemUpsertViewModel)model;
+        if (vm.Id == null || vm.Id == Guid.Empty)
+            return new AdminSaveResult(false, "Item ID is required for editing.");
+
+        var existing = await _model.GetItemByIdAsync(vm.Id.Value, ct);
+        if (existing == null)
+            return new AdminSaveResult(false, "Content zone item not found.");
+
+        var updated = existing with
+        {
+            ComponentName = vm.ComponentName,
+            ComponentPropertiesJson = vm.ComponentPropertiesJson,
+            IsActive = vm.IsActive,
+        };
+        var ok = await _model.UpdateItemAsync(updated, ct);
+        return ok ? new AdminSaveResult(true) : new AdminSaveResult(false, "Update failed.");
+    }
 
     public Task<bool> DeleteChildAsync(Guid id, CancellationToken ct = default)
         => _model.RemoveItemAsync(id, ct);

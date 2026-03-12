@@ -83,6 +83,15 @@
                                 </td>
                                 <td>
                                     <div class="buttons are-small">
+                                        <a asp-controller="AdminContent" asp-action="ChildEdit"
+                                           asp-route-contentType="contentzones"
+                                           asp-route-parentKey="@Model.Id"
+                                           asp-route-childType="items"
+                                           asp-route-id="@item.Id"
+                                           class="button is-small">
+                                            <span class="icon"><i class="fas fa-pencil-alt" aria-hidden="true"></i></span>
+                                            <span>Edit</span>
+                                        </a>
                                         <button type="button" class="button is-small is-danger is-light"
                                                 data-delete-trigger
                                                 data-delete-name="@item.ComponentName"
