@@ -153,43 +153,45 @@
                         }
                         else
                         {
-                            <table class="table is-fullwidth is-striped is-hoverable">
-                                <thead>
-                                    <tr>
-                                        <th>Title</th>
-                                        <th>Route</th>
-                                        <th>Status</th>
-                                        <th>Modified</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var p in recentPages)
-                                    {
+                            <div class="table-container">
+                                <table class="table is-fullwidth is-striped">
+                                    <thead>
                                         <tr>
-                                            <td>@p.Title</td>
-                                            <td><code>@p.Route</code></td>
-                                            <td>
-                                                @if (p.IsPublished)
-                                                {
-                                                    <span class="tag is-success">Published</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="tag is-warning">Draft</span>
-                                                }
-                                            </td>
-                                            <td>@p.ModificationDate.ToString("MMM d, yyyy")</td>
-                                            <td>
-                                                <div class="buttons are-small">
-                                                    <a href="@p.Route" target="_blank" class="button is-info is-light">View</a>
-                                                    <a asp-controller="AdminContent" asp-action="Edit" asp-route-contentType="pages" asp-route-id="@p.Id" class="button is-light">Edit</a>
-                                                </div>
-                                            </td>
+                                            <th>Title</th>
+                                            <th>Route</th>
+                                            <th>Status</th>
+                                            <th>Modified</th>
+                                            <th></th>
                                         </tr>
-                                    }
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var p in recentPages)
+                                        {
+                                            <tr>
+                                                <td>@p.Title</td>
+                                                <td><code>@p.Route</code></td>
+                                                <td>
+                                                    @if (p.IsPublished)
+                                                    {
+                                                        <span class="tag is-success">Published</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="tag is-warning">Draft</span>
+                                                    }
+                                                </td>
+                                                <td>@p.ModificationDate.ToString("MMM d, yyyy")</td>
+                                                <td>
+                                                    <div class="buttons are-small">
+                                                        <a href="@p.Route" target="_blank" class="button is-info is-light">View</a>
+                                                        <a asp-controller="AdminContent" asp-action="Edit" asp-route-contentType="pages" asp-route-id="@p.Id" class="button is-light">Edit</a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
                         }
                     </div>
                     <div class="card-footer">
@@ -251,48 +253,50 @@
                 }
                 else
                 {
-                    <table class="table is-fullwidth is-striped is-hoverable">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Author</th>
-                                <th>Status</th>
-                                <th>Modified</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var article in recentArticles)
-                            {
+                    <div class="table-container">
+                        <table class="table is-fullwidth is-striped">
+                            <thead>
                                 <tr>
-                                    <td>@article.Title</td>
-                                    <td>
-                                        @if (string.IsNullOrWhiteSpace(article.AuthorName))
-                                        {
-                                            <span class="has-text-grey-light is-italic">—</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="icon-text">
-                                                <span class="icon"><i class="fas fa-user"></i></span>
-                                                <span>@article.AuthorName</span>
-                                            </span>
-                                        }
-                                    </td>
-                                    <td>
-                                        @if (article.IsPublished)
-                                        {
-                                            <span class="tag is-success">Published</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="tag is-warning">Draft</span>
-                                        }
-                                    </td>
-                                    <td>@article.ModificationDate.ToString("MMM d, yyyy")</td>
+                                    <th>Title</th>
+                                    <th>Author</th>
+                                    <th>Status</th>
+                                    <th>Modified</th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach (var article in recentArticles)
+                                {
+                                    <tr>
+                                        <td>@article.Title</td>
+                                        <td>
+                                            @if (string.IsNullOrWhiteSpace(article.AuthorName))
+                                            {
+                                                <span class="has-text-grey-light is-italic">—</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="icon-text">
+                                                    <span class="icon"><i class="fas fa-user"></i></span>
+                                                    <span>@article.AuthorName</span>
+                                                </span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (article.IsPublished)
+                                            {
+                                                <span class="tag is-success">Published</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="tag is-warning">Draft</span>
+                                            }
+                                        </td>
+                                        <td>@article.ModificationDate.ToString("MMM d, yyyy")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 }
             </div>
             <div class="card-footer">
