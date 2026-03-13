@@ -27,7 +27,7 @@
 
 @font-face {
   font-family: 'Inter';
-  src: url('../fonts/InterVariable.woff2') format('woff2-variations');
+  src: url('../assets/fonts/InterVariable.woff2') format('woff2-variations');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -35,7 +35,7 @@
 
 @font-face {
   font-family: 'FiraCode';
-  src: url('../fonts/FiraCode-VF.woff2') format('woff2-variations');
+  src: url('../assets/fonts/FiraCode-VF.woff2') format('woff2-variations');
   font-weight: 300 700;
   font-style: normal;
   font-display: swap;
@@ -44,30 +44,30 @@
 /* --- Custom Properties --- */
 :root {
   /* Colors */
-  --color-bg-deep:       #0A0D14;
-  --color-bg-surface:    #111520;
-  --color-bg-raised:     #1A1F2E;
-  --color-bg-border:     #252B3B;
-  --color-accent:        #00D4B4;
-  --color-accent-dim:    rgba(0, 212, 180, 0.15);
-  --color-accent-glow:   rgba(0, 212, 180, 0.3);
-  --color-accent-2:      #3B82F6;
-  --color-text-primary:  #E8EAF0;
-  --color-text-secondary:#8892A4;
-  --color-text-muted:    #555E72;
+  --color-bg-deep: #0A0D14;
+  --color-bg-surface: #111520;
+  --color-bg-raised: #1A1F2E;
+  --color-bg-border: #252B3B;
+  --color-accent: #00D4B4;
+  --color-accent-dim: rgba(0, 212, 180, 0.15);
+  --color-accent-glow: rgba(0, 212, 180, 0.3);
+  --color-accent-2: #3B82F6;
+  --color-text-primary: #E8EAF0;
+  --color-text-secondary: #8892A4;
+  --color-text-muted: #555E72;
 
   /* Typography */
-  --font-sans:  'Inter', 'Inter Fallback', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono:  'FiraCode', 'FiraCode Fallback', 'Fira Code', 'Cascadia Code', monospace;
+  --font-sans: 'Inter', 'Inter Fallback', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'FiraCode', 'FiraCode Fallback', 'Fira Code', 'Cascadia Code', monospace;
 
   /* Spacing scale */
-  --space-1:  0.25rem;
-  --space-2:  0.5rem;
-  --space-3:  0.75rem;
-  --space-4:  1rem;
-  --space-5:  1.25rem;
-  --space-6:  1.5rem;
-  --space-8:  2rem;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
   --space-10: 2.5rem;
   --space-12: 3rem;
   --space-16: 4rem;
@@ -81,9 +81,9 @@
   --section-padding: clamp(4rem, 10vh, 7rem);
 
   /* Borders & Radius */
-  --radius-sm:  0.375rem;
-  --radius-md:  0.75rem;
-  --radius-lg:  1.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.25rem;
   --radius-full: 9999px;
   --border-color: var(--color-bg-border);
 
@@ -97,15 +97,17 @@
   --transition-slow: 400ms ease;
 
   /* Z-indexes */
-  --z-base:    0;
-  --z-above:   10;
-  --z-nav:     100;
+  --z-base: 0;
+  --z-above: 10;
+  --z-nav: 100;
   --z-overlay: 200;
-  --z-modal:   300;
+  --z-modal: 300;
 }
 
 /* --- Reset --- */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -129,7 +131,9 @@ body {
   overflow-x: hidden;
 }
 
-img, svg, video {
+img,
+svg,
+video {
   display: block;
   max-width: 100%;
 }
@@ -139,7 +143,8 @@ a {
   text-decoration: none;
 }
 
-ul, ol {
+ul,
+ol {
   list-style: none;
 }
 
@@ -150,7 +155,8 @@ button {
   background: none;
 }
 
-input, textarea {
+input,
+textarea {
   font-family: inherit;
 }
 
@@ -170,6 +176,7 @@ input, textarea {
   text-transform: uppercase;
   transition: top var(--transition-fast);
 }
+
 .skip-link:focus {
   top: var(--space-4);
   outline: 3px solid var(--color-bg-deep);
@@ -182,15 +189,28 @@ input, textarea {
   outline-offset: 3px;
   border-radius: var(--radius-sm);
 }
+
 :focus:not(:focus-visible) {
   outline: none;
 }
 
 /* --- Scrollbar --- */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--color-bg-deep); }
-::-webkit-scrollbar-thumb { background: var(--color-bg-border); border-radius: var(--radius-full); }
-::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-bg-border);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
 
 /* --- Selection --- */
 ::selection {
@@ -294,7 +314,10 @@ input, textarea {
   transition: opacity var(--transition-fast);
   z-index: 1;
 }
-.nav__logo:hover { opacity: 0.8; }
+
+.nav__logo:hover {
+  opacity: 0.8;
+}
 
 .nav__links {
   display: flex;
@@ -349,6 +372,7 @@ input, textarea {
   border-radius: var(--radius-full);
   transition: transform var(--transition-fast), box-shadow var(--transition-fast), opacity var(--transition-fast);
 }
+
 .nav__cta:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 16px var(--color-accent-glow);
@@ -364,16 +388,29 @@ input, textarea {
   z-index: calc(var(--z-overlay) + 1);
   transition: opacity var(--transition-fast);
 }
-.nav__hamburger:hover { opacity: 0.7; }
+
+.nav__hamburger:hover {
+  opacity: 0.7;
+}
+
 .nav__hamburger svg {
   width: 22px;
   height: 22px;
   color: var(--color-text-primary);
   transition: opacity var(--transition-fast);
 }
-.nav__hamburger .icon-close { display: none; }
-.nav__hamburger.is-open .icon-menu { display: none; }
-.nav__hamburger.is-open .icon-close { display: block; }
+
+.nav__hamburger .icon-close {
+  display: none;
+}
+
+.nav__hamburger.is-open .icon-menu {
+  display: none;
+}
+
+.nav__hamburger.is-open .icon-close {
+  display: block;
+}
 
 /* Mobile overlay */
 .nav__overlay {
@@ -389,6 +426,7 @@ input, textarea {
   opacity: 0;
   transition: opacity var(--transition-slow);
 }
+
 .nav__overlay.is-open {
   display: flex;
   opacity: 1;
@@ -425,9 +463,10 @@ input, textarea {
 .hero::before {
   content: '';
   position: absolute;
-  inset: -64px; /* overhang so transform translate doesn't expose edges */
+  inset: -64px;
+  /* overhang so transform translate doesn't expose edges */
   background-image:
-    radial-gradient(circle, rgba(255,255,255,0.09) 1.5px, transparent 1.5px);
+    radial-gradient(circle, rgba(255, 255, 255, 0.09) 1.5px, transparent 1.5px);
   background-size: 32px 32px;
   animation: dotgrid-drift 40s linear infinite;
   pointer-events: none;
@@ -440,8 +479,8 @@ input, textarea {
   position: absolute;
   inset: 0;
   background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0, 212, 180, 0.08) 0%, transparent 70%),
-              radial-gradient(ellipse 60% 40% at 80% 80%, rgba(59, 130, 246, 0.06) 0%, transparent 60%),
-              linear-gradient(180deg, transparent 60%, var(--color-bg-deep) 100%);
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(59, 130, 246, 0.06) 0%, transparent 60%),
+    linear-gradient(180deg, transparent 60%, var(--color-bg-deep) 100%);
   pointer-events: none;
 }
 
@@ -553,6 +592,7 @@ input, textarea {
   will-change: transform;
   animation: bounce-y 2s ease-in-out infinite;
 }
+
 .hero__scroll-icon svg {
   width: 24px;
   height: 24px;
@@ -587,6 +627,7 @@ input, textarea {
   background: var(--color-accent);
   color: var(--color-bg-deep);
 }
+
 .btn--primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px var(--color-accent-glow);
@@ -598,6 +639,7 @@ input, textarea {
   color: var(--color-text-primary);
   border: 1.5px solid rgba(232, 234, 240, 0.28);
 }
+
 .btn--secondary:hover {
   border-color: var(--color-accent);
   color: var(--color-accent);
@@ -609,6 +651,7 @@ input, textarea {
   color: var(--color-accent);
   border: 1px solid rgba(0, 212, 180, 0.2);
 }
+
 .btn--ghost:hover {
   background: rgba(0, 212, 180, 0.25);
   transform: translateY(-2px);
@@ -645,6 +688,7 @@ input, textarea {
   text-align: center;
   transition: transform var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
 }
+
 .stat-card:hover {
   transform: translateY(-4px);
   border-color: var(--color-accent);
@@ -777,6 +821,7 @@ input, textarea {
   transform: translateY(-4px);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
 }
+
 .job-card:hover::before {
   opacity: 1;
 }
@@ -824,7 +869,11 @@ input, textarea {
   padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-full);
 }
-.job-card__dates svg { width: 12px; height: 12px; }
+
+.job-card__dates svg {
+  width: 12px;
+  height: 12px;
+}
 
 .job-card__location {
   display: inline-flex;
@@ -834,7 +883,11 @@ input, textarea {
   color: var(--color-text-muted);
   font-family: var(--font-mono);
 }
-.job-card__location svg { width: 11px; height: 11px; }
+
+.job-card__location svg {
+  width: 11px;
+  height: 11px;
+}
 
 .job-card__bullets {
   display: flex;
@@ -918,6 +971,7 @@ input, textarea {
   transition: transform var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
   letter-spacing: 0.02em;
 }
+
 .tag:hover {
   transform: translateY(-2px);
   color: var(--color-accent);
@@ -942,7 +996,7 @@ input, textarea {
   background: var(--color-bg-surface);
   border: 1px solid var(--color-bg-border);
   border-radius: var(--radius-lg);
-  padding: var(--space-6) var(--space-7);
+  padding: var(--space-6);
   position: relative;
   overflow: hidden;
   transition: transform var(--transition-base), box-shadow var(--transition-base);
@@ -960,10 +1014,12 @@ input, textarea {
   transform-origin: left;
   transition: transform var(--transition-slow);
 }
+
 .cms-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
 }
+
 .cms-card:hover::after {
   transform: scaleX(1);
 }
@@ -1051,6 +1107,7 @@ input, textarea {
   padding: var(--space-4) var(--space-5);
   transition: transform var(--transition-fast), border-color var(--transition-fast);
 }
+
 .cert-item:hover {
   transform: translateX(4px);
   border-color: rgba(0, 212, 180, 0.4);
@@ -1066,6 +1123,7 @@ input, textarea {
   justify-content: center;
   flex-shrink: 0;
 }
+
 .cert-item__icon svg {
   width: 18px;
   height: 18px;
@@ -1091,7 +1149,7 @@ input, textarea {
   background: var(--color-bg-surface);
   border: 1px solid var(--color-bg-border);
   border-radius: var(--radius-lg);
-  padding: var(--space-7);
+  padding: var(--space-6);
   position: relative;
   overflow: hidden;
 }
@@ -1193,6 +1251,7 @@ input, textarea {
   gap: var(--space-4);
   transition: transform var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
 }
+
 .contact-card:hover {
   transform: translateY(-3px);
   border-color: rgba(0, 212, 180, 0.4);
@@ -1216,6 +1275,7 @@ input, textarea {
   justify-content: center;
   flex-shrink: 0;
 }
+
 .contact-card__icon-wrap svg {
   width: 20px;
   height: 20px;
@@ -1250,21 +1310,25 @@ input, textarea {
   flex-shrink: 0;
   transition: color var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
 }
+
 .copy-btn:hover {
   color: var(--color-accent);
   border-color: rgba(0, 212, 180, 0.4);
   background: var(--color-accent-dim);
 }
+
 .copy-btn svg {
   width: 16px;
   height: 16px;
   transition: transform var(--transition-fast);
 }
+
 .copy-btn.copied {
   color: var(--color-accent);
   border-color: var(--color-accent);
   background: var(--color-accent-dim);
 }
+
 .copy-btn.copied svg {
   transform: scale(1.2);
 }
@@ -1290,11 +1354,13 @@ input, textarea {
   border-radius: var(--radius-full);
   transition: color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
 }
+
 .contact__link:hover {
   color: var(--color-accent);
   border-color: rgba(0, 212, 180, 0.4);
   transform: translateY(-2px);
 }
+
 .contact__link svg {
   width: 17px;
   height: 17px;
@@ -1357,9 +1423,11 @@ input, textarea {
     grid-template-columns: 1fr;
     gap: var(--space-12);
   }
+
   .about__stats {
     grid-template-columns: repeat(4, 1fr);
   }
+
   .certs__grid {
     grid-template-columns: 1fr;
   }
@@ -1369,6 +1437,7 @@ input, textarea {
   .nav__links {
     display: none;
   }
+
   .nav__hamburger {
     display: flex;
   }
@@ -1385,6 +1454,7 @@ input, textarea {
     flex-direction: column;
     align-items: flex-start;
   }
+
   .job-card__meta {
     align-items: flex-start;
   }
@@ -1392,6 +1462,7 @@ input, textarea {
   .timeline {
     padding-left: var(--space-6);
   }
+
   .timeline__dot {
     left: calc(-1 * var(--space-6) + 4px);
   }
@@ -1412,7 +1483,8 @@ input, textarea {
 
 @media (max-width: 480px) {
   .hero__content {
-    padding-bottom: 6rem; /* clear space for absolute scroll indicator */
+    padding-bottom: 6rem;
+    /* clear space for absolute scroll indicator */
   }
 
   .hero__typewriter-wrapper {
@@ -1426,6 +1498,7 @@ input, textarea {
   .hero__actions {
     flex-direction: column;
   }
+
   .hero__actions .btn {
     width: 100%;
     justify-content: center;
