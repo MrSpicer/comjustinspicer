@@ -23,6 +23,7 @@
  - always ask clarifying questions when planning if you have any uncertainty.
  - Do not use JQuery.
  - Get confirmation from a human before using any external library or code.
+ - Do not commit work
 
 ## Code Conventions
 
