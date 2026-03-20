@@ -24,6 +24,7 @@
  - Do not use JQuery.
  - Get confirmation from a human before using any external library or code.
  - Do not commit work
+ - The very last thing you should do before existing work is reread the plan and ensure that all steps have been completed and all verification prescribed by the plan was actually done.
 
 ## Code Conventions
 

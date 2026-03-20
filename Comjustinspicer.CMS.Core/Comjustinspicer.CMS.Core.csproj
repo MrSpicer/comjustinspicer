@@ -6,13 +6,11 @@
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageReference Include="AutoMapper" Version="15.0.1" />
     <ProjectReference Include="..\Comjustinspicer.CMS.Data\Comjustinspicer.CMS.Data.csproj" />
-    <ProjectReference Include="..\Comjustinspicer.CMS.Identity\Comjustinspicer.CMS.Identity.csproj" />
     <ProjectReference Include="..\Comjustinspicer.CMS.Forms\Comjustinspicer.CMS.Forms.csproj" />
     <ProjectReference Include="..\Comjustinspicer.CMS.Routing\Comjustinspicer.CMS.Routing.csproj" />
     <ProjectReference Include="..\Comjustinspicer.CMS.ContentZones\Comjustinspicer.CMS.ContentZones.csproj" />
-    <ProjectReference Include="..\Comjustinspicer.CMS.Core\Comjustinspicer.CMS.Core.csproj" />
-    <ProjectReference Include="..\Comjustinspicer.CMS.Presentation\Comjustinspicer.CMS.Presentation.csproj" />
+    <ProjectReference Include="..\Comjustinspicer.CMS.Identity\Comjustinspicer.CMS.Identity.csproj" />
   </ItemGroup>
 </Project>

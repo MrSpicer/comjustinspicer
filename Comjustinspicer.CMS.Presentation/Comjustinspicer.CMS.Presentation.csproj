@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="10.0.0" />
+    <ProjectReference Include="..\Comjustinspicer.CMS.Core\Comjustinspicer.CMS.Core.csproj" />
+    <ProjectReference Include="..\Comjustinspicer.CMS.ContentZones\Comjustinspicer.CMS.ContentZones.csproj" />
+    <ProjectReference Include="..\Comjustinspicer.CMS.Identity\Comjustinspicer.CMS.Identity.csproj" />
+  </ItemGroup>
+
+  <Target Name="CompileSass" BeforeTargets="Build">
+    <Exec Command="npx sass Views/Shared/Components/ContentZone/edit.scss:wwwroot/css/content-zone-edit.css --no-source-map --style=compressed" />
+  </Target>
+
+  <Target Name="CopyViewScripts" BeforeTargets="Build">
+    <Copy SourceFiles="Views/Shared/Components/ContentZone/edit.js"
+          DestinationFiles="wwwroot/js/content-zone-edit.js" />
+    <Copy SourceFiles="Views/AdminPage/PageUpsert.js"
+          DestinationFiles="wwwroot/js/page-upsert.js" />
+  </Target>
+</Project>

@@ -33,11 +33,11 @@ The controller extends `PageControllerBase<TConfig>`, which exposes `CurrentPage
 
 | Class | File | Role |
 |---|---|---|
-| `PageRouteTransformer` | `Comjustinspicer.CMS/Routing/PageRouteTransformer.cs` | Resolves request path to a page record and populates `HttpContext.Items` |
-| `PageControllerBase<TConfig>` | `Comjustinspicer.CMS/Controllers/PageControllerBase.cs` | Abstract base class; exposes `CurrentPage` and `PageConfig` |
-| `[PageController]` | `Comjustinspicer.CMS/Attributes/PageControllerAttribute.cs` | Marks a controller as a page type; drives admin UI metadata |
-| `PageControllerRegistry` | `Comjustinspicer.CMS/Pages/PageControllerRegistry.cs` | Scans assemblies at startup and caches page type metadata |
-| `GenericPageController` | `Comjustinspicer.CMS/Controllers/GenericPageController.cs` | Built-in default page type; canonical implementation example |
+| `PageRouteTransformer` | `Comjustinspicer.CMS.Routing/Routing/PageRouteTransformer.cs` | Resolves request path to a page record and populates `HttpContext.Items` |
+| `PageControllerBase<TConfig>` | `Comjustinspicer.CMS.Core/Controllers/PageControllerBase.cs` | Abstract base class; exposes `CurrentPage` and `PageConfig` |
+| `[PageController]` | `Comjustinspicer.CMS.Forms/Attributes/PageControllerAttribute.cs` | Marks a controller as a page type; drives admin UI metadata |
+| `PageControllerRegistry` | `Comjustinspicer.CMS.Routing/Pages/PageControllerRegistry.cs` | Scans assemblies at startup and caches page type metadata |
+| `GenericPageController` | `Comjustinspicer.CMS.Core/Controllers/GenericPageController.cs` | Built-in default page type; canonical implementation example |
 
 ---
 
@@ -195,3 +195,7 @@ See [`docs/widget-system.md`](widget-system.md) for full ContentZone documentati
 | `ConfigurationType` | `Type?` | `null` | Config class whose `[FormProperty]` properties are rendered as form fields; must match the `TConfig` generic parameter |
 | `IconClass` | `string` | `""` | CSS class for the icon shown in the admin UI (e.g. `"fa-file"`) |
 | `Order` | `int` | `0` | Sort order within the category; lower values appear first |
+
+---
+
+*For architectural reference — routing algorithm, registry internals, `HttpContext.Items` contract, `NotReservedConstraint`, and built-in page types — see [docs/architecture/03-page-routing.md](architecture/03-page-routing.md).*

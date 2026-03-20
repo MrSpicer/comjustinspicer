@@ -48,7 +48,7 @@ When adding a new standalone content type, extend `AdminCrudModel<TDto>`.
 
 ## BaseContentDTO
 
-**File:** `Comjustinspicer.CMS/Data/Models/BaseContentDTO.cs`
+**File:** `Comjustinspicer.CMS.Data/Data/Models/BaseContentDTO.cs`
 
 All content types are EF Core records that extend `BaseContentDTO`. It carries every field shared across all content types.
 
@@ -324,3 +324,5 @@ builder.Services.AddScoped<IAdminCrudHandler>(sp => sp.GetRequiredService<MyCont
 `AdminHandlerRegistry` picks up any `IAdminCrudHandler` registered in DI regardless of which project it originates from. `AdminContentController` handles all routes for `mycontents` with no additional controller code needed.
 
 ---
+
+*For architectural reference — `BaseContentDTO` field semantics, versioning internals, DbContext catalog, service method reference, `AdminCrudModel<T>` dual-role pattern, and AutoMapper conventions — see [docs/architecture/01-data-tier.md](architecture/01-data-tier.md) and [docs/architecture/05-content-domain-models.md](architecture/05-content-domain-models.md).*

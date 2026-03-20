@@ -4,13 +4,16 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
 using AutoMapper;
 using Comjustinspicer.CMS.ContentZones;
+using Comjustinspicer.CMS.Controllers;        // GenericPageController
+using Comjustinspicer.CMS.Controllers.Admin;  // AdminContentController
 using Comjustinspicer.CMS.Controllers.Admin.Handlers;
 using Comjustinspicer.CMS.Data;
 using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
-// using Comjustinspicer.CMS.Models.Article;
 using Comjustinspicer.CMS.Models.ContentBlock;
 using Comjustinspicer.CMS.Models.ContentZone;
+using Comjustinspicer.CMS.TagHelpers;         // FormFieldsTagHelper
+using Comjustinspicer.CMS.ViewComponents;     // ContentZoneViewComponent
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc;
@@ -105,21 +108,21 @@ public static class ServiceCollectionExtensions
 	private static void MapTypes(IServiceCollection services)
 	{
 #if DEBUG
-		services.AddSingleton<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, Services.DevEmailSender>();
+		services.AddSingleton<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, Comjustinspicer.CMS.Services.DevEmailSender>();
 #endif
 		// Needed for UserService to inspect current HttpContext/User
 		services.AddHttpContextAccessor();
-		services.AddSingleton<Services.UserService>();
+		services.AddSingleton<Comjustinspicer.CMS.Services.UserService>();
 
 		// ViewComponent view discovery service
-		services.AddScoped<Services.IViewDiscoveryService, Services.ViewDiscoveryService>();
+		services.AddScoped<Comjustinspicer.CMS.Services.IViewDiscoveryService, Comjustinspicer.CMS.Services.ViewDiscoveryService>();
 
 		// Content Zone Component Registry - scans assemblies for registered ViewComponents
 		services.AddSingleton<IContentZoneComponentRegistry>(sp =>
 		{
 			var assemblies = new[]
 			{
-				typeof(ServiceCollectionExtensions).Assembly,
+				typeof(ContentZoneViewComponent).Assembly,  // CMS.Presentation: [ContentZoneComponent] ViewComponents
 				Assembly.GetEntryAssembly()
 			}.Where(a => a != null).Distinct().Cast<Assembly>();
 			return new ContentZoneComponentRegistry(assemblies);
@@ -157,7 +160,7 @@ public static class ServiceCollectionExtensions
 		{
 			var assemblies = new[]
 			{
-				typeof(ServiceCollectionExtensions).Assembly,
+				typeof(GenericPageController).Assembly,  // CMS.Core: [PageController] controllers
 				Assembly.GetEntryAssembly()
 			}.Where(a => a != null).Distinct().Cast<Assembly>();
 			return new PageControllerRegistry(assemblies);
@@ -191,17 +194,25 @@ public static class ServiceCollectionExtensions
 		services.AddScoped<IAdminHandlerRegistry, AdminHandlerRegistry>();
 
 		// AutoMapper profile from this assembly
-		services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>(), typeof(ServiceCollectionExtensions).Assembly);
+		services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>(), typeof(MappingProfile).Assembly);
 
-		// Register this assembly so that controllers/view components & embedded views are discovered
+		// Register CMS.Core (controllers), CMS.Forms (tag helpers), CMS.Presentation (ViewComponents + compiled views)
 		services.Configure<MvcOptions>(_ => { }); // no-op to ensure MVC services available if host only calls minimal AddControllersWithViews later
 		services.AddControllersWithViews().ConfigureApplicationPartManager(apm =>
 		{
-			var asm = typeof(ServiceCollectionExtensions).Assembly;
-			if (!apm.ApplicationParts.Any(p => p.Name == asm.GetName().Name))
+			var coreAsm = typeof(AdminContentController).Assembly; // CMS.Core
+			if (!apm.ApplicationParts.Any(p => p.Name == coreAsm.GetName().Name))
+				apm.ApplicationParts.Add(new AssemblyPart(coreAsm));
+
+			var formsAsm = typeof(FormFieldsTagHelper).Assembly; // CMS.Forms
+			if (!apm.ApplicationParts.Any(p => p.Name == formsAsm.GetName().Name))
+				apm.ApplicationParts.Add(new AssemblyPart(formsAsm));
+
+			var presentationAsm = typeof(ContentZoneViewComponent).Assembly; // CMS.Presentation
+			if (!apm.ApplicationParts.Any(p => p.Name == presentationAsm.GetName().Name))
 			{
-				apm.ApplicationParts.Add(new AssemblyPart(asm));
-				apm.ApplicationParts.Add(new CompiledRazorAssemblyPart(asm));
+				apm.ApplicationParts.Add(new AssemblyPart(presentationAsm));
+				apm.ApplicationParts.Add(new CompiledRazorAssemblyPart(presentationAsm));
 			}
 		});
 	}

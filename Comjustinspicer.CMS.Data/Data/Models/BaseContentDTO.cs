@@ -1,5 +1,3 @@
-using Comjustinspicer.CMS.Attributes;
-
 namespace Comjustinspicer.CMS.Data.Models;
 
 public abstract record BaseContentDTO

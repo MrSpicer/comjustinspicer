@@ -24,10 +24,10 @@ Content Zones are named, database-backed regions in a view that an admin can pop
 
 | Class | File | Role |
 |---|---|---|
-| `ContentZoneViewComponent` | `Comjustinspicer.CMS/ViewComponents/ContentZoneViewComponent.cs` | Renders a zone by name; switches to edit view for admins |
-| `ContentZoneComponentRegistry` | `Comjustinspicer.CMS/ContentZones/ContentZoneComponentRegistry.cs` | Scans assemblies and caches widget metadata at startup |
-| `[ContentZoneComponent]` | `Comjustinspicer.CMS/Attributes/ContentZoneComponentAttribute.cs` | Marks a ViewComponent as a widget available in the admin UI |
-| `[FormProperty]` / `EditorType` | `Comjustinspicer.CMS/Attributes/FormPropertyAttribute.cs` | Drives config form field generation in the admin UI |
+| `ContentZoneViewComponent` | `Comjustinspicer.CMS.Presentation/ViewComponents/ContentZoneViewComponent.cs` | Renders a zone by name; switches to edit view for admins |
+| `ContentZoneComponentRegistry` | `Comjustinspicer.CMS.ContentZones/ContentZones/ContentZoneComponentRegistry.cs` | Scans assemblies and caches widget metadata at startup |
+| `[ContentZoneComponent]` | `Comjustinspicer.CMS.Forms/Attributes/ContentZoneComponentAttribute.cs` | Marks a ViewComponent as a widget available in the admin UI |
+| `[FormProperty]` / `EditorType` | `Comjustinspicer.CMS.Forms/Attributes/FormPropertyAttribute.cs` | Drives config form field generation in the admin UI |
 
 ---
 
@@ -160,3 +160,7 @@ The `ContentZoneViewComponent` resolves zones via the `ContentZoneAssignments` t
 - **Global zones** (`IsGlobal = true`) bypass assignment lookup and use name-based lookup on `ContentZoneDTO.Name`.
 
 The `ContentZoneDTO.Name` field now stores a human-readable slot name (e.g. `"Main"`, `"Sidebar"`) rather than an opaque path. Zone identity is determined by the assignment record, not the name.
+
+---
+
+*For architectural reference — zone resolution algorithm, lazy zone creation, registry internals, nested zones, and component configuration contract — see [docs/architecture/04-content-zone-framework.md](architecture/04-content-zone-framework.md).*
