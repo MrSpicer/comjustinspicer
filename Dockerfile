@@ -9,7 +9,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certifi
     && rm -rf /var/lib/apt/lists/*
 
 # Copy project files first — restoring in a separate layer caches NuGet packages
+COPY comjustinspicer.sln ./
 COPY Comjustinspicer.CMS/Comjustinspicer.CMS.csproj Comjustinspicer.CMS/
+COPY Comjustinspicer.CMS.Core/Comjustinspicer.CMS.Core.csproj Comjustinspicer.CMS.Core/
+COPY Comjustinspicer.CMS.Data/Comjustinspicer.CMS.Data.csproj Comjustinspicer.CMS.Data/
+COPY Comjustinspicer.CMS.Identity/Comjustinspicer.CMS.Identity.csproj Comjustinspicer.CMS.Identity/
+COPY Comjustinspicer.CMS.Forms/Comjustinspicer.CMS.Forms.csproj Comjustinspicer.CMS.Forms/
+COPY Comjustinspicer.CMS.Routing/Comjustinspicer.CMS.Routing.csproj Comjustinspicer.CMS.Routing/
+COPY Comjustinspicer.CMS.ContentZones/Comjustinspicer.CMS.ContentZones.csproj Comjustinspicer.CMS.ContentZones/
+COPY Comjustinspicer.CMS.Presentation/Comjustinspicer.CMS.Presentation.csproj Comjustinspicer.CMS.Presentation/
 COPY Comjustinspicer.Web/Comjustinspicer.Web.csproj Comjustinspicer.Web/
 
 # Restore with NuGet cache mount (persists between builds on host)
@@ -18,6 +26,13 @@ RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
 
 # Copy source and publish
 COPY Comjustinspicer.CMS/ Comjustinspicer.CMS/
+COPY Comjustinspicer.CMS.Core/ Comjustinspicer.CMS.Core/
+COPY Comjustinspicer.CMS.Data/ Comjustinspicer.CMS.Data/
+COPY Comjustinspicer.CMS.Identity/ Comjustinspicer.CMS.Identity/
+COPY Comjustinspicer.CMS.Forms/ Comjustinspicer.CMS.Forms/
+COPY Comjustinspicer.CMS.Routing/ Comjustinspicer.CMS.Routing/
+COPY Comjustinspicer.CMS.ContentZones/ Comjustinspicer.CMS.ContentZones/
+COPY Comjustinspicer.CMS.Presentation/ Comjustinspicer.CMS.Presentation/
 COPY Comjustinspicer.Web/ Comjustinspicer.Web/
 RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
     dotnet publish Comjustinspicer.Web/Comjustinspicer.Web.csproj \
