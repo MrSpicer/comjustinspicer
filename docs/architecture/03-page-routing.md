@@ -13,7 +13,8 @@
 
 ## 1. System Overview
 
-All public URL traffic is caught by a single catch-all route registered in `Program.cs`:
+All public URL traffic is caught by a single catch-all route registered by the CMS inside
+`EnsureCMS()` (its `ConfigureMiddleware` step — see [07-cms-bootstrap](07-cms-bootstrap.md)):
 
 ```csharp
 app.MapDynamicControllerRoute<PageRouteTransformer>("{**slug}");

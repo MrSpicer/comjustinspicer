@@ -155,13 +155,15 @@ UseRouting()                   — match routes
 UseAuthentication()
 UseAuthorization()
 MapRazorPages()                — Identity UI pages
+MapDynamicControllerRoute<PageRouteTransformer>("{**slug}")  — dynamic page routing
+MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}")  — fallback MVC
 ```
 
-Route mapping for page routing and MVC is done in `Program.cs` after `EnsureCMS()`:
-```csharp
-app.MapDynamicControllerRoute<PageRouteTransformer>("{**slug}");
-app.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
-```
+Route mapping is performed by `ConfigureMiddleware` (the final `EnsureCMS()` step), so the host
+project does not register CMS routes itself. The dynamic catch-all `{**slug}` is mapped before the
+conventional route; if `PageRouteTransformer` returns `null!`, routing falls through to the
+conventional `{controller}/{action}/{id?}` route. Keeping both registrations inside the CMS makes
+the package self-contained — the Web project only calls `EnsureCMS()`.
 
 ---
 
@@ -193,11 +195,10 @@ if (!app.Environment.IsDevelopment())
     app.UseStatusCodePagesWithReExecute("/Error/{0}");
 }
 
-app.EnsureCMS();  // Migrations, seeding, middleware
+app.EnsureCMS();  // Migrations, seeding, middleware, route mapping
 
-// Web-project-specific route mappings:
-app.MapDynamicControllerRoute<PageRouteTransformer>("{**slug}");
-app.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+// Web-project-specific route mappings (optional) go here. The CMS dynamic page route
+// and the conventional fallback route are already registered inside EnsureCMS().
 
 app.Run();
 ```

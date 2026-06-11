@@ -1,6 +1,7 @@
 using Comjustinspicer.CMS.Data.DbContexts;
 using Comjustinspicer.CMS.Data.Models;
 using Comjustinspicer.CMS.Data.Services;
+using Comjustinspicer.CMS.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -282,6 +283,12 @@ public static class CMSExtensions
 		app.UseAuthentication();
 		app.UseAuthorization();
 		app.MapRazorPages();
+
+		app.MapDynamicControllerRoute<PageRouteTransformer>("{**slug}");
+
+		app.MapControllerRoute(
+			name: "default",
+			pattern: "{controller=Home}/{action=Index}/{id?}");
 
 		return app;
 	}

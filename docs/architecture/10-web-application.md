@@ -109,17 +109,14 @@ if (!app.Environment.IsDevelopment())
     app.UseStatusCodePagesWithReExecute("/Error/{0}");   // (7) Status code handler (404, etc.)
 }
 
-app.EnsureCMS();                                         // (8) Migrations, seeding, middleware
-
-app.MapDynamicControllerRoute<PageRouteTransformer>("{**slug}");  // (9) Dynamic page routing
-app.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");  // (10) Fallback MVC
+app.EnsureCMS();                                         // (8) Migrations, seeding, middleware, route mapping
 
 app.Run();
 ```
 
 **Step 1** must happen before step 2 so Web-project DI registrations can be overridden or extended by the CMS.
 
-**Step 9** (dynamic page route) must come before step 10 (conventional route). The catch-all `{**slug}` will match everything; if the transformer returns `null!`, routing falls through to the conventional route.
+Route registration now lives inside `EnsureCMS()` (specifically its `ConfigureMiddleware` step), so the Web project no longer maps the dynamic page route or the conventional fallback itself — it just calls `EnsureCMS()`. The dynamic catch-all `{**slug}` matches everything; if the transformer returns `null!`, routing falls through to the conventional `{controller=Home}/{action=Index}/{id?}` route. See [07-cms-bootstrap](07-cms-bootstrap.md) for the registration details and ordering.
 
 ---
 

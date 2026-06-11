@@ -1,7 +1,6 @@
 using Serilog;
 using Comjustinspicer.CMS;
 using Comjustinspicer.CMS.Logging;
-using Comjustinspicer.CMS.Routing;
 using Comjustinspicer.Web;
 
 
@@ -33,13 +32,6 @@ try
     }
 
     app.EnsureCMS();
-
-    //todo: this needs to be moved to CMS
-    app.MapDynamicControllerRoute<PageRouteTransformer>("{**slug}");
-
-    app.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
 
     app.Run();
 }

@@ -53,7 +53,6 @@ The watch system monitors source files and automatically rebuilds when you save 
 ```
 
 ### Run with Docker Compose
-`DockerRun.sh` reads the same `dotnet user-secrets` used for local development — no additional secrets setup is required.
 ```
 ./Scripts/DockerRun.sh
 ```
@@ -70,23 +69,3 @@ dotnet user-secrets set "CKEditor:LicenseKey" "<your-dev-license>" --project Com
 dotnet user-secrets set "AutoMapper:LicenseKey" "<your-dev-license>" --project Comjustinspicer.Web
 ```
 
-### GitHub
-```
-ADMIN_EMAIL
-ADMIN_PASSWORD
-CONNECTION_STRING
-CKEDITOR_LICENSE_KEY
-AUTOMAPPER_LICENSE_KEY
-```
-## Troubleshooting
-
-### Fix dotnet watch inotify Limits
-
-If you encounter "The configured user limit on the number of inotify instances has been reached" error when running hot reload:
-
-```bash
-echo "fs.inotify.max_user_instances=8192" | sudo tee /etc/sysctl.d/99-inotify.conf
-sudo sysctl -p /etc/sysctl.d/99-inotify.conf
-```
-
-This is a one-time setup per machine.
